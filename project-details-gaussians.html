@@ -1,0 +1,156 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap" rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="bg-orange min-h-screen md:p-14 lg:px-28 p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="index.html"
+                class="inline-flex items-center text-gray-700 hover:text-gray-900 font-serif text-lg transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+
+        <!-- Main Project Container -->
+        <div class="relative flex-row justify-center">
+
+            <!-- Main Project Card -->
+            <div class="w-full bg-beige shadow-xl rounded-lg p-4 border-dashed border-[3px] border-orange-200">
+                <div class="md:p-8 p-2">
+
+                    <!-- Title -->
+                    <h1 class="font-serif md:text-3xl text-2xl font-semibold mb-4 text-gray-900 md:w-[70%] mx-auto">
+                        Interactive Manipulation of Objects for 3D Gaussian Splatting
+                    </h1>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-3 mb-8 md:w-[70%] mx-auto">
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">WebGL</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">JavaScript</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">Computer Vision</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">Computer Graphics</span>
+
+                    </div>
+
+                    <!-- Description -->
+                    <div class="text-gray-800 font-serif  mb-8 md:w-[70%] text-justify mx-auto">
+                        <p class="text-base md:text-xl mb-4">
+                            3D Gaussian Splatting has emerged as a groundbreaking technique in computer graphics,
+                            offering a
+                            compelling alternative to traditional mesh-based and neural rendering approaches. However
+                            existing viewers were purely passive, you could navigate and observe, but never interact
+                            with the scene itself.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            This project transformed a static WebGL Gaussian Splatting viewer into a fully interactive
+                            editing tool. The core challenge was enabling object-level manipulation in scenes composed
+                            of millions of floating Gaussian points rather than traditional 3D meshes.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            We developed a complete editing system featuring label-based selection through a custom
+                            HitTesting algorithm, I focused on implementing the editing features providing
+                            GPU-accelerated object movement,
+                            visibility controls, and object recoloring.
+                            Transformations happen directly in the GPU vertex shader during rendering resulting
+                            in smooth interactions even with complex scenes containing massive numbers of
+                            Gaussians.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            The object segmentation in the scenes were very challenging, My teammates explored multiple
+                            approaches including deep learning models, K-means clustering, and region growing algorithms
+                            to create coherent object labels.
+                        </p>
+
+
+                    </div>
+
+                    <div class="mb-8 md:w-[70%] mx-auto">
+                        <a href="https://github.com/OnurBasci/Interactive_object_manipulation_for_3D_gaussian_splatting_viewer"
+                            class="inline-flex items-center text-gray-700 hover:text-red-800 font-serif text-lg transition-colors duration-200">
+                            Check it out !
+                        </a>
+                    </div>
+
+                </div>
+
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+                    <div class="md:absolute top-[180px] right-[-240px] w-[320px] h-[220px] md:w-[420px] md:h-[300px]  group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/segmentation.png"
+                                    class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-8 -left-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform -rotate-6 z-10">
+                            <p class="font-serif text-sm text-gray-800 whitespace-nowrap">segmented objects in 2D image
+                            </p>
+                            <div
+                                class="absolute -bottom-1 left-8 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="realtive -translate-x-10 md:transform-none md:absolute top-[400px] left-[-240px] w-[320px] h-[220px] md:w-[420px] md:h-[300px]  group">
+                    <div
+                        class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-6">
+                        <div class="w-full h-full flex items-center justify-center relative">
+                            <img src="static/projects/color.png" class="w-[90%] h-[86%] object-cover rounded ">
+                        </div>
+                    </div>
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                        <p class="font-serif text-sm text-gray-800">changing colors of 3D objects in real time in
+                            gaussian splats scene</p>
+                        <div
+                            class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" realtive flex justify-end translate-x-10 md:transform-none">
+                    <div class="md:absolute top-[530px] right-[-240px] w-[320px] h-[220px] md:w-[420px] md:h-[300px]  group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform ">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/leftDisappear.png"
+                                    class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                            <p class="font-serif text-sm text-gray-800">deleting an object from 3D scene</p>
+                            <div
+                                class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+
+
+        </div>
+
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap" rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="bg-orange min-h-screen md:p-14 lg:px-28 p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="index.html"
+                class="inline-flex items-center text-gray-700 hover:text-gray-900 font-serif text-lg transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+
+        <!-- Main Project Container -->
+        <div class="relative flex justify-center">
+
+            <!-- Main Project Card -->
+            <div class="w-full bg-beige shadow-xl rounded-lg p-4 border-dashed border-[3px] border-orange-200">
+                <div class="p-8">
+
+                    <!-- Title -->
+                    <h1 class="font-serif md:text-3xl text-2xl font-semibold mb-4 text-gray-900 md:w-[70%] mx-auto">
+                        AR City Builder
+                    </h1>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-3 mb-8 md:w-[70%] mx-auto">
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">Unity</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">C#</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">AR</span>
+                        <span class="bg-yellow px-2 py-1 font-serif text-xs md:text-sm">Tangible Interactions</span>
+
+                    </div>
+
+                    <!-- Video (Centered) -->
+                    <div class="mb-8 w-full flex justify-center">
+                        <div class="bg-orange p-4 rounded-xl border-4 border-orange-200">
+
+                            <div class="relative md:w-72 w-64 max-w-sm aspect-[9/16] rounded-lg overflow-hidden cursor-pointer group"
+                                onclick="this.innerHTML='<iframe class=\'w-full h-full\' src=\'https://www.youtube.com/embed/odxApuTEADE?autoplay=1&controls=0&modestbranding=1&rel=0\' frameborder=\'0\' allow=\'autoplay; encrypted-media\' allowfullscreen></iframe>'">
+
+                                <!-- Thumbnail -->
+                                <img src="https://img.youtube.com/vi/odxApuTEADE/maxresdefault.jpg"
+                                    class="w-full h-full object-cover" alt="AR City Builder video preview" />
+
+                                <!-- Custom Play Button -->
+                                <div
+                                    class="w-92 absolute inset-0 flex items-center justify-center group-hover:bg-black/30 transition">
+                                    <div class="w-16 h-16 bg-white/90 rounded-full flex items-center justify-center">
+                                        <svg class="w-6 h-6 text-black ml-1" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8 5v14l11-7z" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+                    <!-- Description -->
+                    <div class="text-gray-800 font-serif  mb-8 md:w-[70%] text-justify mx-auto">
+                        <p class="text-base md:text-xl mb-4">
+                            AR City Builder brings city management into the real world. You arrange physical cards
+                            on a
+                            table, each one spawns houses, factories, services, or shops in augmented reality
+                            overlaying
+                            your physical space. Moving cards physically reshapes your city, making zoning decisions
+                            feel immediate and spatial.
+
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            The city management works around happiness, houses show green/yellow/red diamonds based
+                            on
+                            nearby services
+                            vs. polluting factories. Services need funding or shut down. Factories poison housing
+                            but
+                            feed commercial zones. Shops only profit from happy, populated areas.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            We developed a complete editing system featuring label-based selection through a custom
+                            HitTesting algorithm, I focused on implementing the editing features providing
+                            GPU-accelerated object movement,
+                            visibility controls, and object recoloring.
+                            Transformations happen directly in the GPU vertex shader during rendering resulting
+                            in smooth interactions even with complex scenes containing massive numbers of
+                            Gaussians.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            We designed double‑sided cards that work as both AR targets and quick reference
+                            (cost/effects on back), plus a printed playmat that perfectly matches the virtual city
+                            bounds so positioning actually matters in physical space.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            This became my favorite project. I loved designing the gameplay balance and crafting the
+                            physical cards, plus working in AR where digital systems gain real tangibility through
+                            physical interaction.
+                        </p>
+
+
+                    </div>
+
+                    <div class="mb-8  mb-4 w-[70%] text-justify mx-auto ">
+                        <a href="https://kenney.nl"
+                            class="inline-flex items-center text-xl text-gray-700 hover:text-red-800 font-serif text-lg transition-colors duration-200">
+                            All the virtual assets come from kenney.nl !
+                        </a>
+                    </div>
+
+                    <div class=" flex justify-end translate-x-10 md:transform-none">
+                        <div class="md:absolute top-[200px] right-[-280px] md:w-[540px] md:h-[320px] w-[1000px]  group">
+                            <div
+                                class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                                <div class="w-full h-full flex items-center justify-center relative">
+                                    <img src="static/projects/physicalCity.jpeg"
+                                        class="w-[90%] h-[86%] object-cover rounded ">
+                                </div>
+                            </div>
+                            <!-- Tooltip -->
+                            <div
+                                class="absolute -top-8 -left-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform -rotate-6 z-10">
+                                <p class="font-serif text-sm text-gray-800 whitespace-nowrap">Physical playmat and
+                                    building
+                                    cards</p>
+                                <div
+                                    class="absolute -bottom-1 left-8 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="md:absolute top-[600px] left-[-150px] md:h-[500px] md:w-[250px] w-52 group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-6">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/ARCity.png" class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                            <p class="font-serif text-sm text-gray-800">This is how the AR city would look like !</p>
+                            <div
+                                class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class=" flex justify-end translate-x-10 md:transform-none">
+
+                        <div class="md:absolute top-[900px] right-[-150px] md:h-[500px] md:w-[250px] w-52 group">
+                            <div
+                                class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                                <div class="w-full h-full flex items-center justify-center relative">
+                                    <img src="static/projects/houses.png" class="w-[90%] h-[86%] object-cover rounded ">
+                                </div>
+                            </div>
+                            <!-- Tooltip -->
+                            <div
+                                class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                                <p class="font-serif text-sm text-gray-800">AR houses with green happiness indicator</p>
+                                <div
+                                    class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</body>
+
+</html>

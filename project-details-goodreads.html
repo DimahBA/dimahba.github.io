@@ -1,0 +1,195 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap" rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="bg-green min-h-screen md:p-14 lg:px-28 p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="index.html"
+                class="inline-flex items-center text-gray-700 hover:text-gray-900 font-serif text-lg transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+
+        <!-- Main Project Container -->
+        <div class="relative flex justify-center">
+
+            <!-- Main Project Card -->
+            <div class="w-full bg-beige shadow-xl rounded-lg p-4 border-dashed border-[3px] border-green-200">
+                <div class="p-8">
+
+                    <!-- Title -->
+                    <h1 class="font-serif md:text-3xl text-2xl font-semibold mb-4 text-gray-900 md:w-[70%] mx-auto">
+                        GoodReads Usability Study
+                    </h1>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-3 mb-8 md:w-[70%] mx-auto">
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">UX Research</span>
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">Python</span>
+                    </div>
+
+
+                    <!-- Description -->
+                    <div class="text-gray-800 font-serif  mb-8 md:w-[70%] md:text-justify mx-auto">
+
+                        <p class="text-base md:text-xl mb-4 text-justify">
+                            Goodreads promises easy book discovery, but we wanted to test how it actually feels to use.
+                            I worked with a small team of 4 people to run 16 people through three realistic tasks while
+                            tracking
+                            their mouse movements and asking what they thought afterward.
+                        </p>
+                        <h2 class="font-serif text-2xl font-semibold mb-4 text-gray-900">
+                            User Journey Mapping
+                        </h2>
+                        <p class="text-base md:text-xl mb-4 text-justify">
+
+                            We mapped the complete Goodreads user journey to identify critical pain points. The
+                            emotional
+                            journey reveals significant drops during "Exploration & Search" and "Post-Interaction"
+                            phases,
+                            validating our research focus on book discovery.
+                        </p>
+                        <img src="static/projects/user-journey.png" class="w-full mb-4" alt="">
+
+
+                        <h2 class="font-serif text-2xl font-semibold mb-4 text-gray-900">
+                            Task 1: Free exploration
+                        </h2>
+                        <p class="text-base md:text-xl mb-4 text-justify">
+                            New users signed up and searched for a book they'd actually want to read. They rated it
+                            3.9/5. Some liked the clean design, but many found it confusing with too much info and hated
+                            signing in just to browse. Mouse paths showed endless loops back to Home and time wasted in
+                            empty "My Books" section.
+                        </p>
+
+                        <h2 class="font-serif text-2xl font-semibold mb-4 text-gray-900">
+                            Task 2: Feature tour
+                        </h2>
+                        <p class="text-base md:text-xl mb-4 text-justify">
+                            We had users try different features of Goodreads: Similar Books, Explore, Lists, Genres, and
+                            Community.
+                            Similar Books worked showed the best performance, people spent the longest time exploring it
+                            and cheking out multiple books. Community feature however was the worst, more than 3+
+                            minutes on average wasted trying to find a book recommendation, users ended up barely
+                            finding any books (0.7 books found), and called it a "Craigslist from 2009." due to the old
+                            design.
+                        </p>
+
+                        <h2 class="font-serif text-2xl font-semibold mb-4 text-gray-900">
+                            Task 3: Gift recommendation
+                        </h2>
+
+                        <p class="text-base md:text-xl mb-4 text-justify">
+                            Users browsed a friend's profile to pick a birthday book. This actually worked well, half
+                            users gave perfect scores and loved seeing the read lists and favorite genres of their
+                            friends.
+                        </p>
+                        <h2 class="font-serif text-2xl font-semibold mb-4 text-gray-900">
+                            What we learned
+                        </h2>
+                        <p class="text-base md:text-xl mb-4 text-justify">
+                            More time/clicks directly correlated with lower satisfaction, users who struggled longer
+                            hated it
+                            more. No filters anywhere was the #1 complaint, blocking refinement of searches. Community
+                            screamed for a redesign (visuals, group filters, newbie guidance). Personalization felt weak
+                            despite good data like friend profiles. Other gripes: login barrier, info overload,
+                            unappealing
+                            design. Mouse heatmaps pinpointed dead zones (empty sections) vs. value spots (Similar
+                            Books,
+                            profiles). Overall, navigation averaged "okay" but frustrated enough people that many
+                            wouldn't
+                            return.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+                    <div class="md:absolute top-[240px] right-[-280px] w-[440px]  group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <!-- Placeholder for world map -->
+                                <img src="static/projects/heatmap.png" class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-8 -left-12 bg-yellow border-2 border-green-200 rounded-lg px-4 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform -rotate-6 z-10">
+                            <p class="font-serif text-sm text-gray-800 ">
+                                Heatmap showing users primarily interacted with "Browse" and "My Books" sections
+                            </p>
+                            <div
+                                class="absolute -bottom-1 left-8 w-3 h-3 bg-yellow border-r-2 border-b-2 border-green-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Floating Image 2 - Network Visualization -->
+                <div class="md:absolute -translate-x-10 top-[1300px] right-[-280px] w-80 md:w-[440px]  group">
+                    <div
+                        class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-6">
+                        <div class="w-full h-full flex items-center justify-center relative">
+                            <img src="static/projects/avg-time.png" class="w-[90%] h-[86%] object-cover rounded ">
+                        </div>
+                    </div>
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute -top-14 -right-12 bg-yellow border-2 border-green-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                        <p class="font-serif text-sm text-gray-800">
+                            Average time per feature - Community required significantly more time
+                        </p>
+                        <div
+                            class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-green-200 transform rotate-45">
+                        </div>
+                    </div>
+                </div>
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+
+                    <div class="md:absolute top-[1500px] left-[-280px] w-[440px] group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/helpfullness.png"
+                                    class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-14 -right-12 bg-yellow border-2 border-green-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                            <p class="font-serif text-sm text-gray-800">
+                                Similar Books received 5-star ratings; Community section received most negative
+                                ratings </p>
+                            <div
+                                class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-green-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+
+        </div>
+
+    </div>
+</body>
+
+</html>

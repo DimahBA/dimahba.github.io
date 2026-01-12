@@ -1,0 +1,139 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap" rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="bg-yellow min-h-screen md:p-14 lg:px-28 p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="index.html"
+                class="inline-flex items-center text-gray-700 hover:text-gray-900 font-serif text-lg transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+
+        <!-- Main Project Container -->
+        <div class="relative flex-row justify-center">
+
+            <!-- Main Project Card -->
+            <div class="w-full bg-beige shadow-xl rounded-lg p-4 border-dashed border-[3px] border-yellow-200">
+                <div class="md:p-8 p-2">
+
+                    <!-- Title -->
+                    <h1 class="font-serif md:text-3xl text-2xl font-semibold mb-4 text-gray-900 md:w-[70%] mx-auto">
+                        Line Drawing Vectorization
+                    </h1>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-3 mb-8 md:w-[70%] mx-auto">
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">Python</span>
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">Computer Graphics</span>
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">OpenCV</span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="text-gray-800 font-serif  mb-8 md:w-[70%] text-justify mx-auto">
+                        <p class="text-base md:text-xl mb-4">
+                            I built a line-drawing vectorizer that turns hand-drawn raster sketches into clean
+                            SVGs. The goal was to keep the artist’s intent while removing jitter, variable stroke
+                            widths, and messy junctions that make sketches hard to scale.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            The pipeline follows Favreau et al.’s “Fidelity vs. Simplicity” idea. First, I extract a
+                            single-pixel skeleton using trapped-ball region segmentation
+                            to bridge small gaps and handle varying stroke thickness, then clean and unify strokes by
+                            dilating and thinning with a Zhang–Suen implementation.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            Next, I construct a topological graph by detecting endpoints, junctions, and turn points. I
+                            designed a direction-aware traversal that tracks both a base and current angle with gentle
+                            dampening, so it catches sharp turns without overreacting to gentle curves. Nearby critical
+                            points are merged to avoid clutter, and paths are traced with a proximity-based BFS that
+                            tolerates small misalignments at junctions.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            Finally, each path becomes a cubic Bézier curve via chord-length parameterization and
+                            least-squares fitting, preserving topology while producing smooth, compact geometry. The
+                            result is exported directly as SVG.
+                        </p>
+                    </div>
+                </div>
+
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+                    <div class="md:absolute top-[140px] right-[-280px] md:w-[460px] md:h-[240px] w-[380px] h-[200px]  group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/output.png" class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-8 -left-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform -rotate-6 z-10">
+                            <p class="font-serif text-sm text-gray-800 whitespace-nowrap">original sketch VS generated SVG
+                            </p>
+                            <div
+                                class="absolute -bottom-1 left-8 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="-translate-x-10 md:transform-none md:absolute top-[400px] left-[-300px] md:w-[490px] md:h-[210px] w-[380px] h-[200px]  group">
+                    <div
+                        class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-3">
+                        <div class="w-full h-full flex items-center justify-center relative">
+                            <img src="static/projects/city.png" class="w-[90%] h-[86%] object-cover rounded ">
+                        </div>
+                    </div>
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                        <p class="font-serif text-sm text-gray-800">Complex sketch of a city transformed to SVG</p>
+                        <div
+                            class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                        </div>
+                    </div>
+                </div>
+    
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+                    <div class="md:absolute top-[430px] right-[-240px] md:w-[320px] md:h-[280px] w-[280px] h-[250px] group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform ">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/skeleton.png" class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                            <p class="font-serif text-sm text-gray-800">Segmentation of the skeleton: turn points are shown
+                                in
+                                yellow, junctions are shown in red, and end points are shown in green</p>
+                            <div
+                                class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+
+    </div>
+</body>
+
+</html>

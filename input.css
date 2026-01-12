@@ -1,0 +1,9 @@
+@font-face {
+	font-family: 'Podkova';
+	font-style: normal;
+	src: url("./static/fonts/Podkova/Podkova-VariableFont_wght.ttf") format('truetype');
+}
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;

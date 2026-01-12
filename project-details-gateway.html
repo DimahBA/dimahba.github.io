@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Podkova:wght@400..800&display=swap" rel="stylesheet">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<body class="bg-yellow min-h-screen md:p-14 lg:px-28 p-8">
+    <div class="max-w-6xl mx-auto">
+
+        <!-- Back Button -->
+        <div class="mb-8">
+            <a href="index.html"
+                class="inline-flex items-center text-gray-700 hover:text-gray-900 font-serif text-lg transition-colors duration-200">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                Back to Projects
+            </a>
+        </div>
+
+        <!-- Main Project Container -->
+        <div class="relative flex justify-center">
+
+            <!-- Main Project Card -->
+            <div class="w-full bg-beige shadow-xl rounded-lg p-4 border-dashed border-[3px] border-orange-200">
+                <div class="p-8">
+
+                    <!-- Title -->
+                    <h1 class="font-serif md:text-3xl text-2xl font-semibold mb-4 text-gray-900 md:w-[70%] mx-auto">
+                        GaTewAY Molecular Trajectory Analysis
+                    </h1>
+
+                    <!-- Tags -->
+                    <div class="flex flex-wrap gap-3 mb-8 md:w-[70%] mx-auto">
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">C++</span>
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">Software Developement</span>
+                        <span class="bg-brown px-2 py-1 font-serif text-xs md:text-sm">Molecular Dynamics</span>
+                    </div>
+
+                    <!-- Description -->
+                    <div class="text-gray-800 font-serif  mb-8 md:w-[70%] text-justify mx-auto">
+                        <p class="text-base md:text-xl mb-4">
+                            During my third year at IUT d’Orsay, I joined the LAMBE research lab (Analysis, Modeling,
+                            Materials for Biology and the Environment) at Université d’Évry to work on GaTewAY, a tool
+                            that analyzes molecular dynamics trajectories by transforming raw atomic data into
+                            graph-based representations, and helps understand how molecules actually move, bind, and
+                            reorganize over time.
+                        </p>
+                        <p class="text-base md:text-xl mb-4">
+                            Instead of just staring at thousands of 3D snapshots, Gateway converts each frame into a 2D
+                            molecular
+                            graph where atoms are vertices and interactions (covalent, hydrogen, ionic, organometallic)
+                            are
+                            edges, then it tracks which conformations appear, how long they live, and how the system
+                            jumps from
+                            one to another.
+                        </p>
+
+                        <p class="text-base md:text-xl mb-4">
+                            During my internship, I helped refactor the legacy C code into modern C++, redesigning the
+                            architecture around clean object‑oriented components and extending the analysis. I worked on
+                            detecting different bond types, building conformation graphs, and computing statistics like
+                            connected components and cycle distributions, using igraph for fast graph algorithms and
+                            GraphViz/Gnuplot to visualize structures and trends.
+                        </p>
+
+                    </div>
+
+
+
+                </div>
+
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+
+                    <div class="md:absolute top-[140px] right-[-280px] w-80 md:w-[400px] md:h-[390px] group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform rotate-3">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/conformation.png"
+                                    class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-8 -left-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-2 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform -rotate-6 z-10">
+                            <p class="font-serif text-sm text-gray-800 ">2D Graph representation of a molecule with an
+                                organometallic interaction and two connected components</p>
+                            <div
+                                class="absolute -bottom-1 left-8 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="md:absolute  -translate-x-10 top-[440px] left-[-230px] w-80 md:w-[390px]  group">
+                    <div
+                        class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-6">
+                        <div class="w-full h-full flex items-center justify-center relative">
+                            <img src="static/projects/viz.png" class="w-[90%] h-[86%] object-cover rounded ">
+                        </div>
+                    </div>
+                    <!-- Tooltip -->
+                    <div
+                        class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                        <p class="font-serif text-sm text-gray-800">
+                            An example of the time evolution of hydrogen bonds provided by GaTewAY: red indicates
+                            the
+                            forming of a hydrogen bond, blue indicates a proton transfer, and grey indicates the
+                            breaking
+                            of the bond.</p>
+                        <div
+                            class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                        </div>
+                    </div>
+                </div>
+
+                <div class=" flex justify-end translate-x-10 md:transform-none">
+
+                    <div class="md:absolute top-[70px] left-[-200px] w-80 md:w-auto md:h-[320px] group">
+                        <div
+                            class="w-full h-full bg-white rounded-lg shadow-lg border-2 border-brown overflow-hidden transform -rotate-2">
+                            <div class="w-full h-full flex items-center justify-center relative">
+                                <img src="static/projects/graph.png" class="w-[90%] h-[86%] object-cover rounded ">
+                            </div>
+                        </div>
+                        <!-- Tooltip -->
+                        <div
+                            class="absolute -top-14 -right-12 bg-yellow border-2 border-orange-200 rounded-lg px-4 py-3 shadow-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none transform rotate-3 z-10 max-w-xs">
+                            <p class="font-serif text-sm text-gray-800">Example of a transtion graph generated by
+                                GaTewAY,
+                                it represents how the molecule changes forms throughout a trajectory</p>
+                            <div
+                                class="absolute -bottom-1 left-12 w-3 h-3 bg-yellow border-r-2 border-b-2 border-orange-200 transform rotate-45">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+</body>
+
+</html>

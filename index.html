@@ -1,0 +1,445 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="./output.css" rel="stylesheet">
+</head>
+
+<style>
+    .cursor-hidden {
+        visibility: hidden;
+    }
+
+    .cursor-visible {
+        visibility: visible;
+    }
+
+    @keyframes cursor-blink {
+
+        0%,
+        50% {
+            opacity: 1;
+        }
+
+        51%,
+        100% {
+            opacity: 0;
+        }
+    }
+
+    .cursor-blink {
+        animation: cursor-blink 1s infinite;
+    }
+</style>
+
+<body class="bg-beige">
+    <div class="bg-green-background min-h-screen flex items-center justify-center flex-col">
+
+        <!-- cafe -->
+        <img src="./static/PixelArt/cafe_sprite.png" alt="Cafe Sprite"
+            class="w-full max-w-[400px] sm:max-w-[500px] md:max-w-[45%] md:min-w-[500px] -translate-y-10 md:-translate-y-0">
+        <!-- Chibi stuff (circle, bubble, box) -->
+        <div
+            class="relative bottom-0 flex flex-col md:flex-row items-center justify-center gap-10 md:gap-10 -translate-y-14 top-32 md:top-0">
+            <!-- Chat bubble and chibi circle -->
+            <div
+                class="absolute left-1/2 -translate-x-1/2 -top-32 md:static md:translate-x-0 md:-translate-x-0 flex flex-col items-center md:order-1 z-10">
+                <!-- Chat bubble -->
+                <div class="relative md:-translate-x-24 -translate-x-16">
+                    <div id="chat-bubble">
+                        <img src="./static/chat-bubble.png" class="w-48 md:w-52">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl md:text-2xl font-serif transform -translate-y-2">HI, I'M DIMAH</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Chibi circle -->
+                <div class="bg-off-white-200 flex items-center justify-center w-36 md:w-52 rounded-full p-7 relative animate-pop opacity-0 scale-0"
+                    id="chibi-circle" style="animation-delay: 0.5s; animation-fill-mode: both;">
+                    <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi" class="">
+                    <!-- Sunflower positioned relative to chibi circle -->
+                    <img src="./static/PixelArt/sunflower.png"
+                        class="absolute w-10 md:w-14 bottom-0 left-0 translate-x-2 translate-y-2" alt="">
+                </div>
+            </div>
+
+            <!-- Text box -->
+            <div class="bg-off-white rounded-lg p-4 w-[20rem] md:w-[30rem] h-[8rem] p-7 px-9 md:top-10 relative animate-quick-pop opacity-0 border-2 border-black order-2 md:order-2 mt-[52px] md:mt-0"
+                id="chat-box" style="animation-delay: 2.0s; animation-fill-mode: both;">
+                <p class="md:text-lg text-md font-serif">
+                    <span id="typewriter-text"></span>
+                    <span id="cursor" class="cursor-hidden cursor-blink">|</span>
+                </p>
+                <img src="./static/PixelArt/tinyFlower.png"
+                    class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="bg-[url(./static/background.svg)] md:bg-[length:512px_512px] bg-[length:400px_400px] bg-repeat md:h-32 h-20 w-full">
+    </div>
+
+
+
+
+    <!-- --------------------------------------------------------------------------------------------------------------- -->
+    <!-- Blackboard Section -->
+    <!-- --------------------------------------------------------------------------------------------------------------- -->
+
+
+    <div id="blackboard-section" class="mt-10">
+        <h1 class="font-serif text-4xl text-center mb-10">Q&A Board !</h1>
+
+        <div class="w-full flex justify-center ">
+            <div class="relative w-full md:max-w-[66%] max-w-[98%] px-4">
+                <div class="flex flex-col  gap-8">
+
+                    <!-- Blackboard with shadow  -->
+                    <div class="relative flex justify-center">
+                        <!-- Blackboard - -->
+                        <div
+                            class="bg-[#4F5A5D] shadow-2xl max-w-[700px] md:w-full md:h-[400px] w-full h-[360px]  md:p-12 relative md:border-[22px] border-[18px] border-brown-200 border-solid">
+
+                            <!-- Grid of main questions (initial state) -->
+                            <div id="blackboard-questions"
+                                class="grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-16 md:gap-y-12 h-full absolute inset-0 md:p-12 p-6 transition-opacity duration-300">
+
+                                <!-- Education -->
+                                <button onclick="blackboardQA.selectQuestion('education')"
+                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
+                                    <img src="./static/PixelArt/tinyFlower.png"
+                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
+                                    <span
+                                        class="text-white font-serif text-2xl group-hover:text-gray-200">Education</span>
+                                </button>
+
+                                <!-- Projects -->
+                                <button onclick="blackboardQA.selectQuestion('projects')"
+                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
+                                    <img src="./static/PixelArt/tinyFlower.png"
+                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
+                                    <span
+                                        class="text-white font-serif text-2xl group-hover:text-gray-200">Projects</span>
+                                </button>
+
+                                <!-- Music -->
+                                <button onclick="blackboardQA.selectQuestion('music')"
+                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
+                                    <img src="./static/PixelArt/tinyFlower.png"
+                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
+                                    <span class="text-white font-serif text-2xl group-hover:text-gray-200">Music</span>
+                                </button>
+
+                                <!-- Cats or dogs? -->
+                                <button onclick="blackboardQA.selectQuestion('cats-dogs')"
+                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
+                                    <img src="./static/PixelArt/tinyFlower.png"
+                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
+                                    <span class="text-white font-serif text-2xl group-hover:text-gray-200">Cats or
+                                        dogs?</span>
+                                </button>
+
+                            </div>
+
+                            <!-- Follow-up questions container (hidden by default) - ABSOLUTE POSITIONED -->
+                            <div id="blackboard-followups"
+                                class="hidden grid grid-cols md:grid-cols-2 gap-x-16 gap-y-12 h-full absolute inset-0 p-12 transition-opacity duration-300">
+                                <!-- Content will be dynamically inserted by JavaScript -->
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chibi and Chat/Dialogue -->
+
+                <!-- Chat bubble (ALONE) -->
+                <div class="relative     translate-x-8 md:w-64 w-48 flex items-end justify-center mb-2">
+                    <div id="blackboard-chat-bubble" class="opacity-0 transition-opacity duration-300">
+                        <img src="./static/chat-bubble-mirrored.png" class="w-64">
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <span class="text-xl md:text-2xl font-serif transform -translate-y-2">
+                                ASK ME ANYTHING
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chibi + Dialogue grouped together -->
+                <div class="flex items-center justify-center gap-6 relative mb-10">
+
+                    <!-- Chibi circle -->
+                    <div id="blackboard-chibi"
+                        class="bg-orange-200 flex justify-center w-82 md:w-52 rounded-full md:p-7 p-4 relative">
+                        <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi">
+                        <img src="./static/PixelArt/sunflower.png"
+                            class="absolute w-10 md:w-14 bottom-0 right-0 translate-x-2 translate-y-2" alt="">
+                    </div>
+
+                    <!-- Dialogue Box -->
+                    <div id="blackboard-dialogue"
+                        class="bg-off-white rounded-lg w-[54rem] min-h-[10rem] p-7 px-9 relative opacity-0 border-2 border-black transition-opacity duration-400">
+                        <p class="text-m font-serif">
+                            <span id="blackboard-answer"></span>
+                            <span id="blackboard-cursor" class="cursor-hidden cursor-blink">|</span>
+                        </p>
+
+                        <img src="./static/PixelArt/tinyFlower.png"
+                            class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </div>
+
+    <div
+        class="bg-[url(./static/background.svg)] md:bg-[length:512px_512px] bg-[length:400px_400px] bg-repeat md:h-32 h-20 w-full">
+    </div>
+
+
+
+    <!-- --------------------------------------------------------------------------------------------------------------- -->
+    <!-- Projects Section -->
+    <!-- --------------------------------------------------------------------------------------------------------------- -->
+
+    <div class="my-20">
+        <h1 class="font-serif text-4xl mb-12 text-center">My Projects !</h1>
+
+        <!-- Cards Container - Responsive: vertical on mobile, grid on desktop -->
+        <div
+            class="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-x-16 lg:gap-y-8 lg:justify-items-center max-w-5xl mx-auto">
+
+            <!-- Row 1, Card 1 - Top Left -->
+            <a href="project-details-research.html">
+                <div
+                    class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 lg:-rotate-6 z-10 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                    <div
+                        class="relative p-4 pt-6 lg:p-6 lg:pt-8 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <span
+                            class="absolute overflow-hidden px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-m w-fit right-2 top-2 text-gray-800 bg-gradient-to-br from-gray-50 via-gray-150 to-gray-200 shadow-inner shadow-white/50">
+                            ISMAR BEST POSTER AWARD 2025
+                        </span>
+                        <h2 class="mt-2 font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            Adaptive Augmented Reality Pathfinding for Parkinson's Disease
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Unity
+                                3D</span>
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">HCI</span>
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Mixed
+                                Reality</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            AR system using Meta Quest 3 integrating dynamic visual cues to help Parkinson's patients
+                            navigate complex spaces
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 1, Card 2 - Top Right -->
+            <a href="project-details-gaussians.html">
+                <div
+                    class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-0 z-20 lg:rotate-3 lg:z-12 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            Interactive Manipulation of Objects for 3D Gaussian Splatting
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">WebGL</span>
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">JavaScript</span>
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">GLSL</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            Interactive 3D scene editing system with multi-modal segmentation and hit-testing algorithm
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Row 2 - Single card spanning both columns, centered -->
+            <div
+                class="lg:col-span-2 w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-yellow shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-2 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-30 lg:rotate-1 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <a href="project-details-svg.html">
+                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            Line Drawing Vectorization
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                            <span
+                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Python</span>
+                            <span
+                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Computer
+                                Graphics</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            Bitmap-to-vector conversion system for hand-drawn sketches using skeleton extraction and
+                            topological graph construction
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Row 3, Card 4 - Bottom Left -->
+            <a href="project-details-wardrobe.html"
+                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-40 lg:-rotate-6 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                    <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                        A wardrobe against over-consumption
+                    </h2>
+                    <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                        <span
+                            class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Critical
+                            User Experience</span>
+                        <span
+                            class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Design</span>
+                    </div>
+                    <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+
+                        The "Smart Wardrobe" is concept—a design intervention that directly addresses the problem of
+                        clothing overconsumption by creating a <strong>physical</strong> constraint mechanism,
+                        unlike digital solutions
+                        that rely on willpower alone.
+                    </p>
+                </div>
+            </a>
+
+            <!-- Row 3, Card 5 - Bottom Right -->
+            <div
+                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[50] lg:rotate-3 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <a href="project-details-dataviz.html">
+
+                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            Coffee Data Visualization Platform
+
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+
+
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">D3.js</span>
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">React</span>
+                            <span
+                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Data
+                                Viz</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            Interactive visualization platform for exploring global coffee trade patterns and
+                            sustainability metrics
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <div
+                class="lg:col-span-2 w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-yellow shadow-xl rounded-lg p-2 lg:p-3 transform rotate-2 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[60] lg:rotate-1 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <a href="project-details-gateway.html">
+                    <div
+                        class="relative p-4 pt-6 lg:p-6 lg:pt-8 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <span
+                            class="absolute overflow-hidden px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-m w-fit right-2 top-2 text-gray-800 bg-gradient-to-br from-gray-50 via-gray-150 to-gray-200 shadow-inner shadow-white/50">
+                            INTERNSHIP
+                        </span>
+
+                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            GATEwAY, Graph Theory for Conformational Dynamics Analyses
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                            <span
+                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">C++</span>
+                            <span
+                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Software
+                                Developement</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            Rewriting and optimizing GATEwAY (Graph Theory for Conformational Dynamics Analyses), a
+                            post-processing tool designed to automatically analyze conformational changes in molecular
+                            dynamics (MD) simulation data.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+            <a href="project-details-goodreads.html"
+                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[70] lg:-rotate-6 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                    <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                        Goodreads Usability Study
+                    </h2>
+                    <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                        <span
+                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Quantitative
+                            UX</span>
+                        <span
+                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Python</span>
+                        <span
+                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Data
+                            Analysis</span>
+                    </div>
+                    <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                        A quantitative user experience (UX) study conducted on the GoodReads website. The project aimed
+                        to
+                        evaluate how intuitive, efficient, and satisfying the process is for users when finding a book
+                        recommendation
+                    </p>
+                </div>
+            </a>
+
+            <!-- Row 3, Card 5 - Bottom Right -->
+            <div
+                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[90] lg:rotate-3 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
+                <a href="project-details-ARCity.html">
+
+                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
+                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
+                            AR City Builder Game
+                        </h2>
+                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Unity</span>
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">C#</span>
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">AR</span>
+                            <span
+                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Tangible
+                                interactions</span>
+                        </div>
+                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+                            An augmented reality urban planning game that brings city management into the physical world
+                            through tangible interaction.
+                        </p>
+                    </div>
+                </a>
+            </div>
+
+        </div>
+    </div>
+
+
+    <!-- Load scripts in correct order -->
+    <script src="typewriter.js"></script>
+    <script src="content-data.js"></script>
+    <script src="intro-typewriter.js"></script>
+    <script src="blackboard.js"></script>
+    <script src="animate_chatbubble.js"></script>
+    <script src="section-animations.js"></script> <!-- Add this line -->
+    <script src="main.js"></script>
+
+</body>
+
+</html>
