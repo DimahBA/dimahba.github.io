@@ -156,41 +156,43 @@
 
                 <!-- Chibi and Chat/Dialogue -->
 
-                <!-- Chat bubble (ALONE) -->
-                <div class="relative     translate-x-8 md:w-64 w-48 flex items-end justify-center mb-2">
-                    <div id="blackboard-chat-bubble" class="opacity-0 transition-opacity duration-300">
-                        <img src="./static/chat-bubble-mirrored.png" class="w-64">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl md:text-2xl font-serif transform -translate-y-2">
-                                ASK ME ANYTHING
-                            </span>
+                <div class=" md:flex-row md:w-fit">
+                    <!-- Chat bubble (ALONE) -->
+                    <div class="relative     translate-x-8 md:w-64 w-48 flex items-end justify-center mb-2">
+                        <div id="blackboard-chat-bubble" class="opacity-0 transition-opacity duration-300">
+                            <img src="./static/chat-bubble-mirrored.png" class="w-64">
+                            <div class="absolute inset-0 flex items-center justify-center">
+                                <span class="text-xl md:text-2xl font-serif transform -translate-y-2">
+                                    ASK ME ANYTHING
+                                </span>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <!-- Chibi + Dialogue grouped together -->
-                <div class="flex items-center justify-center gap-6 relative mb-10">
-
-                    <!-- Chibi circle -->
-                    <div id="blackboard-chibi"
-                        class="bg-orange-200 flex justify-center w-82 md:w-52 rounded-full md:p-7 p-4 relative">
-                        <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi">
-                        <img src="./static/PixelArt/sunflower.png"
-                            class="absolute w-10 md:w-14 bottom-0 right-0 translate-x-2 translate-y-2" alt="">
+    
+                    <!-- Chibi + Dialogue grouped together -->
+                    <div class="flex items-center justify-center gap-6 relative mb-10">
+    
+                        <!-- Chibi circle -->
+                        <div id="blackboard-chibi"
+                            class="bg-orange-200 flex justify-center w-82 md:w-52 rounded-full md:p-7 p-4 relative">
+                            <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi">
+                            <img src="./static/PixelArt/sunflower.png"
+                                class="absolute w-10 md:w-14 bottom-0 right-0 translate-x-2 translate-y-2" alt="">
+                        </div>
+    
+                        <!-- Dialogue Box -->
+                        <div id="blackboard-dialogue"
+                            class="bg-off-white rounded-lg w-[54rem] min-h-[10rem] p-7 px-9 relative opacity-0 border-2 border-black transition-opacity duration-400">
+                            <p class="text-m font-serif">
+                                <span id="blackboard-answer"></span>
+                                <span id="blackboard-cursor" class="cursor-hidden cursor-blink">|</span>
+                            </p>
+    
+                            <img src="./static/PixelArt/tinyFlower.png"
+                                class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
+                        </div>
+    
                     </div>
-
-                    <!-- Dialogue Box -->
-                    <div id="blackboard-dialogue"
-                        class="bg-off-white rounded-lg w-[54rem] min-h-[10rem] p-7 px-9 relative opacity-0 border-2 border-black transition-opacity duration-400">
-                        <p class="text-m font-serif">
-                            <span id="blackboard-answer"></span>
-                            <span id="blackboard-cursor" class="cursor-hidden cursor-blink">|</span>
-                        </p>
-
-                        <img src="./static/PixelArt/tinyFlower.png"
-                            class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
-                    </div>
-
                 </div>
 
 
