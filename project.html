@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<!-- These are filled in per project by js/case-study.js. They ship empty
+		     rather than absent so the shape of the head is visible in source. -->
+		<title>Case study — Dimah</title>
+		<meta name="description" content="" />
+		<meta name="theme-color" content="#fffbdd" />
+		<link rel="canonical" href="" />
+
+		<meta property="og:type" content="article" />
+		<meta property="og:site_name" content="Buttercup Café" />
+		<meta property="og:title" content="" />
+		<meta property="og:description" content="" />
+		<meta property="og:url" content="" />
+		<meta property="og:image" content="" />
+		<meta name="twitter:card" content="summary_large_image" />
+
+		<link rel="icon" href="static/PixelArt/myChibi-cropped.png" type="image/png" />
+		<link rel="apple-touch-icon" href="static/PixelArt/myChibi-cropped.png" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&amp;family=Space+Grotesk:wght@400..700&amp;display=swap"
+		/>
+
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/components.css" />
+		<link rel="stylesheet" href="css/project.css" />
+
+		<script type="module" src="js/case-study.js"></script>
+	</head>
+
+	<body data-loading>
+		<a class="skip-link" href="#case">Skip to content</a>
+
+		<div class="back-row">
+			<a class="back" href="index.html#work">
+				<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+					<path
+						d="M15 19l-7-7 7-7"
+						stroke="currentColor"
+						stroke-width="2"
+						stroke-linecap="round"
+						stroke-linejoin="round"
+					/>
+				</svg>
+				Back to projects
+			</a>
+		</div>
+
+		<article class="case paper stitch" id="case">
+			<header class="case__head">
+				<span class="plaque" data-slot="badge" hidden></span>
+				<h1 class="case__title" data-slot="title"></h1>
+				<ul class="chips" data-slot="tags"></ul>
+			</header>
+
+			<div class="case__body" data-slot="body"></div>
+		</article>
+
+		<noscript>
+			<div class="case paper stitch" style="margin-top: 1.5rem">
+				<p class="case__p" style="text-align: center">
+					This case study is rendered with JavaScript, which appears to be
+					switched off. Everything else on the site works without it —
+					<a href="index.html#work" style="text-decoration: underline"
+						>head back to the project board</a
+					>
+					for the summaries, or get in touch and I'll happily send the write-up
+					over.
+				</p>
+			</div>
+		</noscript>
+
+		<div class="case-foot">
+			<a href="index.html#work">← back to the table</a>
+			<a href="index.html#hello">say hi ☕</a>
+		</div>
+	</body>
+</html>

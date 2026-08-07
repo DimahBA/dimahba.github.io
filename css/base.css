@@ -1,0 +1,600 @@
+/* ==========================================================================
+   Buttercup Café — base
+   Design tokens, reset, typography, and the page chrome (nav, footer,
+   section rhythm, plaid dividers). Loaded on every page.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Tokens
+   Raw palette values are transcribed verbatim from the old tailwind.config.js
+   so the art direction survives byte-for-byte. Components never reference the
+   raw tier directly — they go through the semantic names below it.
+   -------------------------------------------------------------------------- */
+
+:root {
+	/* -- raw palette ------------------------------------------------------- */
+	--sage: #cdd8b7; /* hero backdrop */
+	--cream: #fffbdd; /* page */
+	--paper: #fffdef; /* cards, and the stitch thread */
+	--paper-warm: #fff1c8;
+	--butter: #fce8a9;
+	--butter-deep: #fcde6e;
+	--peach: #f7cfaf;
+	--peach-deep: #db9369;
+	--tan: #ddbea9;
+	--tan-deep: #d4a27f;
+	--moss: #e5ebbd;
+	--moss-deep: #adba84;
+	--slate: #4f5a5d; /* blackboard */
+
+	/* Warm inks. The old site used Tailwind's blue-grey greys, which read
+	   cold and slightly dirty against cream. */
+	--ink: #33393b;
+	--ink-soft: #5c6163;
+	--ink-faint: #8a8d85;
+
+	/* -- semantic ---------------------------------------------------------- */
+	--bg-page: var(--cream);
+	--bg-desk: var(--sage);
+	--stitch-color: var(--paper);
+	--accent: var(--tan-deep);
+
+	/* -- type -------------------------------------------------------------- */
+	/* One face for every piece of running text, headings excepted. Rounded and
+	   wide-apertured, which is what the typed-out speech panels want — text
+	   arriving a character at a time has to stay easy at a glance. */
+	--ff-body: "Baloo 2", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+	--ff-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	/* Baloo 2 sits light at 400; 600 is the weight the copy is set in. */
+	--fw-body: 600;
+
+	--fs-100: 0.75rem;
+	--fs-200: 0.8125rem;
+	--fs-300: 0.9375rem;
+	--fs-400: 1.0625rem;
+	--fs-500: 1.1875rem;
+	--fs-600: clamp(1.375rem, 1.2rem + 0.8vw, 1.75rem);
+	--fs-700: clamp(1.75rem, 1.45rem + 1.5vw, 2.5rem);
+	--fs-800: clamp(2.25rem, 1.7rem + 2.6vw, 3.5rem);
+
+	--lh-tight: 1.15;
+	--lh-snug: 1.35;
+	--lh: 1.62;
+	--measure: 62ch;
+
+	/* -- spacing: 4px rhythm ----------------------------------------------- */
+	--sp-1: 0.25rem;
+	--sp-2: 0.5rem;
+	--sp-3: 0.75rem;
+	--sp-4: 1rem;
+	--sp-5: 1.25rem;
+	--sp-6: 1.5rem;
+	--sp-8: 2rem;
+	--sp-10: 2.5rem;
+	--sp-12: 3rem;
+	--sp-16: 4rem;
+	--sp-20: 5rem;
+
+	--gutter: clamp(1.125rem, 4vw, 3.5rem);
+	--section-y: clamp(3.5rem, 7vw, 6.5rem);
+	--wrap: 68rem;
+
+	/* -- radii ------------------------------------------------------------- */
+	--r-sm: 0.25rem;
+	--r-md: 0.5rem;
+	--r-lg: 0.75rem;
+	--r-pill: 999px;
+
+	/* -- shadows ----------------------------------------------------------- */
+	/* Tinted warm rather than black: pure black over cream reads as grime.
+	   Two layers per sheet — a tight contact shadow and a wide ambient one.
+	   No inner highlights: they read as a glow rather than as paper. */
+	--sh-contact: 0 1px 2px rgb(88 70 52 / 0.18);
+	--sh-ambient: 0 10px 24px -10px rgb(88 70 52 / 0.28);
+
+	--shadow-paper: var(--sh-contact), var(--sh-ambient);
+	--shadow-lift: 0 4px 8px -2px rgb(88 70 52 / 0.2),
+		0 22px 44px -14px rgb(88 70 52 / 0.34);
+	--shadow-sunk: inset 0 2px 6px rgb(88 70 52 / 0.22);
+
+	/* -- motion ------------------------------------------------------------ */
+	--dur-fast: 120ms;
+	--dur: 220ms;
+	--dur-slow: 420ms;
+	--ease-out: cubic-bezier(0.2, 0.8, 0.28, 1);
+	--ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+	/* -- the stitch -------------------------------------------------------- */
+	--stitch-inset: 0.5rem;
+	--stitch-w: 3px;
+	--r-card: 10px;
+}
+
+/* Card colour themes. Setting one class swaps fill, chip and accent together,
+   which is what makes the case-study pages fall out of the same primitive. */
+.t-moss {
+	--card-bg: var(--moss);
+	--chip-bg: var(--moss-deep);
+	--accent: var(--moss-deep);
+}
+.t-peach {
+	--card-bg: var(--peach);
+	--chip-bg: var(--peach-deep);
+	--accent: var(--peach-deep);
+}
+.t-butter {
+	--card-bg: var(--butter);
+	--chip-bg: var(--butter-deep);
+	--accent: var(--butter-deep);
+}
+
+/* --------------------------------------------------------------------------
+   2. Reset
+   Written with :where() so every rule has zero specificity and can be
+   overridden by a single class without !important or ordering games.
+   -------------------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+/* `hidden` has to out-rank component display rules, or a component that sets
+   its own `display` quietly ignores the attribute — which is how an empty
+   award plaque ends up rendering as a stray pill. */
+[hidden] {
+	display: none !important;
+}
+
+:where(
+		body, h1, h2, h3, h4, p, figure, figcaption, blockquote, dl, dd, ul, ol
+	) {
+	margin: 0;
+}
+
+:where(ul, ol) {
+	padding: 0;
+	list-style: none;
+}
+
+:where(img, picture, video, canvas, svg, iframe) {
+	display: block;
+	max-width: 100%;
+}
+
+:where(img, video) {
+	height: auto;
+}
+
+:where(input, button, textarea, select) {
+	font: inherit;
+	color: inherit;
+}
+
+:where(button) {
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+:where(a) {
+	color: inherit;
+	text-decoration: none;
+}
+
+:where(h1, h2, h3, h4) {
+	font-weight: 700;
+}
+
+/* Emphasis has to clear the 600 the body copy is set in, and in a rounded
+   face a single 100 step barely registers — so 800, not 700. Stated rather
+   than left to `bolder`, whose lookup table would resolve 600 to a 900 that
+   Baloo 2 does not have. */
+:where(strong, b) {
+	font-weight: 800;
+}
+
+/* Long words and URLs must never be the thing that creates a scrollbar. */
+:where(h1, h2, h3, h4, p, li, figcaption) {
+	overflow-wrap: break-word;
+}
+
+/* --------------------------------------------------------------------------
+   3. Document
+   -------------------------------------------------------------------------- */
+
+html {
+	/* Deliberately no `overflow-x` here. Setting it on the root element (even
+	   to `clip`) makes Chromium's implicit IntersectionObserver root stop
+	   firing entirely, which silently kills every scroll-triggered entrance on
+	   the page. Horizontal overflow is contained per-section instead — see
+	   .board-section and .case__body. */
+	scroll-behavior: smooth;
+	/* Stops the sticky nav from covering an anchored heading. */
+	scroll-padding-top: 5.5rem;
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	background: var(--bg-page);
+	color: var(--ink);
+	font-family: var(--ff-body);
+	font-size: var(--fs-400);
+	font-weight: var(--fw-body);
+	line-height: var(--lh);
+	font-synthesis-weight: none;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+	min-height: 100vh;
+}
+
+/* --------------------------------------------------------------------------
+   4. Typography
+   Space Grotesk carries every heading and all UI furniture; Baloo 2 at 600
+   carries every paragraph and everything she says. The display face gets
+   tightened tracking as it grows — a grotesque wants that at size, a rounded
+   face does not, which is the whole reason for the pairing.
+
+   Headings carry their own 700 (see the reset), so the 600 on <body> reaches
+   running text only.
+   -------------------------------------------------------------------------- */
+
+h1,
+h2,
+h3,
+h4,
+.display {
+	font-family: var(--ff-display);
+	line-height: var(--lh-tight);
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+h1 {
+	font-size: var(--fs-800);
+	letter-spacing: -0.035em;
+}
+h2 {
+	font-size: var(--fs-700);
+	letter-spacing: -0.028em;
+}
+h3 {
+	font-size: var(--fs-600);
+}
+h4 {
+	font-size: var(--fs-500);
+}
+
+p {
+	text-wrap: pretty;
+}
+
+/* The small caps label that sits above a section heading. */
+.eyebrow {
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+.lede {
+	font-size: var(--fs-500);
+	color: var(--ink-soft);
+	max-width: 46ch;
+}
+
+/* --------------------------------------------------------------------------
+   5. Focus and skip link
+   -------------------------------------------------------------------------- */
+
+:focus-visible {
+	outline: 3px solid var(--slate);
+	outline-offset: 3px;
+	border-radius: var(--r-sm);
+}
+
+.card:focus-visible,
+.chip-link:focus-visible {
+	outline-offset: 4px;
+}
+
+.skip-link {
+	position: absolute;
+	inset-inline-start: var(--sp-4);
+	inset-block-start: var(--sp-4);
+	z-index: 9999;
+	padding: var(--sp-2) var(--sp-4);
+	background: var(--paper);
+	border: 2px solid var(--ink);
+	border-radius: var(--r-md);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	transform: translateY(-200%);
+	transition: transform var(--dur) var(--ease-out);
+}
+
+.skip-link:focus-visible {
+	transform: translateY(0);
+}
+
+.visually-hidden {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   6. Layout primitives
+   -------------------------------------------------------------------------- */
+
+.wrap {
+	width: 100%;
+	max-width: var(--wrap);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+.wrap--narrow {
+	max-width: 46rem;
+}
+
+.section {
+	padding-block: var(--section-y);
+}
+
+/* Section headings on this site all read "My Projects !" / "Q&A Board !" —
+   centred, with a little pixel flower for punctuation. */
+.section-head {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--sp-2);
+	margin-block-end: var(--sp-12);
+	text-align: center;
+}
+
+.section-head__flower {
+	width: 1.75rem;
+	image-rendering: pixelated;
+}
+
+.stack > * + * {
+	margin-block-start: var(--flow, var(--sp-4));
+}
+
+/* --------------------------------------------------------------------------
+   7. Plaid divider
+   The tiled tartan strip that separates the café from the rooms below it.
+   -------------------------------------------------------------------------- */
+
+.divider {
+	height: clamp(3.5rem, 7vw, 6rem);
+	background-image: url("../static/background.svg");
+	background-repeat: repeat;
+	background-size: clamp(240px, 32vw, 460px) auto;
+}
+
+/* --------------------------------------------------------------------------
+   8. Site nav
+   Hidden until the hero leaves the viewport, then slides down and sticks.
+   -------------------------------------------------------------------------- */
+
+/* Fixed rather than sticky: a sticky bar still reserves its height in flow,
+   which showed as a cream band sitting above the sage hero while the bar
+   itself was translated out of sight. */
+.nav {
+	position: fixed;
+	inset: 0 0 auto 0;
+	z-index: 500;
+	background: var(--cream);
+	transform: translateY(-100%);
+	transition: transform var(--dur-slow) var(--ease-out);
+}
+
+.nav[data-visible] {
+	transform: translateY(0);
+}
+
+/* The nav's bottom edge is the stitch, so the chrome belongs to the same
+   visual family as the cards. */
+.nav::after {
+	content: "";
+	position: absolute;
+	inset: auto 0 0 0;
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 70%, transparent);
+}
+
+.nav__inner {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-4);
+	min-height: 3.75rem;
+}
+
+.nav__brand {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+.nav__avatar {
+	width: 2rem;
+	height: 2rem;
+	border-radius: var(--r-pill);
+	background: var(--peach-deep);
+	padding: 2px;
+	image-rendering: pixelated;
+	object-fit: cover;
+}
+
+.nav__links {
+	display: flex;
+	align-items: center;
+	gap: clamp(0.5rem, 2vw, var(--sp-6));
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 500;
+}
+
+.nav__link {
+	position: relative;
+	padding: var(--sp-2) var(--sp-1);
+	color: var(--ink-soft);
+	transition: color var(--dur) var(--ease-out);
+}
+
+.nav__link::after {
+	content: "";
+	position: absolute;
+	inset: auto var(--sp-1) 0.375rem;
+	height: 2px;
+	background: var(--accent);
+	scale: 0 1;
+	transform-origin: left;
+	transition: scale var(--dur) var(--ease-out);
+}
+
+.nav__link:hover,
+.nav__link[aria-current="true"] {
+	color: var(--ink);
+}
+
+.nav__link:hover::after,
+.nav__link[aria-current="true"]::after {
+	scale: 1 1;
+}
+
+/* --------------------------------------------------------------------------
+   9. Footer
+   -------------------------------------------------------------------------- */
+
+.footer {
+	position: relative;
+	padding-block: var(--sp-16) var(--sp-10);
+	text-align: center;
+	background: color-mix(in srgb, var(--paper-warm) 55%, var(--cream));
+}
+
+.footer::before {
+	content: "";
+	position: absolute;
+	inset: 0 0 auto 0;
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 60%, transparent);
+}
+
+.footer__sign {
+	font-family: var(--ff-display);
+	font-size: var(--fs-600);
+	font-weight: 700;
+	letter-spacing: -0.025em;
+	margin-block-end: var(--sp-6);
+}
+
+.footer__links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--sp-3);
+	margin-block-end: var(--sp-10);
+}
+
+.footer__meta {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2) var(--sp-6);
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	color: var(--ink-faint);
+}
+
+.footer__top {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-1);
+	color: var(--ink-soft);
+	transition: color var(--dur) var(--ease-out), translate var(--dur) var(--ease-out);
+}
+
+.footer__top:hover {
+	color: var(--ink);
+	translate: 0 -2px;
+}
+
+/* --------------------------------------------------------------------------
+   10. Reduced motion
+   Kills every decorative animation, but leaves transitions that only
+   communicate state (colour, opacity) intact so the UI still feels alive.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	html {
+		scroll-behavior: auto;
+	}
+
+	*,
+	*::before,
+	*::after {
+		animation-duration: 0.01ms !important;
+		animation-iteration-count: 1 !important;
+		transition-duration: 0.01ms !important;
+	}
+
+	/* The nav has nothing to reveal from, so it is simply always present. */
+	.nav {
+		transform: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   11. Print
+   Four lines that stop a scattered, rotated board printing as nonsense.
+   -------------------------------------------------------------------------- */
+
+@media print {
+	.nav,
+	.footer__top,
+	.board__toss,
+	.hero__cue {
+		display: none;
+	}
+
+	/* The table is a fixed-height stage holding absolutely positioned sheets.
+	   Straightening the cards is not enough on its own — without this they
+	   would all print stacked in its top-left corner. */
+	.board.is-stage {
+		height: auto;
+		min-height: 0;
+	}
+
+	.board.is-stage .card {
+		position: static;
+		width: auto;
+		font-size: inherit;
+	}
+
+	.card {
+		translate: none;
+		rotate: none;
+		scale: none;
+		transform: none;
+		box-shadow: none;
+		break-inside: avoid;
+	}
+}

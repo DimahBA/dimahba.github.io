@@ -1,0 +1,1033 @@
+/* ==========================================================================
+   Buttercup Café — home
+   Page-specific layout: the café hero, the Q&A room, the project board.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Hero
+   -------------------------------------------------------------------------- */
+
+/* The landing screen is exactly one viewport tall. Everything inside is sized
+   against viewport height so it scales to fit rather than being clipped; the
+   min-height is a floor for very short windows, where growing and scrolling
+   beats cutting the café in half. */
+.hero {
+	position: relative;
+	display: grid;
+	grid-template-rows: 1fr auto;
+	align-items: center;
+	height: 100svh;
+	min-height: 34rem;
+	padding-block: var(--sp-8) var(--sp-6);
+	background: var(--bg-desk);
+	overflow: hidden;
+}
+
+.hero__inner {
+	display: grid;
+	grid-template-columns: minmax(0, 26rem) minmax(0, auto);
+	align-items: center;
+	justify-content: center;
+	gap: clamp(var(--sp-4), 2.5vw, var(--sp-10));
+	width: 100%;
+	max-width: 78rem;
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+/* -- left column: who this is, and what she is saying ------------------ */
+
+/* Stretched to the café's height, so this column's bottom edge *is* the
+   café's bottom edge — the pavement she is standing on. The panel takes the
+   bottom row of it, which is what puts her circle and her words on the same
+   line at every window shape, with no magic numbers and nothing to keep in
+   sync if the café art changes. The identity block centres itself in
+   whatever is left above.
+
+   The stretch is also what makes the `1fr` safe: inside a definite height,
+   the flexible row is just "the rest", with none of the guesswork that
+   sizing an fr against an indefinite height involves. */
+.hero__voice {
+	align-self: stretch;
+	display: grid;
+	grid-template-rows: 1fr auto;
+	row-gap: var(--sp-5);
+}
+
+.hero__intro {
+	align-self: center;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: clamp(var(--sp-2), 1.4vh, var(--sp-4));
+}
+
+.hero__name {
+	font-size: clamp(2.75rem, 1.6rem + 4.4vw, 4.75rem);
+	line-height: 0.95;
+	letter-spacing: -0.045em;
+	color: var(--ink);
+}
+
+.hero__role {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sp-1) var(--sp-2);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	font-weight: 500;
+	color: color-mix(in oklab, var(--ink) 74%, var(--sage));
+}
+
+.hero__role span:not(:last-child)::after {
+	content: "·";
+	margin-inline-start: var(--sp-2);
+	color: color-mix(in oklab, var(--ink) 40%, var(--sage));
+}
+
+.hero__where {
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	color: color-mix(in oklab, var(--ink) 58%, var(--sage));
+}
+
+/* A wrapper around the text box that exists for one reason: below 48rem it
+   also holds her portrait, and the two have to overlap. In the wide layout it
+   is a single-child box that changes nothing. */
+.hero__say {
+	display: grid;
+	justify-items: center;
+	width: 100%;
+}
+
+/* The narrow-screen portrait. Absent from the wide layout entirely — she is
+   standing outside the café there, and this is the same person. */
+.hero__chibi {
+	display: none;
+}
+
+/* -- right column: the shop, with her standing outside it -------------- */
+
+/* The 1.357 is the café sprite's own aspect ratio, so capping against
+   viewport height keeps the whole shop on screen at any window shape. */
+.hero__scene {
+	position: relative;
+	width: min(100%, 48rem, 70vh * 1.357);
+	justify-self: center;
+}
+
+.hero__shop {
+	width: 100%;
+	image-rendering: pixelated;
+}
+
+/* She stands on the pavement at the front of her own café. That adjacency is
+   the whole link: the shop on the sign is hers, and the words in the box to
+   the left are what she is saying to you. */
+.hero__scene .chibi {
+	position: absolute;
+	inset-block-end: -1%;
+	inset-inline-start: 1%;
+	width: 27%;
+	padding: 1.1rem;
+}
+
+.hero__scene .chibi__sunflower {
+	width: 42%;
+}
+
+/* -- scroll cue -------------------------------------------------------- */
+
+.hero__cue {
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--sp-1);
+	justify-self: center;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: color-mix(in oklab, var(--ink) 55%, var(--sage));
+	transition: color var(--dur) var(--ease-out);
+}
+
+.hero__cue:hover {
+	color: var(--ink);
+}
+
+.hero__cue svg {
+	width: 1.25rem;
+	animation: cue-bob 2.4s ease-in-out infinite;
+}
+
+/* -- stacked ----------------------------------------------------------- */
+
+@media (max-width: 60rem) {
+	.hero__inner {
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: center;
+		gap: var(--sp-5);
+	}
+
+	/* The shop leads on a narrow screen — it is the landing image. */
+	.hero__scene {
+		order: -1;
+		width: min(100%, 30rem, 34vh * 1.357);
+	}
+
+	/* Nothing to align to once the café is above rather than beside it. */
+	.hero__voice {
+		align-self: auto;
+		justify-items: center;
+		width: 100%;
+	}
+
+	.hero__intro {
+		align-items: center;
+		text-align: center;
+	}
+
+	.hero__role {
+		justify-content: center;
+	}
+}
+
+/* -- phone: she comes and sits on the box ------------------------------ */
+
+/* On a screen this narrow the hero has room for one idea, so it is reduced to
+   the introduction itself: the café, her name, her face and what she is
+   saying. The two lines of credentials below the name are cut here — not
+   because they stop mattering, but because on a phone they push her voice
+   below the fold, and the same words are three inches further down the page
+   anyway.
+
+   She leaves the pavement at the same width. Shrunk to fit a 30rem café she is
+   a smudge in the corner; sat on the top edge of the text box at twice that
+   size, she is legible and she is obviously the one talking — which is what
+   the tail pointing across at her did in the wide layout, and there is no room
+   for a tail here. 48rem rather than the 60rem the columns stack at: between
+   the two there is still width for the café to carry her. */
+@media (max-width: 48rem) {
+	.hero__role,
+	.hero__where {
+		display: none;
+	}
+
+	.hero__scene .chibi {
+		display: none;
+	}
+
+	/* Authored here rather than on the portrait because the box needs the dip
+	   too — it is how far its own top padding has to move out of her way. One
+	   number, two users, no chance of them drifting apart. */
+	.hero__say {
+		--chibi-size: clamp(6.5rem, 27vw, 8.5rem);
+		--chibi-dip: calc(var(--chibi-size) * 0.42);
+	}
+
+	.hero__chibi {
+		/* Only so she can be stacked above the box: later siblings paint over
+		   earlier ones, and the box is the later sibling. */
+		position: relative;
+		z-index: 1;
+		display: grid;
+		width: var(--chibi-size);
+		padding: 1rem;
+		/* Overlap by pulling the box up, not by lifting her out of the flow:
+		   in flow she still contributes her top half to the column's height,
+		   so nothing above her has to know she is there. */
+		margin-block-end: calc(var(--chibi-dip) * -1);
+	}
+
+	.hero__chibi .chibi__sunflower {
+		width: 40%;
+	}
+
+	.saypanel--hero {
+		padding-block-start: calc(var(--chibi-dip) + var(--sp-3));
+	}
+
+	/* Her face is sitting on the box and her name is the heading above it.
+	   A third "Dimah" in between is one too many. */
+	.saypanel--hero .saypanel__who {
+		display: none;
+	}
+}
+
+@keyframes cue-bob {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 0 5px;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   2. Q&A room
+
+   One screen, with the jar in the middle of it. The section is sized in
+   `svh` rather than `vh` so the mobile URL bar sliding away does not resize
+   the room out from under a note that is already open, and `min-height`
+   rather than `height` so that a genuinely short window gets a scrollbar
+   instead of a note running off the bottom edge.
+   -------------------------------------------------------------------------- */
+
+.section--room {
+	display: grid;
+	align-content: center;
+	min-height: 100svh;
+}
+
+/* Everything in the room is positioned against this box: the stage is the
+   only child in normal flow, so the room is exactly the stage's height and
+   she can be hung off its bottom-left corner. */
+.qa {
+	position: relative;
+	display: grid;
+	justify-items: center;
+	width: 100%;
+}
+
+/* 22% and not a round number: an open sheet is `2 × --quad-w` centred in the
+   room, so the gap down each side is `(100% − 2 × --quad-w) / 2`, and at the
+   narrowest width the jar is ever shown that gap works out at a shade over a
+   fifth of the room. She fills it and stops. Any wider and her sunflower
+   overlaps the paper at exactly the moment the note opens. */
+.qa__host {
+	display: grid;
+	justify-items: center;
+	gap: var(--sp-3);
+	width: min(13rem, 22%);
+	margin-block-start: var(--sp-8);
+}
+
+/* She steps out of the flow and into the corner of the room, because the jar
+   has to be the thing in the middle — given a column of her own she pushes it
+   off-centre, and given a row of her own she pushes the room off the bottom
+   of the screen. That second one is why this breakpoint is 48rem and not
+   wider: 48rem is exactly where the jar starts being shown at all, so there
+   is no band left where she is in flow and the room still has to fit one
+   viewport. */
+/* 48.01rem and not 48rem: the phone block at the end of this section owns
+   everything up to and including 48rem, and at exactly that width both used
+   to apply — which hung her bubble, portrait-less by then, in the corner of a
+   full-bleed stage. The two ranges have to meet without overlapping. */
+@media (min-width: 48.01rem) {
+	.qa__host {
+		position: absolute;
+		inset-block-end: 0;
+		inset-inline-start: 0;
+		margin-block-start: 0;
+	}
+}
+
+/* ---- the stage ---------------------------------------------------------- */
+
+/* The jar is an enhancement layered over the plain list, so it is absent by
+   default and the list is present. Both swaps are made here rather than in
+   JavaScript, which means a reader who turns reduced motion on or off gets
+   the other one immediately instead of on the next reload — and it means the
+   no-JS page never flashes a jar it is about to hide.
+
+   The stage's height is fixed, not grown from its contents: every child is
+   absolutely positioned, so there is nothing in it to grow from. That is what
+   keeps the room the same size whether a note is out or not, and it is the
+   number the whole section is budgeted against — jar, note and all three fold
+   depths are expressed as fractions of it, so shrinking the room on a short
+   window moves everything together instead of pulling it apart. */
+.qa__stage {
+	/* Mirrored in js/modules/jar.js as FLY. The fold's own duration is not
+	   here — it belongs to the paper, and lives on `.note` in components.css
+	   §9b. Change whichever one you mean, and its twin in the module. */
+	--dur-fly: 520ms;
+
+	/* The numbers the room is budgeted from, and they are budgeted against
+	   each other rather than picked.
+
+	   One quadrant is the unit of the whole design, because the note is a
+	   sheet folded in half twice: the packet in the jar is one quadrant, and
+	   the sheet open on the stage is two of them by two. So the stage has to
+	   hold `2 × --quad-h` and nothing taller, ever, whatever the answer says.
+
+	   `--quad-h` is in turn the height the longest of the four answers needs
+	   at `--quad-w` — one quadrant has to hold a whole answer, since text
+	   cannot flow across a crease. That is the real constraint on this room,
+	   and it is why the quadrant is wider than it is tall: widening it buys
+	   height back at better than one for one.
+
+	   `--jar-w` is then as large as the leftover will allow. A jar much
+	   smaller than this stops being the middle of the room and starts being a
+	   decoration standing in front of a note, and the room is called Q&A Jar.
+	   It is a *width*, and the drawing is half again as tall as it is wide
+	   (components.css §9), so the number that has to clear the room is
+	   `--jar-w × 369/251` — which is where the 0.5 comes from, not taste. */
+	--stage-h: clamp(24rem, 62svh, 30rem);
+	--quad-w: clamp(12rem, 26vw, 17rem);
+	--quad-h: clamp(9rem, calc(var(--stage-h) * 0.46), 13rem);
+	--jar-w: clamp(12rem, calc(var(--stage-h) * 0.56), 17rem);
+
+	position: relative;
+	display: none;
+	/* The plant's PNG is two thirds empty air (see `.qa__plant`), so its box
+	   reaches a long way past the leaves — far enough, on a narrow desktop
+	   window, to widen the document and put a scrollbar along the bottom of
+	   the page over pixels nobody can see. Contained per-section, which is the
+	   same call base.css §root makes and for the same reason: clipping the
+	   root instead kills every scroll-triggered entrance on the page.
+
+	   One axis only, and `clip` is the one value that may be paired with
+	   `visible` — the leaves are *meant* to grow up out of the room and stand
+	   behind the heading, so the vertical axis has to stay open. Nothing else
+	   in here comes near an edge: the open note is at most `2 × --quad-w` on a
+	   stage that is always wider. */
+	overflow-x: clip;
+	overflow-y: visible;
+	width: 100%;
+	height: var(--stage-h);
+}
+
+.js .qa__stage {
+	display: block;
+}
+
+.js .qa__list {
+	display: none;
+}
+
+/* Dead centre, and it stays there. An earlier version sent the jar sliding
+   aside to make room, which is the wrong instinct twice over: the jar is the
+   thing the section is about, and a jar that gets out of your way when you
+   take something out of it is not behaving like a jar. */
+.qa__stage .jar {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	z-index: 1;
+	width: var(--jar-w);
+	translate: -50% -50%;
+	transition: scale var(--dur-fly) var(--ease-out),
+		filter var(--dur-fly) var(--ease-out),
+		opacity var(--dur-fly) var(--ease-out);
+}
+
+/* It does not move — it goes *behind*. Blur and a little scale are the two
+   cues a camera gives you for depth, and they are the honest ones here,
+   because the note really is nearer to you than the jar is. */
+.qa__stage.has-note .jar {
+	scale: 0.9;
+	opacity: 0.55;
+	filter: blur(2px);
+}
+
+/* The plant standing behind the jar.
+
+   Placed against the same centre the jar is, and sized from `--jar-w` rather
+   than from the room, because the only thing this drawing has to be right
+   about is how big it is *next to the jar* — anchored to the room instead it
+   drifts out of scale with the object it is standing behind on every window
+   that reshapes the stage.
+
+   Two numbers are being said at once here, and they have to be read apart or
+   none of the four constants make sense.
+
+   What the *drawing* is meant to do is stand one jar wide, with its top-left
+   corner at `0.216 × --jar-w` right of the room's centre and `1.382 × --jar-w`
+   above it. `-1.382` is the only number in this rule that had to be found
+   rather than derived — it is what puts the pot on the floor the jar stands on
+   rather than somewhere in the air above it.
+
+   What is actually being positioned, though, is the *file*, and the file is
+   mostly nothing: the leaves and pot occupy x 180…370, y 45…426 of a 549×454
+   canvas, so the drawing is 190 across where its box is 549. Hence `2.8895`
+   (549/190) to get the art to one jar wide, and hence the placement carrying
+   the drawing's own offset inside the canvas back out of itself — `0.216 −
+   180/190` and `−1.382 − 45/190`. Change where the plant should stand and the
+   two subtractions stay; only the leading terms move.
+
+   `pixelated` for the same reason `.jar__art` has it: this is a bitmap going
+   up past 1:1, and the default resample would soften every pixel edge.
+
+   It is taller than the room by design — the leaves grow up past the top of
+   the stage and stand behind the heading, which is why the stage clips one
+   axis and not the other.
+
+   `left: 50%` plus a length is the only safe way to say this: a percentage in
+   `translate` resolves against the element's own box, so the same intent
+   written as a percentage would be measured against the plant instead of
+   against the jar and land it somewhere else.
+
+   `z-index: -1` and not 0: 0 would still paint it over the section heading,
+   because the heading is unpositioned text and the plant is a positioned box.
+   Negative puts it behind everything painted in this stacking context and in
+   front of nothing but the page itself, which is exactly where a thing at the
+   back of the room belongs. */
+.qa__stage .qa__plant {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	z-index: -1;
+	/* `max-width: none` for the same reason `.jar__art` needs it — this box is
+	   almost three jars wide on purpose, and base.css caps images at 100%. */
+	width: calc(var(--jar-w) * 2.8895);
+	max-width: none;
+	height: auto;
+	translate: calc(var(--jar-w) * -0.7314) calc(var(--jar-w) * -1.6188);
+	image-rendering: pixelated;
+	pointer-events: none;
+	transition: opacity var(--dur-fly) var(--ease-out),
+		filter var(--dur-fly) var(--ease-out);
+}
+
+/* It recedes with the jar, and further. Depth of field falls off with
+   distance, so the thing standing behind the out-of-focus object cannot be
+   the sharp one — a crisp plant behind a blurred jar reads as a sticker on
+   the page rather than as something in the room. */
+.qa__stage.has-note .qa__plant {
+	opacity: 0.4;
+	filter: blur(3px);
+}
+
+/* Two poses and nothing in between: folded shut at the jar's mouth, or open
+   and forward, in front of the glass. Both are authored here, so the flight
+   is a plain transition between two resting states and no script ever writes
+   a coordinate.
+
+   The note's *box* never changes — it is one quadrant, always, because that
+   is the cover. Only `translate` and `scale` differ between the two poses.
+   That is not a stylistic preference: `inset` and `width` would have to be in
+   the transition list to animate at all, and putting them there animates
+   layout sixty times a second. Left out, they snap on the first frame and the
+   flight starts from the wrong place.
+
+   `-50%` of the note's own box is one quadrant halved, so both poses put the
+   *cover* on the middle of the stage, which is where the jar is. The rest
+   pose only adds the lift up to the jar's mouth — the neck of the drawing,
+   just under the lid, which is about a tenth of the room above its middle.
+
+   `translate` gets `--ease-out` and not the spring: paper that overshoots its
+   landing and comes back is paper that is still being acted on after it has
+   come to rest. The spring is left on `scale`, where the overshoot reads as
+   the sheet being tossed down in front of you. */
+.qa__stage .note {
+	position: absolute;
+	inset-block-start: 50%;
+	inset-inline-start: 50%;
+	z-index: 2;
+	translate: -50% calc(-50% - var(--stage-h) * 0.1);
+	scale: 0.36;
+	opacity: 0;
+	pointer-events: none;
+	transition: translate var(--dur-fly) var(--ease-out),
+		scale var(--dur-fly) var(--ease-spring),
+		opacity calc(var(--dur-fly) * 0.55) var(--ease-out);
+}
+
+.qa__stage .note.is-out {
+	translate: -50% -50%;
+	scale: 1;
+	opacity: 1;
+	pointer-events: auto;
+}
+
+/* Keeping the sheet centred as it grows.
+
+   The quadrants hang off the cover's right and bottom edges, so an opening
+   note gets wider and taller in one direction only and walks out of the
+   middle of the room. This slides it back by half of whatever it just gained:
+   half a quadrant left when the right half comes out, half a quadrant up when
+   the bottom half drops.
+
+   It is on the cover and not on `.note` because `.note` already owns a
+   `translate` — the flight from the jar — and that one runs over `--dur-fly`
+   while this one runs over `--dur-fold`. Two jobs, two durations, therefore
+   two elements. Written onto one property they would have to share a
+   transition, and whichever they shared would be wrong for the other.
+
+   Same duration and same easing as the swing, so the recentring and the paper
+   are one movement rather than two that happen to overlap. */
+.qa__stage .note__quad--q {
+	transition: translate var(--dur-fold) var(--fold-ease);
+}
+
+.qa__stage .note.is-fold-1 .note__quad--q {
+	translate: calc(var(--quad-w) * -0.5) 0;
+}
+
+.qa__stage .note.is-fold-2 .note__quad--q {
+	translate: calc(var(--quad-w) * -0.5) calc(var(--quad-h) * -0.5);
+}
+
+/* The one case that gets the plain list instead of the jar. Same specificity
+   as the `.js`-scoped rules above, and later in the file, so this wins.
+
+   Reduced motion, and only reduced motion. A jar with its animations switched
+   off is not a calmer jar, it is a decoration sitting in front of the content.
+
+   This used to catch two more cases, and both have been answered rather than
+   dropped. A coarse pointer is fine: the note is a click target and a tap is a
+   click — nothing here needs hover to be discoverable, because the pull tab
+   says what the fold does. And below 48rem the room is re-solved (see the
+   phone block at the end of this section) rather than abandoned: the sheet
+   gets the gutters back, the quadrant turns portrait, and the answer type
+   steps down one. The jar is the section, so a phone should get the jar.
+
+   The list is not a consolation prize either. It is a <details> per question,
+   which is a fold that needs no script — the same gesture, plainly. */
+@media (prefers-reduced-motion: reduce) {
+	.section--room {
+		display: block;
+		min-height: 0;
+	}
+
+	.js .qa__stage {
+		display: none;
+	}
+
+	.js .qa__list {
+		display: grid;
+	}
+}
+
+.qa__list {
+	margin-block-start: var(--sp-8);
+}
+
+/* ---- the room on a phone ------------------------------------------------ */
+
+/* The same room, re-solved for a screen that is taller than it is wide. Three
+   things change, and each one is forced by the one before it.
+
+   1. The stage goes full bleed. An open sheet is `2 × --quad-w` and a phone
+      has no width to spare, so the room takes the wrap's gutters back — as
+      negative margins that cancel the padding, never as `100vw`, which counts
+      a scrollbar the wrap does not have and would put one along the bottom of
+      the page. The stage is exactly the screen from that point on, so the note
+      is centred on the *screen*, and the plant crops at the screen's edge
+      rather than at a line inside the page, which is the difference between a
+      thing standing off the side of the room and a picture cut short.
+   2. The quadrant turns portrait. Wider than tall was the right shape when
+      width was the cheap axis; here it is the scarce one, so the answer buys
+      its room in height instead.
+   3. The answer steps down to --fs-200. This is the trade that used to be
+      refused, and it is worth re-stating why it is now taken: at 47vw a
+      quadrant is about 24 characters wide, and the longest answer at --fs-300
+      needs more height than a phone has room for below the heading. --fs-200
+      is the size the slips in the jar are already set in, so it is a size this
+      section already asks a reader to read, and it is what makes the whole
+      sheet fit above the fold.
+
+   The stage height stops being a fraction of the viewport here and becomes
+   two quadrants plus a margin, because on a phone the note is what the room
+   is for. If that overflows a very short window the section scrolls, which is
+   the behaviour `min-height` was chosen for — an answer cut off by a quadrant
+   it does not fit in would not be. */
+@media (max-width: 48rem) {
+	/* The room is one screen or it is nothing, and on a phone every band above
+	   the stage is spent out of the same 812-odd pixels the note needs. These
+	   two are the cheapest to give back: the room's own padding, and the air
+	   under its heading. */
+	.section--room {
+		padding-block: var(--sp-10);
+	}
+
+	.section--room .section-head {
+		margin-block-end: var(--sp-5);
+	}
+
+	.qa__stage {
+		--quad-w: clamp(8rem, 47vw, 12rem);
+		/* 15rem is what the longest answer needs at --fs-200 from 360px up,
+		   with about half a line to spare. Below that the column loses a word
+		   per line and the same paragraph runs three lines longer, so the
+		   quadrant grows to meet it: the slope is measured, not guessed — the
+		   answer needs 304px of quadrant at 320px wide against 240px at 360px,
+		   which is 1.6px of height per pixel of width lost. Nothing above
+		   360px pays for it, because the clamp floors the whole term. */
+		--quad-h: clamp(15rem, calc(15rem + (22.5rem - 100vw) * 1.6), 19.5rem);
+		--stage-h: calc(var(--quad-h) * 2 + var(--sp-2));
+		/* Deliberately most of the room's width, and a bigger fraction of it
+		   than the desktop stage gives the jar. There the jar has a whole
+		   room to be the middle of; here it is competing with a sheet of
+		   paper that is nearly the width of the screen, and a jar that reads
+		   as an ornament next to the note has stopped being what the section
+		   is named after. The plant is sized from this number, so the two
+		   grow together — see `.qa__stage .qa__plant`.
+
+		   The ceiling is what the *stage* can hold, not what the room can:
+		   0.56 of the stage is the tallest jar that still clears two
+		   quadrants, since the drawing is 369/251 as tall as it is wide. */
+		--jar-w: min(17rem, calc(var(--stage-h) * 0.56));
+
+		justify-self: stretch;
+		width: auto;
+		margin-inline: calc(var(--gutter) * -1);
+	}
+
+	/* The sheet keeps its vertical padding and gives back some of its side
+	   padding — on a column this narrow eight pixels either side is most of a
+	   word per line, and lines are the thing the quadrant is short of. */
+	.qa__stage .note__sheet {
+		padding-inline: var(--sp-3);
+	}
+
+	.qa__stage .note__text {
+		font-size: var(--fs-200);
+	}
+
+	/* She turns side-on: portrait first, then the line she is saying, in one
+	   row under the jar. Stacked she is two bands tall and the room is one
+	   screen — side by side she is one, and the band is her own height rather
+	   than her height plus the bubble's.
+
+	   The tail goes. It points down at where she used to be, and a bubble that
+	   points past its speaker is worse than one that does not point at all;
+	   sitting against her shoulder it does not need to say whose voice it is.
+
+	   `order` and not a second copy in the markup: the bubble is first in the
+	   DOM because that is the reading order — her line is the content, the
+	   drawing is decoration with an empty alt — and that stays true whichever
+	   side of it she is drawn on.
+
+	   The row is anchored to the left edge and not centred, and that is the
+	   whole point of the two tracks. Her four lines are four different widths,
+	   and a shrink-wrapped row centred in the room re-centres itself on every
+	   one of them — so she slid sideways each time the bubble changed, which
+	   is the one thing in this section that is supposed to be furniture. A
+	   fixed column for her and the rest of the row for the words means the
+	   only thing a longer line can move is its own right-hand edge.
+
+	   `minmax(0, 1fr)` and not `1fr`: a grid track's automatic minimum is its
+	   content's min-content width, so the bubble's longest word would push the
+	   track — and her with it — past the room rather than wrapping. And the
+	   row's height is hers, because she is taller than two lines of bubble;
+	   the band under the jar is the same height whatever she says. */
+	.qa__host {
+		grid-auto-flow: column;
+		grid-template-columns: auto minmax(0, 1fr);
+		align-items: center;
+		justify-items: start;
+		gap: var(--sp-3);
+		justify-self: stretch;
+		width: auto;
+		margin-block-start: var(--sp-3);
+	}
+
+	/* Left inside the bubble too, for the lines long enough to wrap: the box
+	   is against her shoulder, so its text starts where she does. */
+	.qa__host .bubble {
+		text-align: start;
+	}
+
+	.qa__host .chibi {
+		order: -1;
+		width: 5.5rem;
+		padding: 0.7rem;
+	}
+
+	.qa__host .chibi__sunflower {
+		width: 2rem;
+	}
+
+	.qa__host .bubble::after,
+	.qa__host .bubble::before {
+		content: none;
+	}
+
+	/* The float belongs to a bubble hanging over someone's head, where a
+	   little drift reads as a thought that is still in the air. Sitting on the
+	   line beside her it is a caption, and a caption that will not keep still
+	   next to a portrait that does is just one of the two shaking. */
+	.qa__host .bubble.is-in {
+		animation: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   3. Project board — the table
+
+   Two layouts live here and which one applies is decided by JavaScript.
+
+   Without `.is-stage` — scripting off, reduced motion, or a touch screen —
+   the board is an ordinary two-up grid of cards in normal flow, nudged by the
+   --rest-* values authored inline in the markup. That is what the HTML means
+   on its own, and it is a perfectly good board.
+
+   With `.is-stage`, the board becomes a table exactly one viewport tall and
+   the cards become sheets of paper lying on it, absolutely positioned.
+   js/modules/cards.js writes three numbers per card — --x, --y, --rot — and
+   everything below describes what happens *between* two sets of those
+   numbers. CSS owns all of the motion; JS never animates anything.
+   -------------------------------------------------------------------------- */
+
+.board-section {
+	/* `clip`, not `hidden` — hidden would make this a scroll container and
+	   break the sticky nav. Both axes, because cards are thrown in from above
+	   the table and have to be invisible until they enter it; without the
+	   vertical clip they would be seen hanging over the section above. */
+	overflow: clip;
+}
+
+/* ---- fallback: cards in normal flow ------------------------------------- */
+
+.board {
+	display: grid;
+	justify-items: center;
+	gap: var(--sp-10) var(--sp-8);
+	max-width: 60rem;
+	margin-inline: auto;
+	/* Contains a lifted card's z-index so it can never paint over the nav. */
+	isolation: isolate;
+}
+
+/* Two up, with the right-hand column dropped half a card so the board reads
+   as a staggered brick rather than a table. */
+@media (min-width: 64rem) {
+	.board:not(.is-stage) {
+		--brick: 7rem;
+		grid-template-columns: repeat(2, auto);
+		gap: var(--sp-12) var(--sp-10);
+		padding-block-end: var(--brick);
+	}
+
+	.board:not(.is-stage) .card:nth-child(even) {
+		--rest-y: var(--brick);
+	}
+}
+
+/* On a narrow screen there is no room to scatter sideways. The offsets are
+   authored inline per card, so they need !important to be unset. */
+@media (max-width: 40rem) {
+	.board:not(.is-stage) .card {
+		--rest-x: 0px !important;
+	}
+}
+
+.board__foot {
+	display: flex;
+	justify-content: center;
+	margin-block-start: var(--sp-12);
+}
+
+/* The button only does anything once the drag module is running, and the
+   module deletes it outright when it bows out. This covers the remaining
+   case: no JavaScript at all. */
+.board__toss {
+	display: none;
+}
+
+.js .board__toss {
+	display: inline-flex;
+}
+
+/* ---- the table ---------------------------------------------------------- */
+
+/* One viewport, no more. Every pixel spent on chrome around the stage is a
+   pixel the cards have to give back by shrinking, so the section's usual
+   generous rhythm is cut right down here. */
+.board-section.is-table {
+	padding-block: 0;
+}
+
+.board-section.is-table > .wrap {
+	display: flex;
+	flex-direction: column;
+	min-height: 100svh;
+	/* Wider than the site's usual measure: the cards want room, and this is
+	   the one section that is a picture rather than a column of text. */
+	max-width: 100rem;
+	/* The nav is fixed, so the top of the section sits underneath it. */
+	padding-block: calc(3.75rem + var(--sp-6)) var(--sp-8);
+}
+
+.board-section.is-table .section-head {
+	margin-block-end: var(--sp-6);
+}
+
+.board-section.is-table .board__foot {
+	margin-block-start: var(--sp-6);
+}
+
+/* The stage takes whatever height the flex column has left over. It must
+   carry no padding of its own: absolutely positioned children are placed from
+   the padding edge, and the JS measures the border box — the two have to
+   agree or every card sits offset by the padding. */
+.board.is-stage {
+	position: relative;
+	display: block;
+	flex: 1;
+	width: 100%;
+	max-width: none;
+	min-height: 16rem;
+	gap: 0;
+	padding: 0;
+}
+
+/* --w / --h are written by the module, sized so the whole scatter fits the
+   stage. They are deliberately not the global --card-w / --card-h tokens: the
+   fallback board still wants those, unchanged. */
+.board.is-stage .card {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: 0;
+	margin: 0;
+	width: var(--w, 26.5rem);
+	min-height: var(--h, 19rem);
+
+	/* Type and padding scale with the sheet, so a card shrunk to fit a small
+	   window is the same drawing at a smaller size rather than the same text
+	   in a tighter box. 26.5 is the authored card width in rem, which makes
+	   this exactly 1rem at full size.
+
+	   The floor is where that idea stops being true. Eight cards on a phone
+	   are about a third of the authored width, and a third of 16px is 6px —
+	   at which point the sheet is not a small drawing, it is an unreadable
+	   one. 0.625rem is the smallest this type is allowed to get; below it the
+	   card stops scaling and starts simply being small. */
+	font-size: max(calc(var(--w, 26.5rem) / 26.5), 0.625rem);
+
+	/* Every step the card's own children measure themselves in, restated in
+	   `em` so they come down with the sheet. Each value is the one the token
+	   already holds at full size — 0.75em of 16px *is* --fs-100's 0.75rem —
+	   so a desktop card is unchanged to the pixel, and only a shrunk one is
+	   affected. Without these the chips and the plaque kept their rem sizes
+	   while everything around them halved, and a card at a third scale wore
+	   tags bigger than its own title. */
+	--fs-100: 0.75em;
+	--fs-200: 0.8125em;
+	--fs-300: 0.9375em;
+	--fs-500: 1.1875em;
+	--fs-600: 1.5em;
+	--sp-1: 0.25em;
+	--sp-2: 0.5em;
+	--stitch-inset: 0.5em;
+	/* The thread was the one part of the sheet still measured in px, so a card
+	   at a third scale wore the same 3px dashes as a full-size one and the
+	   stitch read as a rope. 0.1875em is that same 3px at full size. */
+	--stitch-w: 0.1875em;
+	gap: 0.75em;
+	padding: calc(var(--stitch-inset) + var(--stitch-w) + 1em);
+
+	translate: var(--x, 0px) var(--y, 0px);
+	rotate: var(--rot, 0deg);
+
+	/* No transition on translate or rotate, ever. Those two are written every
+	   frame by the flight loop in cards.js, and a transition on top of a
+	   simulation does not smooth it — it lags it, turning a card falling under
+	   gravity into a card easing towards wherever it was a frame ago. Scale
+	   and opacity are the only things CSS still animates here, and neither is
+	   ever touched by the physics. */
+	transition: scale var(--dur) var(--ease-out);
+}
+
+/* The last two rem values inside a card, for the same reason as the block
+   above and with the same arithmetic: at full size `em` and `rem` are the same
+   number here, so this changes nothing on a desk and everything on a phone. */
+.board.is-stage .card .chip {
+	padding-block: 0.15em;
+}
+
+.board.is-stage .card .plaque {
+	padding-block: 0.2em;
+	font-size: 0.625em;
+}
+
+/* Promoted only while something is actually moving — the whole board for the
+   length of a throw, a single card for the length of a drag. Eight layers
+   permanently promoted, each carrying a soft shadow, costs real GPU memory
+   and leaves text fuzzy in Safari. */
+.board.is-stage.is-live .card,
+.board.is-stage .card.is-drag {
+	will-change: translate, rotate;
+}
+
+/* Hidden until the first throw, which starts from off the top of the table. */
+.board.is-stage .card {
+	opacity: 0;
+}
+
+.board.is-stage.is-dealt .card {
+	opacity: 1;
+}
+
+.board.is-stage .card.is-drag {
+	cursor: grabbing;
+	--lift: 1.04;
+	--z-boost: 2000;
+}
+
+/* ---- the table on a phone ----------------------------------------------- */
+
+/* Eight sheets have to share one screen here, so each one is about a third of
+   the width it was authored at — and a card that small has to be a smaller
+   *drawing*, not the same paragraph set in 8px. So the blurb comes off the
+   sheet and what is left is what a thrown card is for: what it is, what it was
+   built with, and the fact that it opens.
+
+   Only in the stage. Without `.is-stage` the board is a plain column with no
+   height to fight over, and there the summary is the most useful line on the
+   card — a reduced-motion reader keeps it. The case study keeps it either way;
+   this is a cover, not the content.
+
+   Everything else is already handled and is worth not re-solving: the sheet's
+   type, padding and stitch inset are all `em` off `--w`, so they came down
+   with the card on their own, and the fall is the same throw the desk gets. */
+@media (max-width: 48rem) {
+	.board.is-stage .card__desc {
+		display: none;
+	}
+
+	/* The title takes the room the blurb gave up rather than the sheet keeping
+	   it as air. `em`, like everything else in the stage card — a proportion
+	   of the sheet, not a size. */
+	.board.is-stage .card__title {
+		font-size: 1.25em;
+	}
+
+	/* The sheet's own margin, cut. At the type floor the card no longer scales
+	   but this padding still would, and 1em of a 10px sheet against a 175px
+	   card is a fifth of it spent on air.
+
+	   The thread is left to the `em` the block above sets it in, and that is
+	   worth a line because it is not the same thing as "proportional". The
+	   card's type has hit its floor by this width, so an `em` here is a little
+	   more than the sheet's own scale would give — the true proportion of the
+	   authored 3px on a card this size is about 1.4px, which is a hairline
+	   rather than a stitch. Following the floored type instead keeps the
+	   thread a thread. */
+	.board.is-stage .card {
+		gap: 0.5em;
+		padding: calc(var(--stitch-inset) + var(--stitch-w) + 0.5em);
+	}
+
+	/* The table is the screen. Same negative-margin full bleed the Q&A room
+	   uses in §2 and for the same reason — the gutters are 36px the cards can
+	   have, and a card that falls off the side of the *screen* reads as having
+	   been thrown, where one that stops short of an invisible line inside the
+	   page reads as having been placed. `width: auto` because the board is a
+	   stretched flex item: it takes the column's width and the margins push it
+	   back out past the padding. `100vw` would count a scrollbar this column
+	   does not have. */
+	.board.is-stage {
+		width: auto;
+		margin-inline: calc(var(--gutter) * -1);
+	}
+
+	/* A phone has no hover, so the chrome around the table is only ever chrome:
+	   trimmed to leave the cards the height. */
+	.board-section.is-table > .wrap {
+		padding-block: calc(3.75rem + var(--sp-3)) var(--sp-5);
+	}
+
+	.board-section.is-table .section-head {
+		margin-block-end: var(--sp-4);
+	}
+
+	.board-section.is-table .board__foot {
+		margin-block-start: var(--sp-4);
+	}
+}

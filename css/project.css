@@ -1,0 +1,789 @@
+/* ==========================================================================
+   Buttercup Café — case study page
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Theme
+   The renderer sets data-theme on <html>; everything colour-related follows
+   from that one attribute.
+   -------------------------------------------------------------------------- */
+
+:root {
+	/* The paper sheet itself. Narrow enough to read as a sheet on a desk
+	   rather than as a full-bleed page — an 84rem sheet filled the window and
+	   stopped looking like an object.
+
+	   The photographs are not confined to it. --spill is how far a gutter
+	   figure may hang past the paper edge, the way the originals were taped
+	   half-off the card. It is a clamp against the viewport rather than a
+	   fixed number, so the overhang shrinks to nothing before it can ever
+	   reach the edge of the window. The 6rem of slack is not decoration: it
+	   covers the body padding, a classic scrollbar, and the corner a tilted
+	   print swings out past its own width. */
+	--sheet: 68rem;
+	--measure-col: 42rem;
+	--spill: clamp(0rem, (100vw - var(--sheet) - 6rem) / 2, 6rem);
+}
+
+[data-theme="moss"] {
+	--page-fill: var(--moss);
+	--accent: var(--moss-deep);
+	--chip-bg: var(--moss-deep);
+}
+[data-theme="peach"] {
+	--page-fill: var(--peach);
+	--accent: var(--peach-deep);
+	--chip-bg: var(--peach-deep);
+}
+[data-theme="butter"] {
+	--page-fill: var(--butter);
+	--accent: var(--butter-deep);
+	--chip-bg: var(--butter-deep);
+}
+
+body {
+	background: var(--page-fill, var(--tan));
+	padding-block: clamp(1.25rem, 4vw, 3.5rem);
+	padding-inline: clamp(0.75rem, 3vw, 2.5rem);
+}
+
+/* --------------------------------------------------------------------------
+   2. Back link
+   -------------------------------------------------------------------------- */
+
+.back {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	max-width: var(--sheet);
+	margin: 0 auto var(--sp-6);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	color: color-mix(in oklab, var(--ink) 76%, var(--page-fill));
+	transition: color var(--dur) var(--ease-out), gap var(--dur) var(--ease-out);
+}
+
+.back:hover {
+	color: var(--ink);
+	gap: var(--sp-3);
+}
+
+.back svg {
+	width: 1.1em;
+	height: 1.1em;
+}
+
+.back-row {
+	max-width: var(--sheet);
+	margin-inline: auto;
+}
+
+/* --------------------------------------------------------------------------
+   3. The sheet
+   Same stitch primitive as the home cards, inverted: cream fill with the
+   thread tinted by the project's accent.
+   -------------------------------------------------------------------------- */
+
+.case {
+	--card-bg: var(--cream);
+	--stitch-color: var(--accent);
+	/* The thread sits further in on a wide sheet than it can afford to on a
+	   phone, where 0.85rem of it is a fifth of the margin. */
+	--stitch-inset: clamp(0.55rem, 2.2vw, 0.85rem);
+	--r-card: 14px;
+	max-width: var(--sheet);
+	margin-inline: auto;
+
+	/* .paper derives its padding from the thread precisely so that text can
+	   never touch it. Overriding the shorthand with a bare clamp threw that
+	   derivation away, and at 375px the inline padding (1rem) landed *inside*
+	   the thread (0.85rem inset + 3px) — every paragraph started its first
+	   character on the stitching. Keep the derived value as the floor and let
+	   the clamp only ever add to it. */
+	--case-inset: calc(var(--stitch-inset) + var(--stitch-w) + var(--sp-4));
+	padding: max(var(--case-inset), clamp(1.75rem, 4vw, 3.25rem))
+		max(var(--case-inset), clamp(1rem, 3vw, 2.5rem));
+}
+
+.case__head {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: var(--sp-3);
+	max-width: 46rem;
+	margin: 0 auto var(--sp-10);
+	text-align: center;
+}
+
+.case__title {
+	font-size: var(--fs-700);
+}
+
+/* --------------------------------------------------------------------------
+   4. Body grid
+
+   Three columns: a gutter, the measure, a gutter. Floating figures live in
+   the gutters as real grid items, so they can never be clipped by the
+   viewport — which is what the old `right-[-180px]` negative offsets did at
+   any window narrower than the author's.
+   -------------------------------------------------------------------------- */
+
+.case__body {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(0, var(--measure-col)) minmax(0, 1fr);
+	column-gap: clamp(0.75rem, 2vw, 2rem);
+	align-items: start;
+}
+
+/* The renderer sets --row per item rather than an inline `grid-row`, so the
+   single-column fallback below can simply hand placement back to auto
+   without needing !important to beat an inline style. */
+.case__body > * {
+	grid-column: 2;
+	grid-row: var(--row, auto);
+}
+
+.case__p {
+	margin-block-end: var(--sp-5);
+	font-size: var(--fs-400);
+	line-height: var(--lh);
+	color: var(--ink);
+}
+
+.case__h2 {
+	margin-block: var(--sp-8) var(--sp-4);
+	font-size: var(--fs-600);
+}
+
+.case__h2:first-child {
+	margin-block-start: 0;
+}
+
+/* An inline figure in the main column.
+
+   No frame, no shadow, no radius. Several of these images are cut-out PNGs on
+   transparency (the wardrobe renders in particular), and a box-shadow on a
+   transparent image draws a rectangle around nothing — the drawing ends up
+   sitting inside a visible grey card it was never meant to have. The image is
+   the object; the paper behind it is already the frame.
+
+   Bounded by height rather than width, because the constraint that actually
+   bites is vertical. closet-Photoroom.png is 732×1280: at `width: 100%` of the
+   42rem measure it rendered 1175px tall and ate a whole screen. A single
+   height cap sizes tall and wide images sensibly from one rule, with no
+   per-image number to keep in sync with the artwork.
+
+   The cap is expressed as a *width* derived from the aspect ratio, rather
+   than as `width: auto; max-height`. Those two say the same thing about a
+   decoded image and completely different things about one that has not
+   arrived yet: `auto` has no natural width to shrink-wrap, so the figure is
+   0×0 until the bytes land and the page jolts as the reader scrolls. --fig-ar
+   is known from the data before the first request goes out. */
+.case__figure {
+	display: grid;
+	justify-items: center;
+	margin-block: var(--sp-6) var(--sp-8);
+}
+
+.case__figure img {
+	width: min(100%, calc(var(--fig-h, 26rem) * var(--fig-ar, 1)));
+	aspect-ratio: var(--fig-ar, auto);
+}
+
+.case__figure figcaption {
+	margin-block-start: var(--sp-3);
+	font-size: var(--fs-200);
+	color: var(--ink-soft);
+	text-align: center;
+}
+
+/* -- outbound link ----------------------------------------------------- */
+
+.case__link {
+	margin-block: var(--sp-4) var(--sp-8);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	font-weight: 600;
+}
+
+.case__link a {
+	color: color-mix(in oklab, var(--accent) 72%, #000);
+	text-decoration: underline;
+	text-decoration-thickness: 2px;
+	text-underline-offset: 3px;
+	transition: color var(--dur) var(--ease-out);
+}
+
+.case__link a:hover {
+	color: var(--ink);
+}
+
+/* -- video ------------------------------------------------------------- */
+
+.case__video {
+	position: relative;
+	width: 100%;
+	max-width: 24rem;
+	margin: var(--sp-6) auto var(--sp-10);
+	padding: var(--sp-3);
+	background: var(--page-fill);
+	border: 3px solid var(--accent);
+	border-radius: var(--r-lg);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+}
+
+.case__video-frame {
+	position: relative;
+	aspect-ratio: var(--ar, 16 / 9);
+	overflow: hidden;
+	border-radius: var(--r-sm);
+	background: var(--slate);
+}
+
+.case__video-frame > * {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+}
+
+.case__video-frame img {
+	object-fit: cover;
+}
+
+.case__play {
+	display: grid;
+	place-items: center;
+	cursor: pointer;
+	transition: background var(--dur) var(--ease-out);
+}
+
+.case__play::before {
+	content: "";
+	position: absolute;
+	inset: 0;
+	background: rgb(0 0 0 / 0);
+	transition: background var(--dur) var(--ease-out);
+}
+
+.case__play:hover::before {
+	background: rgb(0 0 0 / 0.25);
+}
+
+.case__play svg {
+	position: relative;
+	width: 4rem;
+	height: 4rem;
+	transition: scale var(--dur) var(--ease-spring);
+}
+
+.case__play:hover svg {
+	scale: 1.1;
+}
+
+/* --------------------------------------------------------------------------
+   5. Gutter polaroids
+
+   Anchoring is by body-block index rather than a pixel `top`, so a caption
+   stays beside the paragraph it describes even after the copy is edited.
+
+   These used to be zero-height wrappers with an absolutely positioned figure
+   inside, so that a photograph never stretched the row it was anchored to.
+   That is exactly what made the GaTewAY page collide: its three paragraphs
+   are short and two of its photographs are anchored to consecutive ones, so
+   a 300px figure hanging out of a 90px row landed on top of the next figure.
+   Out-of-flow content cannot be asked not to overlap.
+
+   So each figure is now a real grid item spanning from its own anchor row to
+   the next figure's anchor row *on the same side* — a range the renderer
+   computes from the data, never from a measurement. Two figures on one side
+   can no longer occupy the same row, at any copy length, so the collision is
+   gone by construction rather than by tuning. The cost is that a row stretches
+   when the prose beside it is shorter than the photograph, which reads as a
+   photo essay breathing rather than as a bug.
+   -------------------------------------------------------------------------- */
+
+.gutter {
+	display: grid;
+	align-content: start;
+	grid-row: var(--row-start, auto) / var(--row-end, auto);
+}
+
+/* No justify-self here: the gutter must stretch to fill its column. Sizing it
+   to its content collapses it to nothing, which left the photographs 67px
+   wide inside a 264px gutter. */
+.gutter[data-side="left"] {
+	grid-column: 1;
+	justify-items: end;
+	margin-inline-start: calc(var(--spill) * -1);
+}
+
+.gutter[data-side="right"] {
+	grid-column: 3;
+	justify-items: start;
+	margin-inline-end: calc(var(--spill) * -1);
+}
+
+.gutter > .polaroid {
+	width: 100%;
+	max-width: 20rem;
+	/* Reserved inside the item, so the grid counts the breathing room when it
+	   sizes the row range. A margin between two out-of-flow figures would be
+	   invisible to the row algorithm and collapse to nothing. */
+	margin-block-end: var(--sp-8);
+}
+
+/* The print edge: a warm rule in the project's own accent, mixed back towards
+   the paper so it stays a drawn line and never becomes a UI border. Two rules
+   at two strengths — the outer one edges the mount, the inner one seats the
+   photograph into it, which is what a real print in a paper mount looks like
+   and what keeps a pale image from bleeding into the mount. */
+.polaroid {
+	padding: 0.55rem 0.55rem 0;
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
+	border-radius: 5px;
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	rotate: var(--rot, 0deg);
+	transition: rotate var(--dur) var(--ease-spring),
+		scale var(--dur) var(--ease-spring), box-shadow var(--dur) var(--ease-out),
+		border-color var(--dur) var(--ease-out);
+}
+
+.polaroid:hover,
+.polaroid:focus-within {
+	position: relative;
+	z-index: 5;
+	rotate: 0deg;
+	scale: 1.04;
+	border-color: var(--accent);
+	box-shadow: var(--shadow-lift);
+}
+
+.polaroid img {
+	width: 100%;
+	border: 1px solid color-mix(in oklab, var(--accent) 34%, var(--paper));
+	border-radius: 2px;
+}
+
+/* Captions are always visible. In the original they were hover-only
+   tooltips, which hid real information ("Heatmap showing users primarily
+   interacted with Browse and My Books") from touch and keyboard entirely. */
+.polaroid figcaption {
+	padding: 0.6rem 0.25rem 0.75rem;
+	font-size: var(--fs-100);
+	line-height: 1.4;
+	text-align: center;
+	color: var(--ink-soft);
+}
+
+/* Below this width the gutters are too narrow to hold a photograph, so the
+   figures come inline instead — which is what the old md:absolute /
+   translate-x-10 pair was fumbling towards. */
+@media (max-width: 78rem) {
+	.case__body {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* The two .gutter[data-side] rules above are more specific than a bare
+	   `.case__body > *`, so they have to be unset by name — otherwise they keep
+	   placing figures in columns 1 and 3, which silently resurrects the
+	   three-column grid as implicit tracks and collapses the text column to
+	   zero width. */
+	.case__body > *,
+	.gutter[data-side="left"],
+	.gutter[data-side="right"] {
+		grid-column: 1;
+		grid-row: auto;
+	}
+
+	.case__body > .case__p,
+	.case__body > .case__h2,
+	.case__body > .case__link,
+	.case__body > .case__figure {
+		max-width: var(--measure-col);
+		margin-inline: auto;
+		width: 100%;
+	}
+
+	.gutter,
+	.gutter[data-side="left"],
+	.gutter[data-side="right"] {
+		justify-self: center;
+		justify-items: center;
+		/* The overhang has to be unset by name too: a negative margin left
+		   over from the three-column layout would pull a centred figure off
+		   the side of the sheet. */
+		margin-inline: 0;
+		margin-block: var(--sp-6) var(--sp-8);
+	}
+
+	/* Straightened, and not for taste. A rotated rectangle is bulkier than its
+	   own box — each corner swings out by roughly half its height times the
+	   sine of the angle — so a 500px-tall print tilted 6° needs about 50px
+	   more width than it claims. In the gutters there is margin outside the
+	   sheet to absorb that. Here the photograph is already as wide as the
+	   column, so the overhang has nowhere to go and leaves the page scrolling
+	   sideways by a few pixels. The hover state straightens these anyway. */
+	.gutter > .polaroid {
+		width: min(20rem, 100%);
+		margin-block-end: 0;
+		rotate: 0deg;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   6. Zoom affordance
+
+   Every image on the page is wrapped in a real <button>, not a click handler
+   on the <img>. That is the whole of the keyboard and screen-reader story:
+   tab order, Enter/Space, and an accessible name all come free, and there is
+   no invisible interaction that only a mouse can find.
+   -------------------------------------------------------------------------- */
+
+.zoom {
+	display: block;
+	width: 100%;
+	border-radius: inherit;
+	cursor: zoom-in;
+}
+
+.zoom img {
+	transition: scale var(--dur) var(--ease-out);
+}
+
+/* The polaroid already lifts as a whole on hover (via :focus-within, so the
+   keyboard gets the same lift), so only the bare inline figures need a hint
+   of their own. */
+.case__figure .zoom:hover img {
+	scale: 1.02;
+}
+
+/* --------------------------------------------------------------------------
+   7. The lightbox
+
+   A <dialog> opened with showModal(), which buys the top layer, the focus
+   trap, inert background content and Esc — none of which is worth
+   reimplementing by hand, and all of which hand-rolled overlays get subtly
+   wrong.
+
+   The opening move is a FLIP: the frame is drawn at rest by CSS, and the
+   script writes only how far it currently is from rest (--fx/--fy/--fs),
+   then drops those on the next frame so the transition runs home. Same
+   division of labour as the rest of the site — CSS owns the resting pose,
+   the script owns the deviation, and neither writes the other's number.
+   `scale` therefore has exactly one author: the flight. That is why the
+   sheet fades without scaling; two things scaling at once is how you get a
+   photograph that swims.
+   -------------------------------------------------------------------------- */
+
+html.is-zoomed {
+	overflow: hidden;
+	/* The scrollbar's own width, measured once at open. Without it the page
+	   jumps sideways underneath the scrim as the bar disappears. */
+	padding-inline-end: var(--sbw, 0px);
+}
+
+.lightbox {
+	/* The photograph's budget, and the only place a size is decided.
+
+	   Both are lengths, never percentages. A percentage here would have to
+	   resolve against a panel that is itself being sized by the photograph,
+	   and the circularity does not fail loudly — it fails by the grid refusing
+	   to shrink its image column below the file's own pixel width, so a wide
+	   plot pushes the writing off the side of the screen. Subtracting the
+	   chrome from the viewport instead is arithmetic the browser can do before
+	   it knows anything about the contents.
+
+	   The subtrahends are everything that is not the photograph, at its
+	   widest: the mount (1.65rem), the gap (2.25rem), the writing column
+	   (22rem), the sheet's padding (3.5rem) and the dialog's (5rem). */
+	--img-max-w: min(52rem, calc(100vw - 35rem));
+	--img-max-h: min(38rem, calc(100svh - 11rem));
+
+	position: fixed;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	width: 100%;
+	max-width: 100%;
+	height: 100%;
+	max-height: 100%;
+	margin: 0;
+	padding: clamp(1rem, 3vw, 2.5rem);
+	border: 0;
+	background: transparent;
+	overflow: hidden;
+	overscroll-behavior: contain;
+}
+
+/* Put back what the rule above took away.
+
+   A closed <dialog> is hidden by `dialog:not([open]) { display: none }` in the
+   user-agent stylesheet — an ordinary author-overridable rule, not magic. So
+   `display: grid` up there silently beat it, and a closed panel stayed a
+   full-viewport fixed box lying over the page: invisible, because the scrim
+   and the sheet are both at opacity 0, and still hit-testable. Every click
+   after the first one landed on the dead panel, so the photographs stopped
+   opening and nothing on the page could be clicked again.
+
+   It has to be restated rather than avoided, because the open state genuinely
+   needs `display: grid` to centre the sheet. */
+.lightbox:not([open]) {
+	display: none;
+}
+
+/* The wash is a real element rather than ::backdrop, because ::backdrop
+   cannot be faded in and out without the discrete-property dance and this
+   one has to be in step with the frame's flight to the millisecond. Tinted
+   with the same warm brown as every shadow on the site: a neutral black
+   scrim over cream turns the whole page grey. */
+.lightbox::backdrop {
+	background: transparent;
+}
+
+.lightbox__scrim {
+	position: fixed;
+	inset: 0;
+	background: rgb(88 70 52 / 0.62);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.lightbox.is-open .lightbox__scrim {
+	opacity: 1;
+}
+
+.lightbox__sheet {
+	--card-bg: var(--cream);
+	--stitch-color: var(--accent);
+	--stitch-inset: 0.7rem;
+	--r-card: 14px;
+	position: relative;
+	display: grid;
+	/* The photograph's column is content-sized and the sheet hugs it, rather
+	   than both columns being handed a share of a fixed width. A wide panel
+	   around a tall narrow image is mostly the gap between the two — the paper
+	   should be the shape of what is on it. */
+	grid-template-columns: auto minmax(13rem, 22rem);
+	align-items: center;
+	gap: clamp(1rem, 2.5vw, 2.25rem);
+	width: fit-content;
+	max-width: min(74rem, 100%);
+	max-height: 100%;
+	padding: clamp(1rem, 2.2vw, 1.75rem);
+	opacity: 0;
+	transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.lightbox.is-open .lightbox__sheet {
+	opacity: 1;
+}
+
+/* One image only, and no caption inside the mount — the writing lives in the
+   column beside it, which is the point of opening the thing. Uniform padding
+   is load-bearing: it puts the frame's centre exactly on the photograph's
+   centre, which is what lets the flight scale the frame about its own centre
+   and still land the photograph on the thumbnail.
+
+   The mount is sized to the picture and the panel is sized to the mount, so
+   nothing here spans to a fixed width. `content-box` puts the ratio on the
+   inside of the padding, which is where the photograph is, and the width is
+   the smaller of the two budgets: how wide it may be, and how wide the height
+   budget lets it be at this shape. Solving both axes as one width is what
+   makes the fit exact — a portrait and a panorama both come out whole, and
+   neither is ever stretched, because only one dimension is ever authored. */
+.lightbox__frame {
+	box-sizing: content-box;
+	width: min(var(--img-max-w), calc(var(--img-max-h) * var(--ar, 1)));
+	aspect-ratio: var(--ar, 1);
+	padding: 0.7rem;
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
+	border-radius: 6px;
+	box-shadow: var(--sh-contact), var(--shadow-lift);
+	translate: var(--fx, 0px) var(--fy, 0px);
+	scale: var(--fs, 1);
+	transition: translate var(--dur-slow) var(--ease-out),
+		scale var(--dur-slow) var(--ease-out);
+}
+
+/* The one frame in the gesture where the frame is parked on top of the
+   thumbnail. It must not animate its way there — only home from there. */
+.lightbox.is-flipping .lightbox__frame {
+	transition: none;
+}
+
+/* No fill behind the photograph. Several of these images are cut-outs on
+   transparency, and any colour here is a rectangle drawn around a drawing —
+   the same box the inline figures had to lose. The mount's own paper is what
+   shows through, which is what you would see under a real print anyway. */
+.lightbox__frame img {
+	width: 100%;
+	height: 100%;
+	border-radius: 2px;
+}
+
+.lightbox__note {
+	align-self: center;
+	max-height: var(--img-max-h);
+	padding-inline-end: var(--sp-2);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.lightbox__eyebrow {
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+/* The rule sits under the project's name rather than under the caption. It is
+   the project's accent — the one place in the panel that says which case study
+   you are standing in — and here it separates two things that are genuinely
+   different: where you are, and what you are looking at. Under the caption it
+   would be a divider with nothing below it, which reads as a piece of the
+   panel that failed to load. */
+.lightbox__eyebrow::after {
+	content: "";
+	display: block;
+	width: 2.5rem;
+	margin-block: var(--sp-3);
+	border-block-start: 3px dashed var(--accent);
+}
+
+.lightbox__title {
+	font-size: var(--fs-500);
+	line-height: var(--lh-snug);
+	text-wrap: pretty;
+}
+
+.lightbox__close {
+	position: absolute;
+	inset-block-start: calc(var(--sp-2) * -1);
+	inset-inline-end: calc(var(--sp-2) * -1);
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
+	border-radius: var(--r-pill);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	line-height: 1;
+	color: var(--ink-soft);
+	transition: rotate var(--dur) var(--ease-spring),
+		background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+.lightbox__close:hover {
+	rotate: 90deg;
+	background: var(--paper-warm);
+	color: var(--ink);
+}
+
+/* An image with nothing written about it gets the whole sheet rather than an
+   empty column beside it. */
+.lightbox__sheet:not(:has(.lightbox__note)) {
+	grid-template-columns: auto;
+}
+
+/* Below this the two columns would each be too narrow to be worth having, so
+   the panel becomes a card: photograph above, writing below. A short, wide
+   window is deliberately not in this query — side by side is the right shape
+   there, and --img-max-h already shrinks the picture to fit it. */
+@media (max-width: 60rem) {
+	.lightbox {
+		/* Nothing beside the photograph any more, so the width budget only has
+		   to clear the mount, the sheet and the dialog. The height budget now
+		   shares the sheet with the writing rather than sitting next to it. */
+		--img-max-w: calc(100vw - 6rem);
+		--img-max-h: min(24rem, 42svh);
+	}
+
+	.lightbox__sheet {
+		grid-template-columns: minmax(0, 1fr);
+		align-content: start;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+
+	.lightbox__frame {
+		justify-self: center;
+	}
+
+	.lightbox__note {
+		max-height: none;
+		overflow: visible;
+	}
+}
+
+/* Nothing flies. The panel is simply there, which is the whole request. */
+@media (prefers-reduced-motion: reduce) {
+	.lightbox__scrim,
+	.lightbox__sheet,
+	.lightbox__frame,
+	.zoom img {
+		transition: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   8. Loading and not-found states
+   -------------------------------------------------------------------------- */
+
+body[data-loading] .case__body::before {
+	content: "brewing…";
+	display: block;
+	grid-column: 2;
+	font-family: var(--ff-display);
+	color: var(--ink-faint);
+	text-align: center;
+}
+
+.notfound {
+	max-width: 34rem;
+	margin-inline: auto;
+	text-align: center;
+}
+
+.notfound__list {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--sp-2);
+	margin-block-start: var(--sp-6);
+}
+
+/* --------------------------------------------------------------------------
+   9. Page footer
+   -------------------------------------------------------------------------- */
+
+.case-foot {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-4);
+	max-width: var(--sheet);
+	margin: var(--sp-10) auto 0;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	color: color-mix(in oklab, var(--ink) 62%, var(--page-fill));
+}
+
+.case-foot a {
+	font-weight: 600;
+	transition: color var(--dur) var(--ease-out);
+}
+
+.case-foot a:hover {
+	color: var(--ink);
+}

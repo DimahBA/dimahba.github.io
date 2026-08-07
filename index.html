@@ -1,447 +1,776 @@
 <!doctype html>
-<html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="./output.css" rel="stylesheet">
-</head>
+		<title>Dimah — AR, HCI &amp; Computer Graphics</title>
+		<meta
+			name="description"
+			content="Portfolio of Dimah, a Master's student in IT focused on computer graphics and human-computer interaction. AR pathfinding for Parkinson's disease, 3D Gaussian splatting, tangible AR games — and a small pixel-art café to sit in while you read."
+		/>
+		<meta name="author" content="Dimah" />
+		<meta name="theme-color" content="#cdd8b7" />
+		<link rel="canonical" href="https://dimahba.github.io/" />
 
-<style>
-    .cursor-hidden {
-        visibility: hidden;
-    }
+		<meta property="og:type" content="website" />
+		<meta property="og:site_name" content="Buttercup Café" />
+		<meta property="og:title" content="Dimah — AR, HCI &amp; Computer Graphics" />
+		<meta
+			property="og:description"
+			content="A cosy pixel-art café, and the portfolio of a Master's student working on AR, HCI and computer graphics."
+		/>
+		<meta property="og:url" content="https://dimahba.github.io/" />
+		<meta
+			property="og:image"
+			content="https://dimahba.github.io/static/PixelArt/cafe_sprite.png"
+		/>
+		<meta name="twitter:card" content="summary_large_image" />
 
-    .cursor-visible {
-        visibility: visible;
-    }
+		<link rel="icon" href="static/PixelArt/myChibi-cropped.png" type="image/png" />
+		<link rel="apple-touch-icon" href="static/PixelArt/myChibi-cropped.png" />
 
-    @keyframes cursor-blink {
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&amp;family=Space+Grotesk:wght@400..700&amp;display=swap"
+		/>
 
-        0%,
-        50% {
-            opacity: 1;
-        }
+		<!-- Stamped before first paint so the entrance states only apply when
+		     there is something around to trigger them. With scripting off, the
+		     greeting and the board are simply present. -->
+		<script>
+			document.documentElement.classList.add("js");
+		</script>
 
-        51%,
-        100% {
-            opacity: 0;
-        }
-    }
+		<link rel="stylesheet" href="css/base.css" />
+		<link rel="stylesheet" href="css/components.css" />
+		<link rel="stylesheet" href="css/home.css" />
 
-    .cursor-blink {
-        animation: cursor-blink 1s infinite;
-    }
-</style>
+		<script type="module" src="js/home.js"></script>
+	</head>
 
-<body class="bg-beige">
-    <div class="bg-green-background min-h-screen flex items-center justify-center flex-col">
+	<body>
+		<a class="skip-link" href="#main">Skip to content</a>
 
-        <!-- cafe -->
-        <img src="./static/PixelArt/cafe_sprite.png" alt="Cafe Sprite"
-            class="w-full max-w-[400px] sm:max-w-[500px] md:max-w-[45%] md:min-w-[500px] -translate-y-10 md:-translate-y-0">
-        <!-- Chibi stuff (circle, bubble, box) -->
-        <div
-            class="relative bottom-0 flex flex-col md:flex-row items-center justify-center gap-10 md:gap-10 -translate-y-14 top-32 md:top-0">
-            <!-- Chat bubble and chibi circle -->
-            <div
-                class="absolute left-1/2 -translate-x-1/2 -top-32 md:static md:translate-x-0 md:-translate-x-0 flex flex-col items-center md:order-1 z-10">
-                <!-- Chat bubble -->
-                <div class="relative md:-translate-x-24 -translate-x-16">
-                    <div id="chat-bubble">
-                        <img src="./static/chat-bubble.png" class="w-48 md:w-52">
-                        <div class="absolute inset-0 flex items-center justify-center">
-                            <span class="text-xl md:text-2xl font-serif transform -translate-y-2">HI, I'M DIMAH</span>
-                        </div>
-                    </div>
-                </div>
-                <!-- Chibi circle -->
-                <div class="bg-off-white-200 flex items-center justify-center w-36 md:w-52 rounded-full p-7 relative animate-pop opacity-0 scale-0"
-                    id="chibi-circle" style="animation-delay: 0.5s; animation-fill-mode: both;">
-                    <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi" class="">
-                    <!-- Sunflower positioned relative to chibi circle -->
-                    <img src="./static/PixelArt/sunflower.png"
-                        class="absolute w-10 md:w-14 bottom-0 left-0 translate-x-2 translate-y-2" alt="">
-                </div>
-            </div>
+		<!-- ==================================================================
+		     Nav — hidden until the hero scrolls away, then sticks
+		     =============================================================== -->
+		<nav class="nav" data-nav aria-label="Main">
+			<div class="wrap nav__inner">
+				<a class="nav__brand" href="#top">
+					<img
+						class="nav__avatar"
+						src="static/PixelArt/myChibi-cropped.png"
+						alt=""
+						width="32"
+						height="32"
+					/>
+					<span>dimah</span>
+				</a>
+				<ul class="nav__links">
+					<li><a class="nav__link" href="#qa" data-nav-link>q&amp;a</a></li>
+					<li><a class="nav__link" href="#work" data-nav-link>work</a></li>
+					<li><a class="nav__link" href="#hello" data-nav-link>say hi</a></li>
+				</ul>
+			</div>
+		</nav>
 
-            <!-- Text box -->
-            <div class="bg-off-white rounded-lg p-4 w-[20rem] md:w-[30rem] h-[8rem] p-7 px-9 md:top-10 relative animate-quick-pop opacity-0 border-2 border-black order-2 md:order-2 mt-[52px] md:mt-0"
-                id="chat-box" style="animation-delay: 2.0s; animation-fill-mode: both;">
-                <p class="md:text-lg text-md font-serif">
-                    <span id="typewriter-text"></span>
-                    <span id="cursor" class="cursor-hidden cursor-blink">|</span>
-                </p>
-                <img src="./static/PixelArt/tinyFlower.png"
-                    class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
-            </div>
-        </div>
-    </div>
+		<main id="main">
+			<!-- ==============================================================
+			     Hero
+			     =========================================================== -->
+			<section class="hero" id="top" data-hero>
+				<div class="hero__inner">
+					<div class="hero__voice">
+						<div class="hero__intro">
+							<h1 class="hero__name">Hi ! <br/> I'm Dimah</h1>
+							<p class="hero__role">
+								<span>Augmented reality</span><span>HCI</span
+								><span>Computer graphics</span>
+							</p>
+							<p class="hero__where">
+								Master's student @ Institut Polytechnique de Paris
+							</p>
+						</div>
 
-    <div
-        class="bg-[url(./static/background.svg)] md:bg-[length:512px_512px] bg-[length:400px_400px] bg-repeat md:h-32 h-20 w-full">
-    </div>
+						<div class="hero__say">
+							<!-- The second portrait of her, and the only duplicated markup on
+							     the page. On a narrow screen she leaves the pavement and comes
+							     to sit on the top edge of her own text box, which is a move no
+							     stylesheet can make: the café portrait lives in the other grid
+							     column, and absolute positioning cannot cross into a sibling's
+							     box. Exactly one of the two is ever in the layout — and
+							     `display: none` takes the other out of the accessibility tree
+							     with it, so a screen reader never meets her twice. -->
+							<div
+								class="chibi hero__chibi"
+								data-chibi="hero"
+								style="--in-delay: 220ms"
+							>
+								<img
+									src="static/PixelArt/myChibi-cropped.png"
+									alt="Pixel-art portrait of Dimah"
+									width="323"
+									height="326"
+								/>
+								<img
+									class="chibi__sunflower chibi__sunflower--left"
+									src="static/PixelArt/sunflower.png"
+									alt=""
+									width="110"
+									height="109"
+								/>
+							</div>
 
+							<!-- Her voice. Clicking anywhere in here moves to the next line of
+							     the café intro; the ▼ is the same action made focusable, and
+							     its click bubbles up to the one handler on the panel. -->
+							<div
+								class="saypanel saypanel--hero"
+								data-saybox
+								style="--in-delay: 420ms"
+							>
+								<p class="saypanel__who">Dimah</p>
+								<!-- The intro copy sits here in full so the page reads with
+								     JavaScript off. The typewriter clears it and retypes it. -->
+								<p class="saypanel__line saypanel__line--reserved" data-intro-line>
+									<span class="saypanel__said"
+										><span data-intro-text
+											>I'm an IT student who likes cute things, music, and
+											<strong>coffee!</strong></span
+										><span class="caret" data-caret>|</span></span
+									>
+								</p>
+								<button
+									class="saypanel__next"
+									type="button"
+									data-intro-next
+									hidden
+									aria-label="Next"
+								>
+									▼
+								</button>
+							</div>
+						</div>
+					</div>
 
+					<!-- The shop, with Dimah standing outside it. The adjacency is the
+					     point: it is her café, and the box on the left is her voice. -->
+					<div class="hero__scene">
+						<img
+							class="hero__shop"
+							src="static/PixelArt/cafe_sprite.png"
+							alt="A pixel-art café with a striped awning, flower boxes and a tree beside it. The sign reads Buttercup Café."
+							width="1413"
+							height="1041"
+							fetchpriority="high"
+						/>
 
+						<div class="chibi" data-chibi="hero" style="--in-delay: 220ms">
+							<img
+								src="static/PixelArt/myChibi-cropped.png"
+								alt="Pixel-art portrait of Dimah, standing outside the café"
+								width="323"
+								height="326"
+							/>
+							<img
+								class="chibi__sunflower chibi__sunflower--left"
+								src="static/PixelArt/sunflower.png"
+								alt=""
+								width="110"
+								height="109"
+							/>
+						</div>
+					</div>
+				</div>
 
-    <!-- --------------------------------------------------------------------------------------------------------------- -->
-    <!-- Blackboard Section -->
-    <!-- --------------------------------------------------------------------------------------------------------------- -->
+				<a class="hero__cue" href="#qa">
+					<span>come on in</span>
+					<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+						<path
+							d="M12 5v14m0 0-6-6m6 6 6-6"
+							stroke="currentColor"
+							stroke-width="2"
+							stroke-linecap="round"
+							stroke-linejoin="round"
+						/>
+					</svg>
+				</a>
+			</section>
 
+			<div class="divider" role="presentation"></div>
 
-    <div id="blackboard-section" class="mt-10">
-        <h1 class="font-serif text-4xl text-center mb-10">Q&A Board !</h1>
+			<!-- ==============================================================
+			     Q&A — the jar of folded questions
+			     =========================================================== -->
+			<section class="section section--room" id="qa" data-qa-section>
+				<div class="wrap">
+					<div class="section-head">
+						<p class="eyebrow">have a seat</p>
+						<h2>Q&amp;A Jar !</h2>
+					</div>
 
-        <div class="w-full flex justify-center ">
-            <div class="relative w-full md:max-w-[66%] max-w-[98%] px-4">
-                <div class="flex flex-col  gap-8">
+					<div class="qa">
+						<!-- The jar is the enhancement, not the content. It is hidden
+						     until <html> is stamped `.js`, and hidden again under
+						     reduced motion — both in CSS, so a reader who changes the
+						     setting gets the right one of the two without a reload.
+						     The list below it is the thing that always ships.
 
-                    <!-- Blackboard with shadow  -->
-                    <div class="relative flex justify-center">
-                        <!-- Blackboard - -->
-                        <div
-                            class="bg-[#4F5A5D] shadow-2xl max-w-[700px] md:w-full md:h-[400px] w-full h-[360px]  md:p-12 relative md:border-[22px] border-[18px] border-brown-200 border-solid">
+						     Everything here is an empty shell: js/modules/jar.js fills
+						     the slips and every piece of text from js/data/qa.js. -->
+						<div class="qa__stage" data-qa-stage>
+							<!-- Furniture. It stands behind the jar and is partly seen
+							     *through* it, which is the cheapest proof the glass is
+							     glass — a highlight only suggests transparency, something
+							     legible behind it settles the question. Decorative, so
+							     `alt=""`: a screen reader gets nothing from a houseplant,
+							     and the questions are the content here. -->
+							<img
+								class="qa__plant"
+								src="static/PixelArt/snake-plant.png"
+								alt=""
+								role="presentation"
+								width="549"
+								height="454"
+								loading="lazy"
+							/>
 
-                            <!-- Grid of main questions (initial state) -->
-                            <div id="blackboard-questions"
-                                class="grid grid-cols-1 md:grid-cols-2 gap-y-8 md:gap-x-16 md:gap-y-12 h-full absolute inset-0 md:p-12 p-6 transition-opacity duration-300">
+							<!-- The jar itself is a drawing; only what is *inside* the
+							     glass is drawn in CSS. The cavity comes first so the art
+							     lies over it — the lid overlapping the topmost slip and
+							     the walls cutting off the widest one is what puts the
+							     paper inside the jar rather than in front of it. -->
+							<div class="jar">
+								<div class="jar__cavity">
+									<!-- `role="list"` is not redundant: `list-style: none`
+									     strips list semantics in Safari, and this <ul>
+									     carries a label that only means something if it is
+									     still announced as a list. -->
+									<ul
+										class="jar__slips"
+										role="list"
+										data-jar-slips
+										aria-label="Folded questions in the jar"
+									></ul>
+									<div class="jar__shine" role="presentation"></div>
+								</div>
+								<img
+									class="jar__art"
+									src="static/PixelArt/Jar.png"
+									alt=""
+									role="presentation"
+									width="549"
+									height="454"
+								/>
+							</div>
 
-                                <!-- Education -->
-                                <button onclick="blackboardQA.selectQuestion('education')"
-                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
-                                    <img src="./static/PixelArt/tinyFlower.png"
-                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
-                                    <span
-                                        class="text-white font-serif text-2xl group-hover:text-gray-200">Education</span>
-                                </button>
+							<!-- The note is one square sheet folded in half twice, so
+							     it opens into four quadrants around a cross of creases.
+							     The top-left quadrant is the cover — the question, and the
+							     only thing you can read through the glass.
 
-                                <!-- Projects -->
-                                <button onclick="blackboardQA.selectQuestion('projects')"
-                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
-                                    <img src="./static/PixelArt/tinyFlower.png"
-                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
-                                    <span
-                                        class="text-white font-serif text-2xl group-hover:text-gray-200">Projects</span>
-                                </button>
+							     Fold 1 swings the right half out on the vertical crease.
+							     Fold 2 swings the bottom half down on the horizontal one.
+							     That is the reverse of the order it was folded in, which is
+							     the only order paper can be opened in.
 
-                                <!-- Music -->
-                                <button onclick="blackboardQA.selectQuestion('music')"
-                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
-                                    <img src="./static/PixelArt/tinyFlower.png"
-                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
-                                    <span class="text-white font-serif text-2xl group-hover:text-gray-200">Music</span>
-                                </button>
+							     The right half spans both rows and the bottom half spans
+							     both columns, so the two halves cross — and no element can
+							     be a child of both. The bottom-right quadrant is therefore
+							     nested inside the top-right one, where it rides the first
+							     fold, and shares the second fold's class with the
+							     bottom-left one so that the pair always swings at the same
+							     angle and reads as one unbroken band of paper.
 
-                                <!-- Cats or dogs? -->
-                                <button onclick="blackboardQA.selectQuestion('cats-dogs')"
-                                    class="flex items-center gap-3 hover:scale-105 transition-transform duration-200 cursor-pointer text-left group">
-                                    <img src="./static/PixelArt/tinyFlower.png"
-                                        class="w-6 group-hover:scale-110 transition-transform" alt="">
-                                    <span class="text-white font-serif text-2xl group-hover:text-gray-200">Cats or
-                                        dogs?</span>
-                                </button>
+							     Each flap carries two faces: `.note__sheet` is the printed
+							     side and `.note__lining` is the blank back, turned away with
+							     rotateY. Both hide their own backface, so which of the two
+							     you are looking at falls out of the geometry rather than
+							     being timed — a flap shows its underside through the first
+							     half of its swing and its printed side through the second,
+							     in both directions, with nothing to keep in sync.
 
-                            </div>
+							     The cover has no lining because it never turns over. -->
+							<article class="note" data-qa-note>
+								<div class="note__quad note__quad--q">
+									<div class="note__sheet">
+										<h3 class="note__q" data-qa-question></h3>
+										<button
+											class="note__pull"
+											type="button"
+											data-qa-unfold
+										>
+											unfold<span class="note__pull-arrow">▶</span>
+										</button>
+										<button
+											class="note__away"
+											type="button"
+											data-qa-away
+											aria-label="Fold it up and put it back in the jar"
+										>
+											×
+										</button>
+									</div>
 
-                            <!-- Follow-up questions container (hidden by default) - ABSOLUTE POSITIONED -->
-                            <div id="blackboard-followups"
-                                class="hidden grid grid-cols md:grid-cols-2 gap-x-16 gap-y-12 h-full absolute inset-0 p-12 transition-opacity duration-300">
-                                <!-- Content will be dynamically inserted by JavaScript -->
-                            </div>
+									<!-- top right, across the vertical crease -->
+									<div class="note__quad note__quad--a">
+										<div class="note__lining note__lining--v"></div>
+										<div class="note__sheet">
+											<p class="note__text" data-qa-answer></p>
+											<button
+												class="note__pull"
+												type="button"
+												data-qa-unfold
+											>
+												there's a doodle<span class="note__pull-arrow"
+													>▼</span
+												>
+											</button>
+										</div>
 
-                        </div>
-                    </div>
-                </div>
+										<!-- bottom right: nested here so it rides the fold
+										     above, and classed with the fold below -->
+										<div class="note__quad note__quad--caption">
+											<div class="note__lining note__lining--h"></div>
+											<div class="note__sheet">
+												<p
+													class="note__caption"
+													data-qa-caption
+												></p>
+											</div>
+										</div>
+									</div>
 
-                <!-- Chibi and Chat/Dialogue -->
+									<!-- bottom left, across the horizontal crease -->
+									<div class="note__quad note__quad--art">
+										<div class="note__lining note__lining--h"></div>
+										<div class="note__sheet">
+											<div
+												class="note__art"
+												data-qa-art
+												role="presentation"
+											></div>
+										</div>
+									</div>
+								</div>
+							</article>
+						</div>
 
-                <div class=" md:flex-row md:w-fit">
-                    <!-- Chat bubble (ALONE) -->
-                    <div class="relative     translate-x-8 md:w-64 w-48 flex items-end justify-center mb-2">
-                        <div id="blackboard-chat-bubble" class="opacity-0 transition-opacity duration-300">
-                            <img src="./static/chat-bubble-mirrored.png" class="w-64">
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <span class="text-xl md:text-2xl font-serif transform -translate-y-2">
-                                    ASK ME ANYTHING
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-    
-                    <!-- Chibi + Dialogue grouped together -->
-                    <div class="flex items-center justify-center gap-6 relative mb-10">
-    
-                        <!-- Chibi circle -->
-                        <div id="blackboard-chibi"
-                            class="bg-orange-200 flex justify-center w-82 md:w-52 rounded-full md:p-7 p-4 relative">
-                            <img src="./static/PixelArt/myChibi-cropped.png" alt="Pixel art chibi">
-                            <img src="./static/PixelArt/sunflower.png"
-                                class="absolute w-10 md:w-14 bottom-0 right-0 translate-x-2 translate-y-2" alt="">
-                        </div>
-    
-                        <!-- Dialogue Box -->
-                        <div id="blackboard-dialogue"
-                            class="bg-off-white rounded-lg w-[54rem] min-h-[10rem] p-7 px-9 relative opacity-0 border-2 border-black transition-opacity duration-400">
-                            <p class="text-m font-serif">
-                                <span id="blackboard-answer"></span>
-                                <span id="blackboard-cursor" class="cursor-hidden cursor-blink">|</span>
-                            </p>
-    
-                            <img src="./static/PixelArt/tinyFlower.png"
-                                class="absolute w-8 top-0 right-0 translate-x-4 -translate-y-2" alt="">
-                        </div>
-    
-                    </div>
-                </div>
+						<!-- She leans in from the corner of the room. The jar is the
+						     centrepiece, so she is placed against the stage rather than
+						     given a column of her own to sit in. -->
+						<div class="qa__host">
+							<p
+								class="bubble"
+								data-qa-bubble
+								style="--tail-x: 2.5rem; --in-delay: 300ms"
+							>
+								Ask me anything !
+							</p>
+							<div
+								class="chibi"
+								data-chibi="qa"
+								style="--chibi-bg: var(--peach-deep); --in-delay: 0ms"
+							>
+								<img
+									src="static/PixelArt/myChibi-cropped.png"
+									alt=""
+									width="323"
+									height="326"
+								/>
+								<img
+									class="chibi__sunflower chibi__sunflower--right"
+									src="static/PixelArt/sunflower.png"
+									alt=""
+									width="110"
+									height="109"
+								/>
+							</div>
+						</div>
+					</div>
 
+					<!-- The calm version, and the only one a crawler or a reader with
+					     no JavaScript ever sees. A <details> is already a fold, so this
+					     needs no script to work. Generated from js/data/qa.js — if the
+					     copy there changes, regenerate rather than retyping. -->
+					<div class="qa__list">
+						<details class="qa-note">
+							<summary>Education</summary>
+							<p>
+								I'm a Master's student in IT with a focus on Computer Graphics
+								and Human-Computer interactions. I love exploring how technology
+								can create beautiful experiences, especially in AR settings.
+							</p>
+							<details class="qa-note qa-note--sub">
+								<summary>Which university?</summary>
+								<p>I'm studying at Institut Polytechnique de Paris!</p>
+							</details>
+							<details class="qa-note qa-note--sub">
+								<summary>Key skills?</summary>
+								<p>
+									I've developed skills in Unity 3D, C++, and JavaScript. And I
+									learned a lot about usability and design throughout my
+									studies.
+								</p>
+							</details>
+						</details>
+						<details class="qa-note">
+							<summary>Projects</summary>
+							<p>I have lots of projects .. Check them out below !</p>
+							<details class="qa-note qa-note--sub">
+								<summary>Favorite project?</summary>
+								<p>
+									My favorite project is the AR Pathfinding system for
+									Parkinson's patients. It was my personal research project
+									where I got to see a real impact on patients who suffered from
+									mobility issues. It was an example of how technology can make
+									people's lives a bit better and it's what I would love to work
+									on in the future.
+								</p>
+							</details>
+							<details class="qa-note qa-note--sub">
+								<summary>Future plans?</summary>
+								<p>
+									I want to explore more AR/VR applications in healthcare and
+									education. The potential to create accessible, helpful
+									technology really motivates me!
+								</p>
+							</details>
+						</details>
+						<details class="qa-note">
+							<summary>Music</summary>
+							<p>I love music .. what would you like to know ?</p>
+							<details class="qa-note qa-note--sub">
+								<summary>What instruments?</summary>
+								<p>I play piano, guitar, and violin!</p>
+							</details>
+							<details class="qa-note qa-note--sub">
+								<summary>Favorite genres?</summary>
+								<p>I love Heavy Metal and Electro.</p>
+							</details>
+						</details>
+						<details class="qa-note">
+							<summary>Cats or dogs?</summary>
+							<p>Definitely cats! 🐱</p>
+							<details class="qa-note qa-note--sub">
+								<summary>Do you have a cat?</summary>
+								<p>Sadly not, I've never had one .. But I can't wait !</p>
+							</details>
+							<details class="qa-note qa-note--sub">
+								<summary>Why cats?</summary>
+								<p>
+									Cats are like elegant code - efficient, independent, and
+									sometimes unpredictable! They respect your space but show
+									affection on their own terms.
+								</p>
+							</details>
+						</details>
+					</div>
+				</div>
+			</section>
 
-            </div>
-        </div>
-    </div>
+			<div class="divider" role="presentation"></div>
 
-    <div
-        class="bg-[url(./static/background.svg)] md:bg-[length:512px_512px] bg-[length:400px_400px] bg-repeat md:h-32 h-20 w-full">
-    </div>
+			<!-- ==============================================================
+			     Project board
 
+			     These eight cards are static HTML on purpose. If the board were
+			     rendered from js/projects.data.js, crawlers and no-JS visitors
+			     would find no links at all on the site's most important page.
+			     The cost is that title / tags / blurb are duplicated between
+			     here and the data file — eight short blocks that change a
+			     couple of times a year. Worth it.
+			     =========================================================== -->
+			<section class="section board-section" id="work">
+				<div class="wrap">
+					<div class="section-head">
+						<p class="eyebrow">on the table</p>
+						<h2>My Projects !</h2>
+					</div>
 
+					<div class="board" data-board>
+						<a
+							class="card paper stitch t-moss"
+							href="project.html?id=ar-pathfinding"
+							draggable="false"
+							style="--i: 0; --z: 1; --rest-x: -0.75rem; --rest-rot: -3.5deg"
+						>
+							<span class="plaque card__plaque"
+								>ISMAR Best Poster Award 2025</span
+							>
+							<h3 class="card__title">
+								Adaptive Augmented Reality Pathfinding for Parkinson's Disease
+							</h3>
+							<ul class="chips">
+								<li class="chip">Unity 3D</li>
+								<li class="chip">HCI</li>
+								<li class="chip">Mixed Reality</li>
+							</ul>
+							<p class="card__desc">
+								AR system using Meta Quest 3 integrating dynamic visual cues to
+								help Parkinson's patients navigate complex spaces
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-    <!-- --------------------------------------------------------------------------------------------------------------- -->
-    <!-- Projects Section -->
-    <!-- --------------------------------------------------------------------------------------------------------------- -->
+						<a
+							class="card paper stitch t-peach"
+							href="project.html?id=gaussian-splatting"
+							draggable="false"
+							style="--i: 1; --z: 2; --rest-x: 0.75rem; --rest-rot: 2.5deg"
+						>
+							<h3 class="card__title">
+								Interactive Manipulation of Objects for 3D Gaussian Splatting
+							</h3>
+							<ul class="chips">
+								<li class="chip">WebGL</li>
+								<li class="chip">JavaScript</li>
+								<li class="chip">GLSL</li>
+							</ul>
+							<p class="card__desc">
+								Interactive 3D scene editing system with multi-modal
+								segmentation and hit-testing algorithm
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-    <div class="my-20">
-        <h1 class="font-serif text-4xl mb-12 text-center">My Projects !</h1>
+						<a
+							class="card paper stitch t-butter"
+							href="project.html?id=line-vectorization"
+							draggable="false"
+							style="--i: 2; --z: 3; --rest-x: -0.5rem; --rest-rot: 1.5deg"
+						>
+							<h3 class="card__title">Line Drawing Vectorization</h3>
+							<ul class="chips">
+								<li class="chip">Python</li>
+								<li class="chip">Computer Graphics</li>
+							</ul>
+							<p class="card__desc">
+								Bitmap-to-vector conversion system for hand-drawn sketches using
+								skeleton extraction and topological graph construction
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-        <!-- Cards Container - Responsive: vertical on mobile, grid on desktop -->
-        <div
-            class="flex flex-col items-center lg:grid lg:grid-cols-2 lg:gap-x-16 lg:gap-y-8 lg:justify-items-center max-w-5xl mx-auto">
+						<a
+							class="card paper stitch t-peach"
+							href="project.html?id=smart-wardrobe"
+							draggable="false"
+							style="--i: 3; --z: 4; --rest-x: 0.5rem; --rest-rot: -2.5deg"
+						>
+							<h3 class="card__title">A wardrobe against over-consumption</h3>
+							<ul class="chips">
+								<li class="chip">Critical User Experience</li>
+								<li class="chip">Design</li>
+							</ul>
+							<p class="card__desc">
+								The "Smart Wardrobe" is a concept — a design intervention that
+								directly addresses the problem of clothing overconsumption by
+								creating a <strong>physical</strong> constraint mechanism, unlike
+								digital solutions that rely on willpower alone.
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-            <!-- Row 1, Card 1 - Top Left -->
-            <a href="project-details-research.html">
-                <div
-                    class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 lg:-rotate-6 z-10 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                    <div
-                        class="relative p-4 pt-6 lg:p-6 lg:pt-8 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <span
-                            class="absolute overflow-hidden px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-m w-fit right-2 top-2 text-gray-800 bg-gradient-to-br from-gray-50 via-gray-150 to-gray-200 shadow-inner shadow-white/50">
-                            ISMAR BEST POSTER AWARD 2025
-                        </span>
-                        <h2 class="mt-2 font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            Adaptive Augmented Reality Pathfinding for Parkinson's Disease
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Unity
-                                3D</span>
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">HCI</span>
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Mixed
-                                Reality</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            AR system using Meta Quest 3 integrating dynamic visual cues to help Parkinson's patients
-                            navigate complex spaces
-                        </p>
-                    </div>
-                </div>
-            </a>
+						<a
+							class="card paper stitch t-moss"
+							href="project.html?id=coffee-dataviz"
+							draggable="false"
+							style="--i: 4; --z: 5; --rest-x: -0.75rem; --rest-rot: 2deg"
+						>
+							<h3 class="card__title">Coffee Data Visualization Platform</h3>
+							<ul class="chips">
+								<li class="chip">D3.js</li>
+								<li class="chip">React</li>
+								<li class="chip">Data Viz</li>
+							</ul>
+							<p class="card__desc">
+								Interactive visualization platform for exploring global coffee
+								trade patterns and sustainability metrics
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-            <!-- Row 1, Card 2 - Top Right -->
-            <a href="project-details-gaussians.html">
-                <div
-                    class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-0 z-20 lg:rotate-3 lg:z-12 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            Interactive Manipulation of Objects for 3D Gaussian Splatting
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">WebGL</span>
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">JavaScript</span>
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">GLSL</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            Interactive 3D scene editing system with multi-modal segmentation and hit-testing algorithm
-                        </p>
-                    </div>
-                </div>
-            </a>
+						<a
+							class="card paper stitch t-butter"
+							href="project.html?id=gateway"
+							draggable="false"
+							style="--i: 5; --z: 6; --rest-x: 0.75rem; --rest-rot: -1.5deg"
+						>
+							<span class="plaque card__plaque">Internship</span>
+							<h3 class="card__title">
+								GATEwAY, Graph Theory for Conformational Dynamics Analyses
+							</h3>
+							<ul class="chips">
+								<li class="chip">C++</li>
+								<li class="chip">Software Development</li>
+							</ul>
+							<p class="card__desc">
+								Rewriting and optimizing GATEwAY, a post-processing tool designed
+								to automatically analyze conformational changes in molecular
+								dynamics (MD) simulation data.
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-            <!-- Row 2 - Single card spanning both columns, centered -->
-            <div
-                class="lg:col-span-2 w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-yellow shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-2 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-30 lg:rotate-1 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <a href="project-details-svg.html">
-                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            Line Drawing Vectorization
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                            <span
-                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Python</span>
-                            <span
-                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Computer
-                                Graphics</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            Bitmap-to-vector conversion system for hand-drawn sketches using skeleton extraction and
-                            topological graph construction
-                        </p>
-                    </div>
-                </a>
-            </div>
+						<a
+							class="card paper stitch t-moss"
+							href="project.html?id=goodreads"
+							draggable="false"
+							style="--i: 6; --z: 7; --rest-x: -0.5rem; --rest-rot: -3deg"
+						>
+							<h3 class="card__title">Goodreads Usability Study</h3>
+							<ul class="chips">
+								<li class="chip">Quantitative UX</li>
+								<li class="chip">Python</li>
+								<li class="chip">Data Analysis</li>
+							</ul>
+							<p class="card__desc">
+								A quantitative user experience (UX) study conducted on the
+								Goodreads website. The project aimed to evaluate how intuitive,
+								efficient, and satisfying the process is for users when finding a
+								book recommendation
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
 
-            <!-- Row 3, Card 4 - Bottom Left -->
-            <a href="project-details-wardrobe.html"
-                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-40 lg:-rotate-6 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                    <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                        A wardrobe against over-consumption
-                    </h2>
-                    <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                        <span
-                            class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Critical
-                            User Experience</span>
-                        <span
-                            class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Design</span>
-                    </div>
-                    <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
+						<a
+							class="card paper stitch t-peach"
+							href="project.html?id=ar-city-builder"
+							draggable="false"
+							style="--i: 7; --z: 8; --rest-x: 0.5rem; --rest-rot: 2.5deg"
+						>
+							<h3 class="card__title">AR City Builder Game</h3>
+							<ul class="chips">
+								<li class="chip">Unity</li>
+								<li class="chip">C#</li>
+								<li class="chip">AR</li>
+								<li class="chip">Tangible interactions</li>
+							</ul>
+							<p class="card__desc">
+								An augmented reality urban planning game that brings city
+								management into the physical world through tangible interaction.
+							</p>
+							<span class="card__more">read the case study →</span>
+						</a>
+					</div>
 
-                        The "Smart Wardrobe" is concept—a design intervention that directly addresses the problem of
-                        clothing overconsumption by creating a <strong>physical</strong> constraint mechanism,
-                        unlike digital solutions
-                        that rely on willpower alone.
-                    </p>
-                </div>
-            </a>
+					<div class="board__foot">
+						<button class="btn board__toss" type="button" data-toss>
+							<svg
+								viewBox="0 0 24 24"
+								fill="none"
+								aria-hidden="true"
+								width="18"
+								height="18"
+							>
+								<path
+									d="M20 11.5A8 8 0 1 1 17.6 6M20 4v5h-5"
+									stroke="currentColor"
+									stroke-width="2"
+									stroke-linecap="round"
+									stroke-linejoin="round"
+								/>
+							</svg>
+							Toss the cards
+						</button>
+					</div>
+				</div>
+			</section>
+		</main>
 
-            <!-- Row 3, Card 5 - Bottom Right -->
-            <div
-                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[50] lg:rotate-3 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <a href="project-details-dataviz.html">
+		<!-- ==================================================================
+		     Footer
 
-                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            Coffee Data Visualization Platform
+		     ┌──────────────────────────────────────────────────────────────┐
+		     │ TODO Dimah — replace these three placeholders with your real  │
+		     │ details. They are the only invented values on the whole site. │
+		     │   1. the mailto: address                                      │
+		     │   2. the GitHub profile URL                                   │
+		     │   3. the LinkedIn profile URL                                 │
+		     └──────────────────────────────────────────────────────────────┘
+		     =============================================================== -->
+		<footer class="footer" id="hello">
+			<div class="wrap">
+				<p class="footer__sign">thanks for stopping by ☕</p>
 
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
+				<div class="footer__links">
+					<a class="chip-link stitch" href="mailto:TODO@example.com">
+						<svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+							<rect
+								x="2.5"
+								y="4.5"
+								width="19"
+								height="15"
+								rx="2.5"
+								stroke="currentColor"
+								stroke-width="1.8"
+							/>
+							<path
+								d="m3 7 9 6 9-6"
+								stroke="currentColor"
+								stroke-width="1.8"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+						email
+					</a>
 
+					<a
+						class="chip-link stitch"
+						href="https://github.com/TODO"
+						rel="me noopener"
+					>
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path
+								d="M12 2a10 10 0 0 0-3.16 19.49c.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.45-1.16-1.11-1.47-1.11-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.9 1.53 2.36 1.09 2.93.83.09-.65.35-1.09.63-1.34-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.27.1-2.65 0 0 .84-.27 2.75 1.02a9.5 9.5 0 0 1 5 0c1.91-1.29 2.75-1.02 2.75-1.02.55 1.38.2 2.4.1 2.65.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.68.92.68 1.85v2.74c0 .27.18.58.69.48A10 10 0 0 0 12 2Z"
+							/>
+						</svg>
+						github
+					</a>
 
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">D3.js</span>
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">React</span>
-                            <span
-                                class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Data
-                                Viz</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            Interactive visualization platform for exploring global coffee trade patterns and
-                            sustainability metrics
-                        </p>
-                    </div>
-                </a>
-            </div>
+					<a
+						class="chip-link stitch"
+						href="https://www.linkedin.com/in/TODO"
+						rel="me noopener"
+					>
+						<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+							<path
+								d="M4.98 3.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5ZM3 9h4v12H3V9Zm6.5 0h3.8v1.65h.05c.53-.95 1.83-1.95 3.77-1.95 4.03 0 4.78 2.5 4.78 5.75V21h-4v-5.7c0-1.36-.03-3.11-1.95-3.11-1.95 0-2.25 1.48-2.25 3.01V21h-4V9Z"
+							/>
+						</svg>
+						linkedin
+					</a>
+				</div>
 
-            <div
-                class="lg:col-span-2 w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-yellow shadow-xl rounded-lg p-2 lg:p-3 transform rotate-2 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[60] lg:rotate-1 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <a href="project-details-gateway.html">
-                    <div
-                        class="relative p-4 pt-6 lg:p-6 lg:pt-8 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <span
-                            class="absolute overflow-hidden px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-m w-fit right-2 top-2 text-gray-800 bg-gradient-to-br from-gray-50 via-gray-150 to-gray-200 shadow-inner shadow-white/50">
-                            INTERNSHIP
-                        </span>
-
-                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            GATEwAY, Graph Theory for Conformational Dynamics Analyses
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                            <span
-                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">C++</span>
-                            <span
-                                class="bg-yellow-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Software
-                                Developement</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            Rewriting and optimizing GATEwAY (Graph Theory for Conformational Dynamics Analyses), a
-                            post-processing tool designed to automatically analyze conformational changes in molecular
-                            dynamics (MD) simulation data.
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-            <a href="project-details-goodreads.html"
-                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-green shadow-xl rounded-lg p-2 lg:p-3 transform -rotate-3 -translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[70] lg:-rotate-6 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                    <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                        Goodreads Usability Study
-                    </h2>
-                    <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                        <span
-                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Quantitative
-                            UX</span>
-                        <span
-                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Python</span>
-                        <span
-                            class="bg-green-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Data
-                            Analysis</span>
-                    </div>
-                    <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                        A quantitative user experience (UX) study conducted on the GoodReads website. The project aimed
-                        to
-                        evaluate how intuitive, efficient, and satisfying the process is for users when finding a book
-                        recommendation
-                    </p>
-                </div>
-            </a>
-
-            <!-- Row 3, Card 5 - Bottom Right -->
-            <div
-                class="w-[320px] h-[240px] lg:w-[430px] lg:h-[320px] bg-orange shadow-xl rounded-lg p-2 lg:p-3 transform rotate-3 translate-x-4 lg:translate-x-0 -mt-12 lg:-mt-24 z-[90] lg:rotate-3 lg:z-20 hover:rotate-0 hover:scale-105 hover:z-100 hover:shadow-2xl transition-all duration-300 ease-in-out cursor-pointer">
-                <a href="project-details-ARCity.html">
-
-                    <div class="p-4 lg:p-6 h-full flex flex-col border-dashed border-[3px] rounded-lg border-white">
-                        <h2 class="font-serif text-base lg:text-xl font-semibold mb-2 lg:mb-3 leading-tight">
-                            AR City Builder Game
-                        </h2>
-                        <div class="flex flex-wrap gap-1 lg:gap-2 mb-2 lg:mb-4">
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Unity</span>
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">C#</span>
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">AR</span>
-                            <span
-                                class="bg-orange-200 px-1.5 lg:px-2 py-[2px] lg:py-[3px] font-serif text-xs lg:text-sm">Tangible
-                                interactions</span>
-                        </div>
-                        <p class="text-xs lg:text-sm font-serif leading-relaxed text-gray-800 flex-grow">
-                            An augmented reality urban planning game that brings city management into the physical world
-                            through tangible interaction.
-                        </p>
-                    </div>
-                </a>
-            </div>
-
-        </div>
-    </div>
-
-
-    <!-- Load scripts in correct order -->
-    <script src="typewriter.js"></script>
-    <script src="content-data.js"></script>
-    <script src="intro-typewriter.js"></script>
-    <script src="blackboard.js"></script>
-    <script src="animate_chatbubble.js"></script>
-    <script src="section-animations.js"></script> <!-- Add this line -->
-    <script src="main.js"></script>
-
-</body>
-
+				<p class="footer__meta">
+					<span
+						>© <span data-year>2026</span> Dimah · made with too much coffee</span
+					>
+					<a class="footer__top" href="#top">
+						<svg
+							viewBox="0 0 24 24"
+							fill="none"
+							aria-hidden="true"
+							width="14"
+							height="14"
+						>
+							<path
+								d="M12 19V5m0 0 6 6m-6-6-6 6"
+								stroke="currentColor"
+								stroke-width="2"
+								stroke-linecap="round"
+								stroke-linejoin="round"
+							/>
+						</svg>
+						back to top
+					</a>
+				</p>
+			</div>
+		</footer>
+	</body>
 </html>

@@ -1,0 +1,11 @@
+<svg viewBox="0 0 900 1080" preserveAspectRatio="xMaxYMid slice" aria-hidden="true" style="position: absolute; right: 0; top: 0; width: 900px; height: 1080px; opacity: 0.9; -webkit-mask-image: linear-gradient(to left, #000 8%, transparent 78%); mask-image: linear-gradient(to left, #000 8%, transparent 78%);">
+            <g stroke="#0e8f88" stroke-width="1" fill="none" opacity="0.55">
+              <path d="M120 180 L360 96 L640 232 L860 140"></path><path d="M120 180 L300 372 L640 232"></path><path d="M300 372 L560 470 L860 380"></path><path d="M560 470 L420 700 L700 792"></path><path d="M420 700 L180 620 L300 372"></path><path d="M700 792 L860 620 L860 380"></path><path d="M700 792 L520 960 L240 900 L180 620"></path><path d="M520 960 L860 900"></path><path d="M640 232 L860 380"></path><path d="M360 96 L180 620"></path>
+            </g>
+            <g fill="#0e8f88">
+              <circle cx="120" cy="180" r="5"></circle><circle cx="360" cy="96" r="3.5"></circle><circle cx="640" cy="232" r="7"></circle><circle cx="860" cy="140" r="3.5"></circle><circle cx="300" cy="372" r="6"></circle><circle cx="560" cy="470" r="9"></circle><circle cx="860" cy="380" r="4"></circle><circle cx="420" cy="700" r="6"></circle><circle cx="180" cy="620" r="4"></circle><circle cx="700" cy="792" r="7.5"></circle><circle cx="860" cy="620" r="3.5"></circle><circle cx="520" cy="960" r="5"></circle><circle cx="240" cy="900" r="3.5"></circle><circle cx="860" cy="900" r="4"></circle>
+            </g>
+            <g fill="none" stroke="#0e8f88" stroke-width="1" opacity="0.5">
+              <circle cx="560" cy="470" r="22"></circle><circle cx="700" cy="792" r="18"></circle><circle cx="640" cy="232" r="16"></circle>
+            </g>
+          </svg>

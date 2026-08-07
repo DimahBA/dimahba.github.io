@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>Nothing brewing here — Dimah</title>
+		<meta name="description" content="That page doesn't exist. Come back to the café." />
+		<meta name="robots" content="noindex" />
+		<meta name="theme-color" content="#cdd8b7" />
+
+		<link rel="icon" href="/static/PixelArt/myChibi-cropped.png" type="image/png" />
+
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&amp;family=Space+Grotesk:wght@400..700&amp;display=swap"
+		/>
+
+		<link rel="stylesheet" href="/css/base.css" />
+		<link rel="stylesheet" href="/css/components.css" />
+
+		<style>
+			body {
+				display: grid;
+				place-items: center;
+				min-height: 100svh;
+				padding: var(--gutter);
+				background: var(--bg-desk);
+				text-align: center;
+			}
+
+			.lost {
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				gap: var(--sp-5);
+				max-width: 30rem;
+			}
+
+			.lost__code {
+				font-family: var(--ff-display);
+				font-size: var(--fs-200);
+				font-weight: 600;
+				letter-spacing: 0.2em;
+				text-transform: uppercase;
+				color: color-mix(in oklab, var(--ink) 50%, var(--sage));
+			}
+
+			.lost h1 {
+				font-size: var(--fs-700);
+			}
+
+			.lost p {
+				color: color-mix(in oklab, var(--ink) 78%, var(--sage));
+			}
+		</style>
+	</head>
+
+	<body>
+		<main class="lost">
+			<div class="chibi is-in">
+				<img
+					src="/static/PixelArt/myChibi-cropped.png"
+					alt="Pixel-art portrait of Dimah, looking a little puzzled"
+					width="323"
+					height="326"
+				/>
+				<img
+					class="chibi__sunflower chibi__sunflower--left"
+					src="/static/PixelArt/sunflower.png"
+					alt=""
+					width="110"
+					height="109"
+				/>
+			</div>
+
+			<p class="lost__code">404 · nothing brewing</p>
+			<h1>This table doesn't exist</h1>
+			<p>
+				The page you were after isn't here — it may have been renamed, or the
+				link might have a typo in it. The coffee's still on, though.
+			</p>
+
+			<a class="btn" href="/">← back to the café</a>
+		</main>
+	</body>
+</html>

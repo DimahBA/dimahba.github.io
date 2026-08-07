@@ -1,0 +1,1543 @@
+/* ==========================================================================
+   Buttercup Café — components
+   The stitch primitive and everything built on top of it. Loaded on every
+   page, because the case-study pages reuse the same vocabulary.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. The stitch
+   The signature visual: a dashed thread running inside the edge of a sheet
+   of paper. One element, one pseudo, themeable with two custom properties.
+
+   Three details that all bite if you get them wrong:
+   · `isolation: isolate` — the pseudo uses z-index:-1 so it paints above the
+     element's own background but below its content. Without a stacking
+     context of its own, -1 would drop it behind the background and vanish.
+   · the radius is `parent − inset`, NOT `inherit`. An inset ring given the
+     parent's radius has a visibly too-round corner arc.
+   · padding is derived from the same token, or text collides with the thread.
+   -------------------------------------------------------------------------- */
+
+.stitch {
+	position: relative;
+	isolation: isolate;
+	border-radius: var(--r-card);
+}
+
+.stitch::before {
+	content: "";
+	position: absolute;
+	inset: var(--stitch-inset);
+	z-index: -1;
+	border: var(--stitch-w) dashed var(--stitch-color);
+	border-radius: max(0px, calc(var(--r-card) - var(--stitch-inset)));
+	pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   2. Paper
+   A plain sheet. The cards and the case-study body are both this, with
+   different fills and thread colours.
+   -------------------------------------------------------------------------- */
+
+.paper {
+	background: var(--card-bg, var(--paper));
+	box-shadow: var(--shadow-paper);
+	padding: calc(var(--stitch-inset) + var(--stitch-w) + var(--sp-4));
+}
+
+/* --------------------------------------------------------------------------
+   3. Project card
+   Physical paper on a desk. The transform is split across three independent
+   CSS properties so that the things that want to move a card can never
+   overwrite one another:
+
+     translate  ← position (authored rest offset, or the stage's --x/--y)
+     rotate     ← angle (authored rest angle, or the stage's --rot)
+     scale      ← hover / grab lift, and nothing else
+
+   This block is the card *out of the stage*: static, in normal flow, exactly
+   what a visitor with no JavaScript sees. The scattered, draggable version
+   lives under `.board.is-stage` in home.css.
+
+   Deliberately absent: any 3D. There is no perspective and no pointer tilt —
+   the card is flat paper seen from above.
+   -------------------------------------------------------------------------- */
+
+@property --lift {
+	syntax: "<number>";
+	inherits: false;
+	initial-value: 1;
+}
+
+/* Fluid, not fixed. A flat 20rem is wider than the content box of a 320px
+   phone, so the cards would sit clipped against the edge of the screen. */
+:root {
+	--card-w: min(20rem, 100%);
+	--card-h: 15rem;
+}
+
+@media (min-width: 64rem) {
+	:root {
+		--card-w: min(26.5rem, 100%);
+		--card-h: 19rem;
+	}
+}
+
+.card {
+	position: relative;
+	z-index: calc(var(--z, 1) + var(--z-boost, 0));
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+	width: var(--card-w);
+	min-height: var(--card-h);
+
+	translate: var(--rest-x, 0px) calc(var(--rest-y, 0px) + var(--hover-y, 0px));
+	rotate: calc(var(--rest-rot, 0deg) * var(--rot-mult, 1));
+	scale: var(--lift, 1);
+
+	transition: translate var(--dur) var(--ease-spring),
+		rotate var(--dur) var(--ease-spring), scale var(--dur) var(--ease-spring);
+
+	/* Kills the 300ms tap delay without claiming the scroll gesture. */
+	touch-action: manipulation;
+	-webkit-user-drag: none;
+	user-select: none;
+	cursor: pointer;
+}
+
+html.is-dragging,
+html.is-dragging * {
+	user-select: none;
+	cursor: grabbing !important;
+}
+
+/* Children are inert, so a drag that starts on the title behaves exactly like
+   one that starts on the paper: the event target is always the card itself,
+   and no child can swallow the gesture or claim a text selection. */
+.card > * {
+	pointer-events: none;
+}
+
+/* The lift shadow lives on a pseudo whose *opacity* animates. Animating
+   box-shadow directly re-rasterizes the whole card, text included, every
+   frame — the single most expensive thing this design could have done. */
+.card::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: var(--shadow-lift);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--dur) var(--ease-out);
+}
+
+.card:hover,
+.card:focus-visible {
+	--hover-y: -10px;
+	--rot-mult: 0; /* straightens the sheet, whatever its authored angle */
+	--lift: 1.03;
+	--z-boost: 1000;
+}
+
+.card:hover::after,
+.card:focus-visible::after,
+.card.is-drag::after {
+	opacity: 1;
+}
+
+.card__plaque {
+	align-self: flex-end;
+	margin-block-end: calc(var(--sp-2) * -1);
+}
+
+.card__title {
+	font-size: var(--fs-500);
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+@media (min-width: 64rem) {
+	.card__title {
+		font-size: var(--fs-600);
+	}
+}
+
+.card__desc {
+	font-size: var(--fs-300);
+	line-height: var(--lh-snug);
+	color: var(--ink-soft);
+}
+
+/* Pinned to the bottom of the sheet. Always visible — it is the only thing
+   telling you the card is a link, so hiding it until hover is a real loss. */
+.card__more {
+	margin-block-start: auto;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	color: var(--ink-soft);
+	transition: translate var(--dur) var(--ease-out);
+}
+
+.card:hover .card__more,
+.card:focus-visible .card__more {
+	translate: 3px 0;
+}
+
+/* --------------------------------------------------------------------------
+   4. Chips
+   -------------------------------------------------------------------------- */
+
+.chips {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp-1) var(--sp-2);
+}
+
+/* Square corners, deliberately. These are cut slips of paper, not pills — a
+   radius on something this small reads as a UI tag rather than as part of the
+   café's paper vocabulary. */
+.chip {
+	padding: 0.15rem var(--sp-2);
+	background: var(--chip-bg, var(--tan));
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 500;
+	letter-spacing: 0.01em;
+	color: color-mix(in oklab, var(--ink) 88%, #000);
+}
+
+/* The award / internship plaque: a small engraved label. */
+.plaque {
+	display: inline-block;
+	padding: 0.2rem var(--sp-2);
+	border: 1.5px solid #c9c6bc;
+	border-radius: 3px;
+	background: #f2f0e8;
+	font-family: var(--ff-display);
+	font-size: 0.625rem;
+	font-weight: 700;
+	letter-spacing: 0.1em;
+	text-transform: uppercase;
+	color: #55524a;
+}
+
+/* --------------------------------------------------------------------------
+   5. Buttons and link chips
+   -------------------------------------------------------------------------- */
+
+.btn {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	padding: var(--sp-2) var(--sp-5);
+	background: var(--paper);
+	border-radius: var(--r-pill);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	color: var(--ink);
+	box-shadow: var(--sh-contact), var(--sh-hi);
+	transition: translate var(--dur) var(--ease-spring),
+		box-shadow var(--dur) var(--ease-out);
+}
+
+.btn:hover:not(:disabled) {
+	translate: 0 -2px;
+	box-shadow: var(--sh-contact), var(--sh-ambient), var(--sh-hi);
+}
+
+.btn:active:not(:disabled) {
+	translate: 0 1px;
+	box-shadow: var(--shadow-sunk);
+}
+
+.btn:disabled {
+	opacity: 0.45;
+	cursor: default;
+}
+
+/* Footer contact chips — the stitch primitive at small scale. */
+.chip-link {
+	--stitch-inset: 0.3rem;
+	--stitch-w: 2px;
+	--stitch-color: color-mix(in srgb, var(--tan-deep) 55%, transparent);
+	--r-card: var(--r-md);
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	padding: var(--sp-3) var(--sp-5);
+	background: var(--paper);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	box-shadow: var(--sh-contact), var(--sh-hi);
+	transition: translate var(--dur) var(--ease-spring),
+		box-shadow var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
+}
+
+.chip-link:hover {
+	translate: 0 -3px;
+	background: var(--paper-warm);
+	box-shadow: var(--sh-contact), var(--sh-ambient), var(--sh-hi);
+}
+
+.chip-link svg {
+	width: 1.05em;
+	height: 1.05em;
+	flex: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. Speech bubble
+   The pixel-art bubble PNGs are replaced with a real CSS bubble: it scales
+   with its text instead of stretching a bitmap, and the tail is a rotated
+   square that inherits the border.
+   -------------------------------------------------------------------------- */
+
+.bubble {
+	/* A line change is three beats, and all three are different numbers on
+	   purpose. She stops talking quickly, thinks, and then comes back slowly —
+	   which is the shape of someone answering, and the reason the fade out and
+	   the fade in are not one duration used twice.
+
+	     --say-out   she goes quiet. Mirrored in js/modules/jar.js as SAY,
+	                 which is how long that module waits before putting the new
+	                 words in: the text may only change while there is nothing
+	                 on screen, so those two have to move together.
+	     --say-wait  the beat before she answers. On the way back only, and
+	                 nothing in JavaScript knows about it — it is only ever the
+	                 delay on one transition.
+	     --say-in    she reappears. The longest of the three, because this is
+	                 the one the reader is waiting for; at the same speed as
+	                 the fade out the new line arrives before the eye has come
+	                 back to it. */
+	--say-out: 180ms;
+	--say-wait: 200ms;
+	--say-in: 360ms;
+
+	position: relative;
+	display: inline-block;
+	max-width: min(22rem, 80vw);
+	padding: var(--sp-3) var(--sp-5);
+	background: var(--paper);
+	border: 2.5px solid var(--ink);
+	border-radius: 1.25rem;
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	font-weight: 600;
+	letter-spacing: 0.02em;
+	line-height: var(--lh-snug);
+	text-align: center;
+	box-shadow: 3px 3px 0 rgb(51 57 59 / 0.14);
+	color: var(--ink);
+	/* The resting state, spelled out rather than left at `none`. Both ends of
+	   the fade are then the same filter function with a different number in
+	   it, which is the one form of filter interpolation nothing has to be
+	   clever about — `none` is defined as interpolable, but only by being
+	   rewritten into whatever it is being compared against. */
+	filter: opacity(1);
+	/* Only for the no-JS page, where the `.js`-scoped rule in §10b that
+	   carries the same fade never applies. */
+	transition: filter var(--say-in) var(--ease-out) var(--say-wait);
+}
+
+/* Her line is swapped at the bottom of a short fade rather than snapped, so
+   the bubble never shows two different lengths of text on consecutive frames
+   while it is still floating. js/modules/jar.js holds the class for a beat
+   longer than this transition takes, and changes the words underneath it.
+
+   The whole bubble goes, not just the writing. Fading the text alone was the
+   first version and it left the one thing that actually jumps: her four lines
+   are four different lengths, so the outline snapped to a new width around
+   text that was not there yet. Taking the box with it means the resize happens
+   while there is nothing on screen to see it happen, and she comes back at
+   whatever size the new line needs.
+
+   `filter: opacity()` and not `opacity`, because `opacity` on this element is
+   already owned by the entrance in §10b — one property, one owner. Two writers
+   on `opacity` here would mean a swap that fights an entrance whenever the
+   section is scrolled into view mid-sentence, and a delay that has to be right
+   for both. `filter` is free, and the two never have to agree on anything. */
+.bubble.is-swap {
+	filter: opacity(0);
+}
+
+.bubble::after,
+.bubble::before {
+	content: "";
+	position: absolute;
+	inset-block-end: -0.55rem;
+	inset-inline-start: var(--tail-x, 2rem);
+	width: 1rem;
+	height: 1rem;
+	background: var(--paper);
+	border-right: 2.5px solid var(--ink);
+	border-bottom: 2.5px solid var(--ink);
+	rotate: 45deg;
+	border-bottom-right-radius: 3px;
+}
+
+/* The lower pseudo only exists to mask the bubble's own bottom border
+   where the tail joins it. */
+.bubble::before {
+	inset-block-end: -0.3rem;
+	border: 0;
+	rotate: 0deg;
+	height: 0.5rem;
+	width: 1.4rem;
+	inset-inline-start: calc(var(--tail-x, 2rem) - 0.2rem);
+	border-radius: 0;
+}
+
+.bubble.is-in {
+	animation: bubble-float 3.6s var(--dur-slow) ease-in-out infinite;
+}
+
+@keyframes bubble-float {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 0 -8px;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   7. Caret
+   -------------------------------------------------------------------------- */
+
+.caret {
+	display: inline-block;
+	width: 0.06em;
+	visibility: hidden;
+}
+
+.caret.is-on {
+	visibility: visible;
+	animation: caret-blink 1s steps(1, end) infinite;
+}
+
+@keyframes caret-blink {
+	0%,
+	50% {
+		opacity: 1;
+	}
+	50.01%,
+	100% {
+		opacity: 0;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   8. Chibi portrait
+   -------------------------------------------------------------------------- */
+
+.chibi {
+	position: relative;
+	display: grid;
+	place-items: center;
+	width: clamp(8.5rem, 18vw, 12rem);
+	aspect-ratio: 1;
+	padding: 1.4rem;
+	border-radius: var(--r-pill);
+	background: var(--chibi-bg, var(--paper-warm));
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+}
+
+.chibi img {
+	image-rendering: pixelated;
+}
+
+.chibi__sunflower {
+	position: absolute;
+	inset-block-end: 0;
+	width: 3.2rem;
+	image-rendering: pixelated;
+}
+
+.chibi__sunflower--left {
+	inset-inline-start: 0;
+	translate: -8% 18%;
+}
+
+.chibi__sunflower--right {
+	inset-inline-end: 0;
+	translate: 8% 18%;
+}
+
+/* --------------------------------------------------------------------------
+   9. The jar of folded questions
+
+   A glass jar with four folded slips fanned inside it, and the note that
+   comes out of it. Only the look of those two objects lives here — where they
+   sit, and the poses the note moves between, are layout and belong to
+   home.css §2.
+
+   The jar itself is a drawing — static/PixelArt/Jar.png, the same hand as the
+   café and the chibi. What a drawing cannot supply is the *inside*: its
+   cavity is transparent, so everything between the walls is still built here,
+   in three layers stacked back to front.
+
+     `.jar__cavity`  the tint the glass lays over whatever is behind it, and
+                     the clip that keeps the slips inside the silhouette
+     `.jar__slips`   the paper, in the belly of that cavity
+     `.jar__shine`   the reflections, over the paper
+     `.jar__art`     the drawing, over all of it
+
+   The order is the whole trick. Painting the shine into the same element as
+   the tint would either hide the slips behind it or put the slips in front of
+   it, and neither looks like glass; putting the drawing under the slips would
+   leave the paper lying in front of a jar rather than sitting in one. Every
+   tint is `--sage` or white — the jar belongs to the café, so its glass is
+   warm-green rather than the blue every stock jar is drawn in.
+   -------------------------------------------------------------------------- */
+
+/* --- the four papers ------------------------------------------------------ */
+
+/* A tint is four decisions at once — the paper, and the three colours its
+   drawing is inked in — so it is set in one place and inherited down.
+   js/data/qa.js names the tint; nothing in the data knows a colour.
+
+   The crease is deliberately *not* tinted. A fold drawn in each paper's own
+   deeper tone disappears on butter, where --butter and --butter-deep are a
+   few percent apart in lightness. A single warm brown at low alpha reads as
+   what it actually is — a shadow lying in a fold — and it reads that way on
+   all four papers.
+
+   Both creases are declared here rather than on the note, because the packet
+   in the jar is a folded note: its right and bottom edges are the very same
+   two folds, and they have to be shaded by the same values or the slip you
+   pick up is not the note that comes out. */
+.jar__slot,
+.note {
+	--sheet: var(--paper);
+	--crease: rgb(120 96 66 / 0.5);
+	--crease-wash: rgb(120 96 66 / 0.22);
+
+	--art-ink: var(--ink);
+	--art-paper: var(--paper);
+	--art-accent: var(--peach-deep);
+	--art-warm: var(--butter-deep);
+}
+
+[data-tint="moss"] {
+	--sheet: var(--moss);
+}
+
+[data-tint="peach"] {
+	--sheet: var(--peach);
+	/* The rocket is the one sprite whose accent would otherwise sit on its
+	   own tint — peach fins on peach paper. Moss is the palette's other
+	   warm neutral and is the only swap the four drawings need. */
+	--art-accent: var(--moss-deep);
+}
+
+[data-tint="butter"] {
+	--sheet: var(--butter);
+}
+
+[data-tint="tan"] {
+	--sheet: var(--tan);
+}
+
+/* --- the glass ------------------------------------------------------------ */
+
+/* `.jar` is the *drawing's* box, not the file's. Everything below is a
+   percentage of it, so the one thing that has to be right is that this box
+   and the painted jar are the same rectangle — get that wrong and the glass
+   wash sits beside the glass. */
+.jar {
+	position: relative;
+	isolation: isolate;
+	width: 100%;
+	/* The drawing is 251×369 — the alpha bounding box of Jar.png, not the
+	   549×454 canvas it is painted on. The file is *not* cropped to the art, so
+	   this box and the image box are two different rectangles and `.jar__art`
+	   below has to do the arithmetic that lines them up.
+
+	   Taller than it is wide, which is what a jar is: wider than tall is a
+	   lunchbox however well the glass is drawn, and four slips fanned down the
+	   inside need the height to read as a stack. */
+	aspect-ratio: 251 / 369;
+}
+
+/* The drawing, cropped to `.jar` exactly.
+
+   Jar.png carries a lot of transparent canvas around the jar — the art sits at
+   x 150…401, y 57…426 of 549×454 — and every percentage in this section is
+   measured against the *jar*, so the padding has to be taken back out here
+   rather than left for each of them to compensate for. Blowing the image up to
+   549/251 of the box and pulling it back by 150/251 of a width and 57/369 of a
+   height puts the art's bounding box on the box's bounding box, which is the
+   one thing the rest of §9 depends on. Overflow is not clipped and does not
+   need to be: what hangs outside is transparent.
+
+   `pixelated` because this is a bitmap being scaled up past 1:1 — the default
+   smooth resample turns hard pixel edges into a soft blur, which is exactly
+   the look pixel art is not.
+
+   Above the cavity, so the lid overlaps the topmost slip and the walls crop
+   the widest one. That overlap is the whole illusion: paper that is merely
+   *behind* a jar is paper on the table. */
+.jar__art {
+	position: absolute;
+	inset-block-start: -15.447%;
+	inset-inline-start: -59.761%;
+	z-index: 2;
+	/* `max-width: none` is load-bearing, not tidying. base.css resets every
+	   image to `max-width: 100%`, and this one is deliberately wider than its
+	   own box — so the reset clamps the width while the explicit `height` sails
+	   past unclamped, and the jar arrives squashed to 46% of its width at full
+	   height. It cost an afternoon once; it is spelled out here so it does not
+	   cost a second one. */
+	width: 218.725%;
+	max-width: none;
+	height: 123.035%;
+	image-rendering: pixelated;
+	pointer-events: none;
+}
+
+/* The inside of the glass: the only part of the jar still drawn in CSS,
+   because the drawing has no inside. Its box is the cavity the walls enclose
+   — x 166…380, y 150…395 of the canvas — and the radii are the shoulder and
+   the base curve, elliptical because the shoulder falls further than it
+   narrows. Everything that is meant to be *in* the jar goes in here and is
+   clipped to that silhouette, so a slip can never be seen standing outside
+   the glass it is supposed to be behind.
+
+   The wash is deliberately fainter than the one the CSS-drawn jar used: the
+   walls, rim and base now come from the drawing, so all this layer still has
+   to do is tint what is seen through them. Left at the old strength it read
+   as fog in the jar rather than as glass in front of the paper. */
+.jar__cavity {
+	position: absolute;
+	/* x 166…380 of 150…401 and y 150…395 of 57…426, as percentages of the
+	   251×369 art box: 93/369 top, 21/251 right, 31/369 bottom, 16/251 left. */
+	inset: 25.2% 8.37% 8.4% 6.37%;
+	z-index: 1;
+	overflow: hidden;
+	border-radius: 19% 19% 15% 15% / 40% 40% 20% 20%;
+	/* The dark bands down each side are the sides of the cylinder turning
+	   away from you. Without them the glass is a flat pane however bright the
+	   highlights are. */
+	background: linear-gradient(
+			100deg,
+			rgb(150 168 118 / 0.2) 0 5%,
+			rgb(205 216 183 / 0.19) 5% 14%,
+			rgb(205 216 183 / 0.07) 33% 67%,
+			rgb(205 216 183 / 0.2) 86% 96%,
+			rgb(150 168 118 / 0.22) 96% 100%
+		),
+		linear-gradient(
+			180deg,
+			rgb(255 255 255 / 0.28) 0 14%,
+			rgb(255 255 255 / 0.03) 100%
+		);
+	box-shadow: inset 0 -18px 26px -20px rgb(88 70 52 / 0.28);
+}
+
+/* Hard-stopped stripes, not a gradient wash: a soft blur reads as a smudge
+   on the page, where a hard edge reads as a reflection on a curved surface.
+   Over the slips and under the drawing — a reflection is on the near face of
+   the glass, so it falls across the paper, but it cannot fall across the
+   painted wall without fighting the highlights already drawn there. */
+.jar__shine {
+	position: absolute;
+	inset: 0;
+	z-index: 1;
+	pointer-events: none;
+	background: linear-gradient(
+		101deg,
+		transparent 0 5%,
+		rgb(255 255 255 / 0.5) 5% 9.5%,
+		transparent 9.5% 13%,
+		rgb(255 255 255 / 0.28) 13% 15.5%,
+		transparent 15.5% 84%,
+		rgb(255 255 255 / 0.22) 84% 93%,
+		transparent 93%
+	);
+}
+
+/* --- the slips ------------------------------------------------------------ */
+
+/* The slips get the belly, not the whole cavity. The drawing's shoulders
+   taper for the top third of the inside, and a slip fanned up there is half
+   behind the painted wall with its question in the hidden half — which fails
+   the one thing the jar has to do, which is be readable at rest. Paper
+   settles at the bottom of a jar anyway. */
+.jar__slips {
+	position: absolute;
+	inset: 20% 5% 3% 5%;
+	list-style: none;
+}
+
+/* The fan is hand-tuned per slip rather than solved. With four of them a
+   solver would be more machinery than the problem deserves, and hand values
+   let each slip sit at an angle that looks *thrown in* rather than dealt. The
+   four overlap, because four folded notes dropped in a jar do.
+
+   The slot owns the fan pose and the button inside it owns the hover lift.
+   That split is the whole reason hovering a fanned slip does not have to
+   restate its own place in the fan — one owner per property, per element.
+
+   Height comes from `top` and only the sideways nudge from `translate`,
+   which is not a stylistic choice: a percentage in `translate` resolves
+   against the element's *own* box, not its parent's. Written as
+   `translate: -52% 22%` the whole fan collapses into a heap at the top of the
+   jar, because 22% of a slip is a fraction of the distance meant. `top` is
+   the one that means "a fifth of the way down the jar". */
+.jar__slot {
+	position: absolute;
+	left: 50%;
+	/* Four slips have to stack inside the belly and each still show its own
+	   question, which fixes this number rather than leaving it to taste: at
+	   13/10 a slip is `w × 0.77`, three steps of 55% of that plus one whole
+	   slip is 2.7 slip-heights, and 46% of the belly is the widest slip whose
+	   stack still comes to less than the belly is tall. Widen it and the
+	   bottom slip sinks into the base of the jar; tighten the steps instead
+	   and each question disappears under the next one. */
+	width: 46%;
+	transition: scale var(--dur) var(--ease-spring),
+		opacity var(--dur) var(--ease-out);
+}
+
+.jar__slot:nth-child(1) {
+	top: 0%;
+	translate: -55%;
+	rotate: -7deg;
+}
+.jar__slot:nth-child(2) {
+	top: 21%;
+	translate: -43%;
+	rotate: 5deg;
+}
+.jar__slot:nth-child(3) {
+	top: 42%;
+	translate: -57%;
+	rotate: -3.5deg;
+}
+.jar__slot:nth-child(4) {
+	top: 63%;
+	translate: -45%;
+	rotate: 6.5deg;
+}
+
+/* The same fan, re-run for the phone's quadrant.
+
+   Below 48rem the note's cover is portrait (css/home.css §2, the phone
+   block), and a slip is the cover — so the slip turns with it or it stops
+   being the paper that flies out. Turning it is what forces the other two
+   numbers: the arithmetic in `.jar__slot` above is `three steps + one slip
+   height ≤ the belly`, and a portrait slip is a third taller than a landscape
+   one of the same width, so the same 46% at the same 21% steps stands a stack
+   two thirds again as tall as the jar can hold. Tighter steps buy most of it
+   back, and the slip is then made as wide as what is left allows: three steps
+   of 17% leave 49% of the belly, and a slip 44% of the belly wide stands 1.39
+   times that in height, which is 49% of it. The stack ends where the jar's
+   base begins.
+
+   The sideways nudges and the angles are untouched: those are the "thrown in
+   rather than dealt" of the fan, and they are as true of a portrait slip. */
+@media (max-width: 48rem) {
+	.slip {
+		/* 18/25 is the phone quadrant at a typical handset width — `--quad-w`
+		   there is 47vw against a fixed `--quad-h`, so like the 13/10 above
+		   this is one representative ratio and not an exact division. */
+		aspect-ratio: 18 / 25;
+		padding: var(--sp-1) var(--sp-2);
+	}
+
+	.jar__slot {
+		width: 44%;
+	}
+
+	.jar__slot:nth-child(1) {
+		top: 0%;
+	}
+	.jar__slot:nth-child(2) {
+		top: 17%;
+	}
+	.jar__slot:nth-child(3) {
+		top: 34%;
+	}
+	.jar__slot:nth-child(4) {
+		top: 51%;
+	}
+}
+
+/* Its note is out in front of the jar, so the slip is not in the jar. Left in
+   the DOM rather than removed so the gap it leaves is exactly its own, and so
+   there is something to fly back into. */
+.jar__slot.is-out {
+	opacity: 0;
+	scale: 0.72;
+}
+
+/* A slip is the note's cover quadrant and nothing else — same proportion,
+   same two crease edges, same rounded corner in the one place the paper was
+   cut rather than folded. That is what makes the note that flies out read as
+   *this* slip opened, rather than as a second object that replaced it.
+
+   13/10 is `--quad-w` over `--quad-h` from css/home.css §2, rounded. It is
+   restated as a literal because `aspect-ratio` cannot divide two clamps. */
+/* The question rides at the top of the slip, not in the middle of it, for two
+   reasons that agree: the note's cover carries its question at the top too,
+   so the slip and the note it opens into are the same object — and in a fan
+   the only part of a slip you can see is the band above the next one, which
+   is exactly where the top of it is. Centred, every question but the last
+   was cut in half by the slip in front of it. */
+.slip {
+	display: grid;
+	place-items: start center;
+	width: 100%;
+	aspect-ratio: 13 / 10;
+	padding: var(--sp-2);
+	border-radius: var(--r-sm) 0 0 0;
+	background: var(--sheet);
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	line-height: 1.2;
+	text-align: center;
+	text-wrap: balance;
+	color: var(--ink);
+	cursor: pointer;
+	box-shadow: 0 2px 5px rgb(88 70 52 / 0.28),
+		inset -9px 0 11px -9px var(--crease),
+		inset 0 -9px 11px -9px var(--crease);
+	transition: translate var(--dur) var(--ease-out),
+		scale var(--dur) var(--ease-spring),
+		box-shadow var(--dur) var(--ease-out);
+}
+
+.slip:hover,
+.slip:focus-visible {
+	translate: 0 -0.35rem;
+	scale: 1.04;
+	box-shadow: 0 7px 13px -3px rgb(88 70 52 / 0.34),
+		inset -9px 0 11px -9px var(--crease),
+		inset 0 -9px 11px -9px var(--crease);
+}
+
+/* --------------------------------------------------------------------------
+   9b. The note, and the fold
+
+   One square-ish sheet folded in half twice, which is why it opens into four
+   quadrants around a cross of creases rather than into a stack of panels. The
+   top-left quadrant is the cover; the other three are folded in behind it.
+
+   ---- the order, and why it cannot be the other one
+
+   It was folded bottom-up first and right-over-left second, so it opens
+   right-half first and bottom-half second. Paper only comes apart in the
+   reverse of the order it went together, and that constraint is the whole
+   shape of this file: fold 1 is a rotateY about a vertical crease, fold 2 is
+   a rotateX about a horizontal one, and they are not interchangeable.
+
+   ---- the crossing, and the one place the model cheats
+
+   The right half spans both rows; the bottom half spans both columns. They
+   cross, and no element can be the child of two parents — so the bottom-right
+   quadrant is nested inside the top-right one, where it rides fold 1 for
+   free, and is given fold 2's class alongside the bottom-left one. Two
+   elements, one class, therefore always the same angle: the bottom band never
+   comes apart at the seam because there is nothing there that could disagree.
+
+   ---- the swing
+
+   What animates is the *angle*, not the rotation. `--fold-a` is registered
+   below as an `<angle>` and is the single thing this fold transitions;
+   `rotate` reads it, and so does the light on the face. That is the reason
+   nothing in here has to be kept in step with anything else — there is only
+   one moving number, and everything visible is a function of it.
+
+   One continuous rotation on `--ease-out`, which starts quick and settles.
+   That is the shape of a flap let go: it comes over fast and the last few
+   degrees are the paper laying itself down, not decelerating into a mark.
+
+   Deliberately not the spring. A flap that overshoots flat and comes back has
+   something still acting on it after it has come to rest, and there is
+   nothing on a folded note that could — the same reason the flight in
+   home.css §2 keeps the spring on `scale` and off `translate`.
+
+   Halfway through, the flap passes exactly through -90°, where a plane has no
+   thickness and disappears for one frame. That is correct rather than a
+   glitch: paper seen edge-on is invisible, and at this duration it is a
+   single frame at the moment the sheet is turning over.
+
+   ---- why nothing has to be kept in sync
+
+   Each flap carries both of its faces. `.note__sheet` is the printed side and
+   `.note__lining` is the blank back, pre-turned with rotateY(180deg); both
+   hide their own backface. Which of the two you are looking at is therefore
+   decided by the geometry on every frame rather than by a timer — the flap
+   shows its underside through the first half of its swing and its printed
+   side through the second, correctly, in both directions, with nothing to
+   keep in step and nothing to re-derive if the timing changes.
+
+   ---- the trap
+
+   A flap folded shut is rotated 180°, and a flap folded shut *inside* another
+   folded flap is rotated 360° — which is face-up, in front of the cover, and
+   perfectly readable. `backface-visibility` is no help there, because the
+   face pointing at you really is the front one. So a closed flap is
+   `visibility: hidden` outright.
+
+   The two delays on that `visibility` are asymmetric on purpose, and that is
+   the whole reason the fold can be watched in both directions: opening flips
+   it visible at 0s, closing holds it visible for the full duration. The flap
+   is on screen for the whole of both swings, and only ever winks out once it
+   is already lying flat behind the cover, where there was nothing to see
+   anyway.
+   -------------------------------------------------------------------------- */
+
+/* How far this quadrant is from lying flat, and the only number in the fold.
+
+   Registering it is what makes it animatable — an unregistered custom property
+   has no type, so the browser can only swap it at the halfway point instead of
+   interpolating it. Given `<angle>`, it tweens, and everything downstream of
+   it tweens with it: the rotation is `rotate: y var(--fold-a)`, and the light
+   on the face is a `cos()` of the same value. One owner, one transition, and a
+   face that cannot be lit for an angle it is not actually at.
+
+   It has to inherit, because the thing that reads it for shading is a pseudo
+   two levels below the element that sets it. Every quadrant declares its own,
+   so the nested bottom-right one is shaded by its own fold and not by the one
+   it happens to be riding. */
+@property --fold-a {
+	syntax: "<angle>";
+	inherits: true;
+	initial-value: 0deg;
+}
+
+.note {
+	/* Mirrored in js/modules/jar.js as FOLD. Change both.
+
+	   The fold's duration lives here rather than with the flight in home.css
+	   §2, because it belongs to the paper: the note folds the same way
+	   wherever on the stage it happens to be. `--quad-w` and `--quad-h` are
+	   the other way round — they are how big the room can afford the note to
+	   be, so they are declared on the stage. */
+	--dur-fold: var(--dur-slow);
+	--fold-ease: var(--ease-out);
+
+	/* Two sheets of paper thick. Small, and the only reason the crease is not
+	   infinitely sharp — see `.note__lining`. */
+	--paper-thick: 1.5px;
+
+	position: relative;
+	width: var(--quad-w);
+	height: var(--quad-h);
+	perspective: 1500px;
+}
+
+.note__quad {
+	position: absolute;
+	width: var(--quad-w);
+	height: var(--quad-h);
+	/* No `overflow`, no `opacity`, no `filter` on a quadrant, ever. Each of
+	   the three silently forces `transform-style: flat`, which collapses the
+	   nesting and drops the bottom-right quadrant out of the fold it is
+	   supposed to be riding. Anything that needs clipping or fading is done to
+	   the `.note__sheet` inside it instead. */
+	transform-style: preserve-3d;
+}
+
+/* The cover is the note's own box; the packet in the jar is this one quadrant
+   and nothing else. */
+.note__quad--q {
+	position: relative;
+}
+
+/* Fold 1 — the right half, on the vertical crease. Hinged on its left edge
+   and laid out one full quadrant to the right of the cover, so at 0° it is
+   simply beside it and at -180° it is folded back over it. */
+.note__quad--a {
+	--fold-a: -180deg;
+
+	inset-block-start: 0;
+	inset-inline-start: 100%;
+	transform-origin: 0 50%;
+	rotate: y var(--fold-a);
+	visibility: hidden;
+	transition: --fold-a var(--dur-fold) var(--fold-ease),
+		visibility 0s linear var(--dur-fold);
+}
+
+.note.is-fold-1 .note__quad--a {
+	--fold-a: 0deg;
+	visibility: visible;
+	transition: --fold-a var(--dur-fold) var(--fold-ease),
+		visibility 0s linear 0s;
+}
+
+/* Fold 2 — the bottom half, on the horizontal crease. Two elements in two
+   different parents, one selector, so they cannot drift apart.
+
+   Same angle, different axis. That is the only thing separating the two folds
+   now, which is worth the swap on its own. */
+.note__quad--art,
+.note__quad--caption {
+	--fold-a: -180deg;
+
+	inset-block-start: 100%;
+	inset-inline-start: 0;
+	transform-origin: 50% 0;
+	rotate: x var(--fold-a);
+	visibility: hidden;
+	transition: --fold-a var(--dur-fold) var(--fold-ease),
+		visibility 0s linear var(--dur-fold);
+}
+
+.note.is-fold-2 .note__quad--art,
+.note.is-fold-2 .note__quad--caption {
+	--fold-a: 0deg;
+	visibility: visible;
+	transition: --fold-a var(--dur-fold) var(--fold-ease),
+		visibility 0s linear 0s;
+}
+
+/* --- the two faces of a quadrant ------------------------------------------ */
+
+.note__sheet {
+	position: absolute;
+	inset: 0;
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
+	padding: var(--sp-3) var(--sp-4);
+	background: var(--sheet);
+	backface-visibility: hidden;
+	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5);
+}
+
+/* Folded edges are crisp and cut edges are not, which is the quiet reason a
+   folded packet looks folded even before it moves: the two rounded corners
+   are always the two furthest from the crease. Unfolded, the four of them
+   land on the four outer corners of the sheet and the middle stays sharp. */
+.note__quad--q > .note__sheet {
+	border-radius: var(--r-md) 0 0 0;
+	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
+		inset -11px 0 13px -11px var(--crease),
+		inset 0 -11px 13px -11px var(--crease);
+}
+
+.note__quad--a > .note__sheet {
+	border-radius: 0 var(--r-md) 0 0;
+	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
+		inset 11px 0 13px -11px var(--crease),
+		inset 0 -11px 13px -11px var(--crease);
+}
+
+.note__quad--art > .note__sheet {
+	border-radius: 0 0 0 var(--r-md);
+	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
+		inset -11px 0 13px -11px var(--crease),
+		inset 0 11px 13px -11px var(--crease);
+}
+
+.note__quad--caption > .note__sheet {
+	border-radius: 0 0 var(--r-md) 0;
+	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
+		inset 11px 0 13px -11px var(--crease),
+		inset 0 11px 13px -11px var(--crease);
+}
+
+/* The blank back of a flap — the side you watch swinging towards you before
+   the paper turns over. Turned away with rotateY so its own backface is the
+   one pointing at you while the flap lies open.
+
+   Which edge the wash sits on is worked out, not eyeballed. rotateY mirrors
+   the lining left-to-right and leaves its vertical axis alone, so on a
+   horizontal fold the edge that ends up against the crease is still local
+   top — but on a vertical fold the mirroring swaps the sides, and the hinge
+   ends up at local *right*. Hence two rules and not one. */
+/* The `translate` is the paper's thickness, and it is worth the one line.
+
+   Without it the sheet and its own back are the same plane, so the flap is a
+   surface with no depth: at the crease it tapers to nothing, and the moment it
+   is edge-on it disappears completely. Pushing the back a hair away from the
+   viewer gives the fold two faces with a gap between them, which is what a
+   sheet of paper is — you see it as a thin bright edge along the crease all
+   the way through the swing.
+
+   Z, and not Y or X, because the two folds turn about different axes and only
+   the depth offset is the same answer for both.
+
+   Order matters: individual transform properties resolve translate → rotate →
+   scale, so the offset is applied in the quadrant's frame *after* the 180°
+   turn rather than being spun round by it. Written as one `transform` with the
+   rotate first, the back would be pushed towards the viewer instead. */
+.note__lining {
+	position: absolute;
+	inset: 0;
+	translate: 0 0 calc(var(--paper-thick) * -1);
+	rotate: y 180deg;
+	backface-visibility: hidden;
+	background: var(--sheet);
+}
+
+.note__lining--h {
+	background: linear-gradient(180deg, var(--crease-wash), transparent 60%),
+		var(--sheet);
+}
+
+.note__lining--v {
+	background: linear-gradient(270deg, var(--crease-wash), transparent 60%),
+		var(--sheet);
+}
+
+/* The face darkens as it turns away from the room and brightens as it comes
+   round to you.
+
+   And it is the real thing rather than a fade timed to look like it. A flat
+   surface catches light in proportion to the cosine of its angle to it, so
+   the shade is `1 − cos(--fold-a)`: nothing at 0°, where the face is square
+   on to the room, and total at -90°, where it is edge-on and catching none.
+   Between those it is a curve, not a ramp, which is why the face brightens
+   late — most of the light arrives in the last thirty degrees.
+
+   Nothing here is transitioned. The angle is the only thing that animates and
+   this is derived from it, so the light physically cannot disagree with the
+   pose: there is no second timing function to keep in step, and changing the
+   fold's duration or easing needs no edit here at all.
+
+   `clamp` because the cosine keeps going past -90° — the face is turned away
+   by then and the lining is what you are looking at, but the value still has
+   to be a legal opacity. */
+.note__sheet::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	border-radius: inherit;
+	background: rgb(88 70 52 / 0.5);
+	opacity: clamp(0, 1 - cos(var(--fold-a)), 1);
+}
+
+/* --- what is written on it ------------------------------------------------ */
+
+/* Note-sized, not heading-sized. Set any larger and the cover starts
+   competing with the jar for the middle of the room, which is the wrong way
+   round. The inline padding keeps it clear of the ×. */
+.note__q {
+	font-family: var(--ff-display);
+	font-size: var(--fs-500);
+	line-height: var(--lh-tight);
+	color: var(--ink);
+	padding-inline-end: var(--sp-6);
+}
+
+/* A quadrant has to hold a whole answer — text cannot flow across a crease —
+   and the longest of the four is Education at ~185 characters. That answer,
+   at this size and measure, is what `--quad-w` and `--quad-h` in home.css §2
+   were solved for. Loosening either of these three numbers means re-checking
+   all four answers against the quadrant, not just this one. */
+.note__text {
+	font-size: var(--fs-300);
+	line-height: 1.5;
+	color: var(--ink);
+}
+
+.note__art {
+	width: min(6.5rem, 62%);
+	margin: auto;
+	/* A hard offset drop rather than a blur: a pixel sprite with a soft shadow
+	   under it stops being a pixel sprite. */
+	filter: drop-shadow(2px 3px 0 rgb(120 96 66 / 0.2));
+}
+
+.note__art > svg {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.note__caption {
+	margin: auto;
+	text-align: center;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	line-height: var(--lh-snug);
+	color: var(--ink-soft);
+}
+
+/* --- the note's two controls ---------------------------------------------- */
+
+/* The tab you pull to open the next fold. A mouse reader can click anywhere
+   on the note — js/modules/jar.js delegates — so this is here to *say* the
+   note opens, and to be the thing a keyboard reader lands on and presses. Its
+   arrow points the way that fold actually swings.
+
+   Exactly one of the two is offered at a time: the cover's while the note is
+   shut, the answer's once the right half is out. `visibility` and not
+   `display`, because the hidden one has to keep its space or the quadrant
+   above it reflows mid-swing — and because visibility takes it out of the tab
+   order, where opacity alone would leave it silently pressable. */
+.note__pull {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	width: fit-content;
+	margin: auto auto 0;
+	padding: 0.15rem var(--sp-3);
+	border-radius: var(--r-pill);
+	background: rgb(255 255 255 / 0.45);
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	color: var(--ink-soft);
+	cursor: pointer;
+	transition: opacity var(--dur) var(--ease-out),
+		background-color var(--dur) var(--ease-out),
+		color var(--dur) var(--ease-out);
+}
+
+.note__pull:hover,
+.note__pull:focus-visible {
+	background: rgb(255 255 255 / 0.9);
+	color: var(--ink);
+}
+
+.note__quad--q .note__pull-arrow {
+	font-size: 0.75em;
+	animation: bob-x 1.4s ease-in-out infinite;
+}
+
+.note__quad--a .note__pull-arrow {
+	font-size: 0.75em;
+	animation: next-bob 1.4s ease-in-out infinite;
+}
+
+.note.is-fold-1 .note__quad--q > .note__sheet > .note__pull,
+.note.is-fold-2 .note__quad--a > .note__sheet > .note__pull {
+	opacity: 0;
+	visibility: hidden;
+}
+
+@keyframes bob-x {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 4px 0;
+	}
+}
+
+.note__away {
+	position: absolute;
+	inset-block-start: var(--sp-2);
+	inset-inline-end: var(--sp-3);
+	width: 1.6rem;
+	height: 1.6rem;
+	border-radius: var(--r-pill);
+	font-family: var(--ff-display);
+	font-size: 1.1rem;
+	line-height: 1;
+	color: var(--ink-faint);
+	cursor: pointer;
+	transition: background-color var(--dur) var(--ease-out),
+		color var(--dur) var(--ease-out), rotate var(--dur) var(--ease-spring);
+}
+
+.note__away:hover,
+.note__away:focus-visible {
+	background: rgb(255 255 255 / 0.75);
+	color: var(--ink);
+	rotate: 90deg;
+}
+
+/* --------------------------------------------------------------------------
+   9c. The plain list
+
+   What ships in the HTML, and the only version a crawler, a reader with no
+   JavaScript, or a reader who has asked for reduced motion ever sees. A
+   <details> is already a fold, so this needs no script to do the one thing
+   the jar exists to do.
+   -------------------------------------------------------------------------- */
+
+.qa__list {
+	display: grid;
+	gap: var(--sp-4);
+	max-width: 44rem;
+	margin-inline: auto;
+}
+
+.qa-note {
+	padding: var(--sp-4) var(--sp-5);
+	background: var(--paper);
+	border-radius: var(--r-md);
+	box-shadow: var(--shadow-paper);
+}
+
+.qa-note > summary {
+	font-family: var(--ff-display);
+	font-size: var(--fs-500);
+	color: var(--ink);
+	cursor: pointer;
+}
+
+.qa-note > p {
+	margin-block-start: var(--sp-3);
+	max-width: var(--measure);
+}
+
+.qa-note--sub {
+	margin-block-start: var(--sp-3);
+	background: var(--paper-warm);
+	box-shadow: none;
+}
+
+.qa-note--sub > summary {
+	font-size: var(--fs-400);
+}
+
+/* --------------------------------------------------------------------------
+   10. The say panel
+
+   Dimah's voice, wherever it appears — the café intro in the hero and the
+   answers on the Q&A board are the same act, so they are the same component.
+   A visual-novel text panel: no outline, just a soft cream sheet lifted off
+   the page by a diffuse shadow, with a striped café awning running down the
+   left edge as the only piece of colour. She speaks; the reader clicks on.
+   -------------------------------------------------------------------------- */
+
+.saypanel {
+	/* Warm orange, dark enough to clear 4.5:1 on the panel — the label is
+	   small text, not decoration. */
+	--speaker: #a9550f;
+	--rail-w: 12px;
+	--awning-a: #fcde6e;
+	--awning-b: #fff7d6;
+
+	position: relative;
+	width: 100%;
+	max-width: 42rem;
+	min-height: 9.5rem;
+	padding: var(--sp-5) var(--sp-8) var(--sp-8)
+		calc(var(--rail-w) + var(--sp-6));
+	background: #faf6e6;
+	border-radius: 16px;
+	box-shadow: 0 1px 2px rgb(88 70 52 / 0.1), 0 12px 28px -14px rgb(88 70 52 / 0.3);
+}
+
+/* The awning: horizontal bands down the rail. Hard colour stops, so these are
+   stripes and not a gradient wash. The rail rounds its own left corners, which
+   is why the panel does not need `overflow: hidden`. */
+.saypanel::before {
+	content: "";
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: var(--rail-w);
+	border-radius: 16px 0 0 16px;
+	background: repeating-linear-gradient(
+		to bottom,
+		var(--awning-a) 0 8px,
+		var(--awning-b) 8px 16px
+	);
+}
+
+.saypanel__who {
+	margin-block-end: var(--sp-2);
+	font-size: var(--fs-200);
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	color: var(--speaker);
+}
+
+.saypanel__line {
+	font-size: var(--fs-400);
+	line-height: 1.65;
+	color: var(--ink);
+}
+
+/* The intro cycles through lines of different lengths, so the panel would
+   grow and shrink under them as each one wraps to a different number of
+   rows. Every chunk she will say is stacked into this one grid cell — the
+   spoken one visible, the rest invisible placeholders — which makes the cell
+   as tall as the longest of them from the start and keeps it there. Sized
+   from the copy itself, so it stays right at any width and needs no
+   updating when the copy changes. */
+.saypanel__line--reserved {
+	display: grid;
+}
+
+.saypanel__line--reserved > * {
+	grid-area: 1 / 1;
+	align-self: start;
+}
+
+/* `visibility` rather than `opacity`: still occupies its space, but is out of
+   the accessibility tree and unselectable. */
+.saypanel__ghost {
+	visibility: hidden;
+	pointer-events: none;
+}
+
+/* Hidden until she has finished the line — `hidden` rather than opacity, so
+   it is out of the tab order and unclickable while it is not offered. */
+.saypanel__next {
+	position: absolute;
+	inset-block-end: 0.85rem;
+	inset-inline-end: 1.1rem;
+	padding: 0.15rem 0.35rem;
+	font-size: 0.95rem;
+	line-height: 1;
+	color: var(--speaker);
+	background: none;
+	border: 0;
+	border-radius: 6px;
+	cursor: pointer;
+	animation: next-in var(--dur) var(--ease-out) both,
+		next-bob 1.4s var(--dur) ease-in-out infinite;
+}
+
+/* In the hero she is standing to the right of the panel, so it gets a tail
+   pointing across at her. No border to interrupt any more, so it is one
+   rotated square of the panel colour and nothing else. Only in the
+   two-column layout — stacked, there is nothing to its right to point at. */
+@media (min-width: 60.01rem) {
+	.saypanel--hero::after {
+		content: "";
+		position: absolute;
+		inset-block-start: calc(50% - 0.6rem);
+		inset-inline-end: -0.5rem;
+		width: 1.2rem;
+		height: 1.2rem;
+		background: #faf6e6;
+		border-radius: 0 3px 0 0;
+		rotate: 45deg;
+	}
+}
+
+@keyframes next-in {
+	from {
+		opacity: 0;
+		scale: 0.6;
+	}
+	to {
+		opacity: 1;
+		scale: 1;
+	}
+}
+
+@keyframes next-bob {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 0 4px;
+	}
+}
+
+/* Anywhere in the panel advances, so the arrow is a hint rather than a
+   target you have to hit. The cursor only offers it when there is something
+   to advance to. */
+.saypanel.is-typing,
+.saypanel.is-ready {
+	cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   10b. Entrance states
+
+   Scoped to `.js`, which an inline snippet in <head> stamps on <html>. With
+   scripting off, the greeting, the portrait and the answer box are simply
+   present — rather than permanently invisible, waiting for a class that will
+   never arrive. Each element staggers itself with --in-delay, so the
+   choreography is CSS rather than a chain of setTimeouts.
+   -------------------------------------------------------------------------- */
+
+.js :is(.bubble, .chibi, .saypanel) {
+	opacity: 0;
+	transition: opacity var(--dur) var(--ease-out),
+		scale var(--dur-slow) var(--ease-spring);
+	transition-delay: var(--in-delay, 0ms);
+}
+
+/* The bubble is the one of the three that changes what it says after it has
+   arrived, so it carries a second fade the entrance's stagger must not delay —
+   see `.bubble.is-swap`. Restating the shorthand here is what lets the two
+   channels keep separate delays: written as the plain `transition-delay` above,
+   one number would have had to serve both.
+
+   The durations and delays are then restated as their own three-value lists
+   rather than left inside the shorthand, because only that lets the rule below
+   change the third of each and leave the first two — the entrance's — alone.
+   This rule is the *coming back*: the slow fade, after the beat. */
+.js .bubble {
+	scale: 0.4;
+	transition: opacity var(--dur) var(--ease-out),
+		scale var(--dur-slow) var(--ease-spring),
+		filter var(--say-in) var(--ease-out);
+	transition-delay: var(--in-delay, 0ms), var(--in-delay, 0ms),
+		var(--say-wait);
+}
+
+/* And this rule is the going away, which is the whole reason those two lists
+   are separate: a transition uses the timings of the state it is moving *to*,
+   so the class arriving reads its timings from here and the class leaving
+   reads them from the rule above. Quick, and starting on the frame it is
+   asked to. One duration and one delay on both sides would have been a slower
+   blink; two of each is her stopping, thinking, and answering. */
+.js .bubble.is-swap {
+	transition-duration: var(--dur), var(--dur-slow), var(--say-out);
+	transition-delay: var(--in-delay, 0ms), var(--in-delay, 0ms), 0s;
+}
+.js .chibi {
+	scale: 0;
+}
+.js .saypanel {
+	scale: 0.96;
+}
+
+.js :is(.bubble, .chibi, .saypanel).is-in {
+	opacity: 1;
+	scale: 1;
+}
+
+/* --------------------------------------------------------------------------
+   11. Reduced motion — the calm board
+   Straight, evenly spaced, no rotation, no tilt, no drag, nothing that
+   moves on its own. The content is identical.
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+	.card {
+		--rest-x: 0px !important;
+		--rest-y: 0px !important;
+		--rest-rot: 0deg !important;
+		translate: none;
+		rotate: none;
+		transform: none;
+	}
+
+	/* Matches the specificity of the `.js`-scoped entrance states above, so
+	   these win and nothing is left hidden waiting for an animation that
+	   will never run. */
+	.js :is(.bubble, .chibi, .saypanel),
+	:is(.bubble, .chibi, .saypanel) {
+		opacity: 1;
+		scale: 1;
+		animation: none;
+	}
+
+	/* The arrow still appears — it is the only signal that the line is over
+	   and there is something to click — it just stops moving. */
+	.saypanel__next {
+		animation: none;
+	}
+
+	.card__more {
+		opacity: 0.75;
+		translate: 0 0;
+	}
+}
