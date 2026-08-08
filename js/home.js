@@ -4,7 +4,9 @@ import { createIntro } from "./modules/intro.js";
 import { initCards } from "./modules/cards.js";
 import { initJar } from "./modules/jar.js";
 import { initNav } from "./modules/nav.js";
+import { initPawTrail } from "./modules/paws.js";
 import { revealOnce, watch } from "./modules/reveal.js";
+import { initClock } from "./modules/shelf.js";
 
 /* Typing starts a beat after the box has finished popping in. The delay is
    tied to the --in-delay values in the markup rather than guessed. */
@@ -14,6 +16,10 @@ const TYPE_AFTER = 700;
 
 const yearSlot = $("[data-year]");
 if (yearSlot) yearSlot.textContent = String(new Date().getFullYear());
+
+/* --------------------------------------------------------------------- cat */
+
+initPawTrail();
 
 /* --------------------------------------------------------------------- nav */
 
@@ -106,3 +112,18 @@ const table = initCards({ board, tossButton: $("[data-toss]") });
 /* The cards fall in the first time the table scrolls into view. `deal` is a
    no-op on the fallback board, which is simply there — nothing to reveal. */
 if (table) revealOnce(board, null, 0.15, () => table.deal());
+
+/* ------------------------------------------------------------------- shelf */
+
+/* `revealOnce`, not `watch`: the five cards arrive once and stay. Unlike the
+   hero and the jar there is nothing here to reset — no typing to replay and
+   no paper to fold back up — so leaving and coming back should find the wall
+   exactly as it was left. The stagger is the --in-delay authored on each
+   card; this adds one class to the section. */
+revealOnce($("[data-shelf]"), "is-in", 0.15);
+
+initClock({
+	card: $("[data-clock]"),
+	led: $("[data-clock-led]"),
+	time: $("[data-clock-time]"),
+});

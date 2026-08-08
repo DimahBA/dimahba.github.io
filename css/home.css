@@ -1031,3 +1031,879 @@
 		margin-block-start: var(--sp-4);
 	}
 }
+
+/* --------------------------------------------------------------------------
+   4. The shelf — the five little things
+
+   A corner of the café wall rather than a dashboard: two columns of unequal
+   width, each an ordinary stack, and no attempt to make the rows line up.
+   Nothing here is a link, so the whole section is the one place on the page
+   that is purely something to look at.
+
+   Three rules keep it from reading as a grid of tiles:
+   · every card carries its own --rest-rot, authored in the markup
+   · the narrow column starts lower than the wide one
+   · the drawings — record, book, cartridge — are different shapes, and two of
+     them push past the edge of the paper they are pinned to
+   -------------------------------------------------------------------------- */
+
+.section--shelf {
+	/* Tape, postmark and record all hang over the edge of their sheet, and a
+	   sheet that is itself rotated puts a corner past the gutter on a phone.
+	   `clip` rather than `hidden`, for the same reason the board uses it: a
+	   scroll container here would take the sticky nav down with it. */
+	overflow: clip;
+}
+
+/* One column by default, three when there is room for three. The stacks are
+   real boxes at that width and nothing else — each is an ordinary flex column,
+   and because the five cards are different heights the seams between the three
+   never line up. That raggedness is the whole look, and it maintains itself:
+   move a card from one stack to another in the HTML and the arrangement
+   re-forms around it.
+
+   Deliberately not `columns: <width>`. Multi-column flow would size and
+   balance the stacks on its own, and briefly did — but every decoration here
+   that hangs off the edge of a card is absolutely positioned, and Chromium
+   fragments absolutely positioned boxes across column breaks. The postmark
+   came out 312px wide instead of 84, painted across two columns, with a piece
+   of tape loose in the gutter.
+
+   Below the three-column width the stacks stop being layout and become
+   grouping — which is exactly what `display: contents` removes. The cards
+   become children of the one-column grid and read in source order, and the
+   column is capped at a card's own width rather than stretched across a
+   tablet: a 700px-wide sheet with two lines on it is mostly empty sheet. */
+.shelf {
+	display: grid;
+	gap: var(--sp-6);
+	max-width: 26rem;
+	margin-inline: auto;
+	/* The hover lift raises a card above its neighbours, and no further. */
+	isolation: isolate;
+}
+
+.shelf__col {
+	display: contents;
+}
+
+@media (min-width: 68rem) {
+	.shelf {
+		grid-template-columns: repeat(3, 1fr);
+		gap: var(--sp-8);
+		align-items: start;
+		max-width: none;
+	}
+
+	.shelf__col {
+		display: flex;
+		flex-direction: column;
+		gap: var(--sp-8);
+	}
+
+	/* The two authored offsets. Everything below them staggers on its own —
+	   these only make sure the three stacks do not all start on the same
+	   line, which is the one thing the cards' own heights cannot fix. */
+	.shelf__col--b {
+		margin-block-start: var(--sp-10);
+	}
+
+	.shelf__col--c {
+		margin-block-start: var(--sp-4);
+	}
+}
+
+/* ---- the sheet ---------------------------------------------------------- */
+
+.knick {
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-3);
+
+	/* A sheet of paper is not something a column break may happen inside. */
+	break-inside: avoid;
+	/* The row gap, in the only form multicol understands. */
+	margin-block-end: var(--sp-8);
+
+	/* Split across the two properties for the same reason the project cards
+	   split theirs: the entrance owns opacity and scale, the pointer owns
+	   translate and rotate, and neither can overwrite the other. */
+	translate: 0 var(--hover-y, 0px);
+	rotate: calc(var(--rest-rot, 0deg) * var(--rot-mult, 1));
+	transition: translate var(--dur) var(--ease-spring),
+		rotate var(--dur) var(--ease-spring);
+}
+
+/* The lift shadow is a pseudo whose opacity animates rather than a box-shadow
+   on the card, which would re-rasterize the sheet and its text every frame.
+   Nothing is obscured: a shadow with no spread paints outside the border box
+   only. */
+.knick::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	box-shadow: var(--shadow-lift);
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity var(--dur) var(--ease-out);
+}
+
+/* Only where there is a pointer to hover with. These are not links and not
+   focusable, so on a touch screen the hover state would be a thing that
+   sticks after a tap and never leaves. */
+@media (hover: hover) {
+	.knick:hover {
+		--hover-y: -5px;
+		--rot-mult: 0.3; /* almost straightens, but keeps the hand-pinned feel */
+		z-index: 3;
+	}
+
+	.knick:hover::after {
+		opacity: 1;
+	}
+}
+
+.knick__label {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	/* Mixed towards whatever it is sitting on. The fallback is the page, for
+	   the three that are not sitting on anything — without it the whole
+	   `color-mix` would be invalid and the label would fall back to inheriting
+	   full-strength ink. */
+	color: color-mix(in srgb, var(--ink) 62%, var(--card-bg, var(--bg-page)));
+}
+
+.knick__title {
+	font-family: var(--ff-display);
+	font-size: var(--fs-500);
+	font-weight: 700;
+	line-height: var(--lh-tight);
+	letter-spacing: -0.02em;
+}
+
+.knick__sub {
+	font-size: var(--fs-300);
+	line-height: var(--lh-snug);
+	color: var(--ink-soft);
+}
+
+/* The one link on the wall. Underlined at rest rather than on hover: it is
+   sitting among five cards that are not links, so it has to say what it is
+   before the pointer arrives. */
+.knick__link {
+	align-self: flex-start;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	color: var(--ink-soft);
+	text-decoration: underline;
+	text-decoration-color: color-mix(in srgb, var(--ink) 35%, transparent);
+	text-underline-offset: 3px;
+	transition: color var(--dur) var(--ease-out),
+		text-decoration-color var(--dur) var(--ease-out);
+}
+
+.knick__link:hover {
+	color: var(--ink);
+	text-decoration-color: currentColor;
+}
+
+.knick__note {
+	font-size: var(--fs-200);
+	line-height: var(--lh-snug);
+	color: var(--ink-soft);
+}
+
+/* ---- washi tape --------------------------------------------------------- */
+
+/* One strip, torn at both ends, holding a corner down. The diagonal hatching
+   is the tape's own weave — without it a flat rectangle reads as a sticker. */
+.tape {
+	position: absolute;
+	z-index: 2;
+	width: 5.25rem;
+	height: 1.4rem;
+	/* Colour and weave kept on their own properties. A colour is only legal in
+	   the *last* layer of the `background` shorthand, and putting it first
+	   throws the whole declaration away — which is a strip of tape you cannot
+	   see rather than an error anybody reports. */
+	background-color: var(--butter);
+	background-image: repeating-linear-gradient(
+		118deg,
+		rgb(255 255 255 / 0.6) 0 5px,
+		rgb(255 255 255 / 0) 5px 11px
+	);
+	box-shadow: 0 1px 3px rgb(88 70 52 / 0.22);
+	opacity: 0.92;
+	clip-path: polygon(
+		0 6%,
+		7% 0,
+		96% 5%,
+		100% 46%,
+		95% 100%,
+		5% 96%,
+		1% 52%
+	);
+	pointer-events: none;
+}
+
+.tape--tl {
+	inset: -0.7rem auto auto -1.15rem;
+	rotate: -19deg;
+}
+
+.tape--tr {
+	inset: -0.75rem -1.2rem auto auto;
+	rotate: 15deg;
+}
+
+/* ---- the turntable ------------------------------------------------------ */
+
+/* The record sits on top, centred, and the words sit under it — the same
+   arrangement at every width, so the card does not rearrange itself halfway
+   down the page. A sleeve on a shelf is looked at square on. */
+.deck {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-4);
+}
+
+.deck__stack {
+	position: relative;
+	flex: none;
+	/* The arm hangs off the top-right corner, so the box it is centred by is
+	   wider than the record — the shift keeps the *record* on the card's
+	   centre line rather than the box that happens to contain it. */
+	width: 9rem;
+	height: 9rem;
+	margin-inline: auto;
+}
+
+.deck__stack img {
+	position: absolute;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	image-rendering: pixelated;
+}
+
+/* The two that are not playing, pushed out from under the one that is and
+   turned a few degrees apart — a stack somebody has been through, not a
+   stack somebody stacked. */
+.deck__spare {
+	width: 68%;
+	height: 68%;
+	opacity: 0.55;
+}
+
+.deck__spare--a {
+	translate: -22% 30%;
+	rotate: -12deg;
+}
+
+.deck__spare--b {
+	translate: 34% -4%;
+	rotate: 10deg;
+}
+
+.deck__disc {
+	z-index: 1;
+	animation: spin 5.5s linear infinite;
+}
+
+@keyframes spin {
+	to {
+		rotate: 1turn;
+	}
+}
+
+/* The tone arm: a bar pivoting on a post at the top right, dropped onto the
+   record. It needs all three pieces to read as an arm rather than as a line
+   somebody left lying across the sleeve — the post it turns on, the arm, and
+   the cartridge at the far end sitting in the groove. Square everything,
+   because of what it is sitting next to. */
+.deck__arm {
+	position: absolute;
+	z-index: 2;
+	inset: 3% -7% auto auto;
+	width: 5.6rem;
+	height: 5px;
+	background: var(--tan-deep);
+	transform-origin: 100% 50%;
+	rotate: -42deg;
+	box-shadow: var(--sh-contact);
+}
+
+/* Both ends turn back the angle the arm was given. A child of a rotated box
+   inherits its rotation, and a post standing on its corner reads as a diamond
+   on a stick rather than as something the arm is mounted on. */
+.deck__arm::before,
+.deck__arm::after {
+	content: "";
+	position: absolute;
+	rotate: 42deg;
+}
+
+/* The post, with a collar around it. */
+.deck__arm::before {
+	inset: -7px -9px auto auto;
+	width: 19px;
+	height: 19px;
+	background: var(--tan-deep);
+	box-shadow: inset 0 0 0 4px color-mix(in srgb, var(--ink) 32%, var(--tan-deep)),
+		var(--sh-contact);
+}
+
+/* The cartridge, hanging a little below the arm the way a real head does. */
+.deck__arm::after {
+	inset: -3px auto auto -5px;
+	width: 13px;
+	height: 11px;
+	background: var(--ink);
+}
+
+.deck__now {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-1);
+	min-width: 0;
+}
+
+.deck__now .chips {
+	margin-block-start: var(--sp-2);
+}
+
+/* Four bars keeping time next to the label. Stepped rather than smooth: a
+   level meter that slides is a modern one, and this café does not have a
+   modern one. */
+.eq {
+	display: inline-flex;
+	align-items: flex-end;
+	gap: 2px;
+	height: 0.8rem;
+}
+
+.eq i {
+	width: 3px;
+	height: 100%;
+	background: var(--accent);
+	transform-origin: 50% 100%;
+	animation: eq-step 880ms steps(3, end) infinite alternate;
+}
+
+.eq i:nth-child(2) {
+	animation-duration: 610ms;
+}
+.eq i:nth-child(3) {
+	animation-duration: 1010ms;
+}
+.eq i:nth-child(4) {
+	animation-duration: 740ms;
+}
+
+@keyframes eq-step {
+	from {
+		scale: 1 0.22;
+	}
+	to {
+		scale: 1 1;
+	}
+}
+
+/* ---- the book ----------------------------------------------------------- */
+
+.book {
+	display: flex;
+	align-items: flex-start;
+	gap: var(--sp-4);
+}
+
+/* Drawn, not photographed. A cover, a darker spine down one edge, two ruled
+   lines where the title would be, and a ribbon coming out of the top. */
+.book__cover {
+	position: relative;
+	flex: none;
+	width: 4.5rem;
+	height: 6.25rem;
+	background: var(--peach-deep);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	rotate: -4deg;
+}
+
+.book__cover::before,
+.book__cover::after {
+	content: "";
+	position: absolute;
+	height: 3px;
+	background: rgb(255 255 255 / 0.55);
+}
+
+.book__cover::before {
+	inset: 1.4rem 0.6rem auto 1.3rem;
+}
+
+.book__cover::after {
+	inset: 2rem 1.3rem auto 1.3rem;
+}
+
+.book__spine {
+	position: absolute;
+	inset: 0 auto 0 0;
+	width: 0.55rem;
+	background: color-mix(in srgb, var(--ink) 26%, var(--peach-deep));
+}
+
+.book__mark {
+	position: absolute;
+	inset: -0.55rem 0.9rem auto auto;
+	width: 0.7rem;
+	height: 2.9rem;
+	background: var(--moss-deep);
+	/* The swallowtail notch, cut out of the bottom end. */
+	clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+}
+
+.sprig {
+	position: absolute;
+	z-index: 2;
+	inset: auto 2.25rem -1.35rem auto;
+	width: 4rem;
+	image-rendering: pixelated;
+	rotate: 7deg;
+	pointer-events: none;
+}
+
+.book__meta {
+	display: flex;
+	flex-direction: column;
+	gap: var(--sp-1);
+	min-width: 0;
+}
+
+/* ---- the passport ------------------------------------------------------- */
+
+.knick--passport {
+	gap: var(--sp-4);
+}
+
+/* The café stamps you in at the door, which is the joke. Rotated and slightly
+   under-inked, like every real one. */
+.postmark {
+	position: absolute;
+	z-index: 2;
+	inset: -0.6rem 0.75rem auto auto;
+	display: grid;
+	place-content: center;
+	gap: 1px;
+	width: 5.25rem;
+	height: 5.25rem;
+	border: 2px dashed color-mix(in srgb, var(--peach-deep) 55%, var(--ink));
+	border-radius: 50%;
+	rotate: -13deg;
+	background: color-mix(in srgb, var(--paper) 30%, transparent);
+	font-family: var(--ff-display);
+	font-size: 0.5rem;
+	font-weight: 600;
+	letter-spacing: 0.14em;
+	text-align: center;
+	text-transform: uppercase;
+	color: color-mix(in srgb, var(--peach-deep) 30%, var(--ink));
+	opacity: 0.85;
+	pointer-events: none;
+}
+
+.postmark b {
+	font-size: 0.75rem;
+	letter-spacing: 0.06em;
+}
+
+.tally {
+	display: flex;
+	align-items: baseline;
+	gap: var(--sp-2);
+	font-size: var(--fs-300);
+	color: var(--ink-soft);
+}
+
+.tally b {
+	font-family: var(--ff-display);
+	font-size: var(--fs-700);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	color: var(--ink);
+}
+
+
+.stamps {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp-2);
+	/* Room for the corners the rotations throw out. */
+	padding-block: 2px;
+}
+
+/* Each one is the stitch primitive at its smallest: a scrap of paper with a
+   thread running just inside the edge. Square corners — a stamp is cut, not
+   rounded. */
+.stamp {
+	--stitch-inset: 2px;
+	--stitch-w: 2px;
+	--r-card: 0px;
+	--stitch-color: color-mix(in srgb, var(--paper) 80%, transparent);
+	padding: 0.35rem 0.55rem;
+	background: var(--paper-warm);
+	box-shadow: var(--sh-contact);
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	line-height: 1.1;
+	white-space: nowrap;
+	rotate: var(--rot, 0deg);
+}
+
+/* Three tints and three angles on a three-cycle, so the page never falls into
+   a pattern you can read as one. */
+.stamps li:nth-child(3n + 1) {
+	--rot: -2.5deg;
+	background: var(--moss);
+}
+.stamps li:nth-child(3n + 2) {
+	--rot: 1.8deg;
+	background: var(--butter);
+}
+.stamps li:nth-child(3n) {
+	--rot: -1deg;
+	background: var(--paper-warm);
+}
+
+/* ---- the clock ---------------------------------------------------------- */
+
+/* A live time is the one thing on this wall that cannot be written down in
+   advance, so it is also the one thing that leaves with the script. */
+html:not(.js) .knick--clock {
+	display: none;
+}
+
+/* A seven-segment panel in a plastic case. Two things make it read as one
+   rather than as four numbers on a dark rectangle: the unlit segments are
+   left faintly visible, and the case is lit from the top left — a lighter
+   edge above, a darker one below. */
+.led {
+	--seg-w: clamp(1.5rem, 1.1rem + 1.4vw, 1.9rem);
+	--seg-t: calc(var(--seg-w) * 0.2);
+	--seg-on: #f4c04a;
+	--seg-off: rgb(255 255 255 / 0.055);
+
+	display: flex;
+	align-items: center;
+	gap: calc(var(--seg-w) * 0.28);
+	align-self: flex-start;
+	padding: calc(var(--seg-w) * 0.42) calc(var(--seg-w) * 0.5);
+	background: #2b2f31;
+	box-shadow: inset 0 0 0 3px #3c4143, inset 0 3px 0 4px rgb(255 255 255 / 0.07),
+		var(--sh-contact), var(--sh-ambient);
+}
+
+.led__digit {
+	position: relative;
+	flex: none;
+	width: var(--seg-w);
+	height: calc(var(--seg-w) * 1.85);
+}
+
+/* Every bar is drawn; `.is-on` only changes its colour. The chamfered ends
+   are what stop two segments meeting at a corner in a solid block. */
+.seg {
+	position: absolute;
+	background: var(--seg-off);
+	transition: background var(--dur-fast) linear;
+}
+
+.seg.is-on {
+	background: var(--seg-on);
+}
+
+.seg--a,
+.seg--d,
+.seg--g {
+	left: calc(var(--seg-t) * 0.62);
+	right: calc(var(--seg-t) * 0.62);
+	height: var(--seg-t);
+	clip-path: polygon(
+		0 50%,
+		var(--seg-t) 0,
+		calc(100% - var(--seg-t)) 0,
+		100% 50%,
+		calc(100% - var(--seg-t)) 100%,
+		var(--seg-t) 100%
+	);
+}
+
+.seg--a {
+	top: 0;
+}
+.seg--g {
+	top: calc(50% - var(--seg-t) / 2);
+}
+.seg--d {
+	bottom: 0;
+}
+
+.seg--b,
+.seg--c,
+.seg--e,
+.seg--f {
+	width: var(--seg-t);
+	height: calc(50% - var(--seg-t) * 1.1);
+	clip-path: polygon(
+		50% 0,
+		100% var(--seg-t),
+		100% calc(100% - var(--seg-t)),
+		50% 100%,
+		0 calc(100% - var(--seg-t)),
+		0 var(--seg-t)
+	);
+}
+
+.seg--f {
+	top: calc(var(--seg-t) * 0.62);
+	left: 0;
+}
+.seg--b {
+	top: calc(var(--seg-t) * 0.62);
+	right: 0;
+}
+.seg--e {
+	bottom: calc(var(--seg-t) * 0.62);
+	left: 0;
+}
+.seg--c {
+	bottom: calc(var(--seg-t) * 0.62);
+	right: 0;
+}
+
+.led__colon {
+	display: flex;
+	flex: none;
+	flex-direction: column;
+	justify-content: center;
+	gap: calc(var(--seg-w) * 0.42);
+	height: calc(var(--seg-w) * 1.85);
+	margin-inline: calc(var(--seg-w) * 0.08);
+}
+
+.led__colon i {
+	width: var(--seg-t);
+	height: var(--seg-t);
+	background: var(--seg-on);
+	animation: led-blink 2s steps(1, end) infinite;
+}
+
+@keyframes led-blink {
+	50% {
+		background: var(--seg-off);
+	}
+}
+
+/* ---- the DS ------------------------------------------------------------- */
+
+/* An open clamshell, drawn in three stacked pieces: lid, hinge, deck.
+
+   Two decisions carry the whole drawing. Both screens are 4:3 and the same
+   width as each other, which is what makes a DS a DS — the same parts with a
+   wide screen read as a generic handheld. And the shell is the site's own
+   paper rather than console-grey, so the thing on the card still belongs to
+   the café.
+
+   Nothing else is drawn. No scanlines, no bezels, no button labels: at this
+   size every one of them landed as noise, and the shape was doing the work
+   on its own. */
+.ds {
+	/* Both screens take their width from here, so they can never drift apart
+	   — and the console's proportions follow from one number. */
+	--screen-w: 58%;
+	--shell: color-mix(in srgb, var(--paper) 84%, var(--tan));
+	--shell-dark: color-mix(in srgb, var(--tan) 70%, var(--ink));
+
+	width: 100%;
+	filter: drop-shadow(0 2px 4px rgb(88 70 52 / 0.24));
+}
+
+.ds__lid,
+.ds__deck {
+	background: var(--shell);
+}
+
+.ds__lid {
+	display: flex;
+	justify-content: center;
+	padding: var(--sp-4);
+	border-radius: 10px 10px 2px 2px;
+}
+
+/* The two barrels the lid turns on. Dark, because on a real one this is the
+   one part that is always in shadow. */
+.ds__hinge {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	height: 0.55rem;
+	padding-inline: 22%;
+	background: var(--shell-dark);
+}
+
+.ds__hinge span {
+	width: 1.4rem;
+	height: 100%;
+	background: color-mix(in srgb, var(--shell-dark) 62%, var(--ink));
+}
+
+.ds__deck {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-2);
+	padding: var(--sp-4) var(--sp-3);
+	border-radius: 2px 2px 10px 10px;
+}
+
+.ds__screen {
+	flex: none;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	width: var(--screen-w);
+	aspect-ratio: 4 / 3;
+	padding: var(--sp-2);
+	background: var(--slate);
+	color: var(--sage);
+	text-align: center;
+	box-shadow: var(--shadow-sunk);
+	overflow: hidden;
+}
+
+.ds__title {
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	font-weight: 700;
+	line-height: var(--lh-tight);
+	letter-spacing: -0.02em;
+	text-wrap: balance;
+}
+
+.ds__hours {
+	font-size: var(--fs-100);
+	line-height: var(--lh-snug);
+	color: color-mix(in srgb, var(--sage) 74%, var(--slate));
+}
+
+/* Two bars crossing. One element, both pseudos, no image. */
+.dpad {
+	position: relative;
+	flex: none;
+	width: 2.1rem;
+	height: 2.1rem;
+}
+
+.dpad::before,
+.dpad::after {
+	content: "";
+	position: absolute;
+	background: var(--shell-dark);
+}
+
+.dpad::before {
+	inset: 0 34%;
+}
+
+.dpad::after {
+	inset: 34% 0;
+}
+
+/* A, B, X, Y. A 2×2 grid turned on its corner is the diamond, and turning the
+   grid rather than placing four dots by hand keeps the spacing even. */
+.keys {
+	flex: none;
+	display: grid;
+	grid-template-columns: repeat(2, auto);
+	gap: 4px;
+	rotate: 45deg;
+	margin: 0.3rem;
+}
+
+.keys i {
+	width: 0.62rem;
+	height: 0.62rem;
+	border-radius: var(--r-pill);
+	background: var(--shell-dark);
+}
+
+/* ---- entrance ----------------------------------------------------------- */
+
+/* Scoped to `.js`, like every other entrance on this page: with scripting off
+   the five cards are simply on the wall.
+
+   The four channels are written as one list with four delays so that the two
+   the entrance owns can be staggered and the two the pointer owns cannot. A
+   single `transition-delay` would have made hovering the last card wait
+   320ms for the stagger it was given on the way in. */
+.js .knick {
+	opacity: 0;
+	scale: 0.965;
+	transition: opacity var(--dur) var(--ease-out),
+		scale var(--dur-slow) var(--ease-spring),
+		translate var(--dur) var(--ease-spring),
+		rotate var(--dur) var(--ease-spring);
+	transition-delay: var(--in-delay, 0ms), var(--in-delay, 0ms), 0s, 0s;
+}
+
+.js [data-shelf].is-in .knick {
+	opacity: 1;
+	scale: 1;
+}
+
+/* ---- the calm wall ------------------------------------------------------ */
+
+@media (prefers-reduced-motion: reduce) {
+	/* Matches the specificity of the `.js` rule above so nothing is left
+	   invisible waiting for a transition that will never run. */
+	.js .knick,
+	.knick {
+		opacity: 1;
+		scale: 1;
+		--rest-rot: 0deg;
+	}
+
+	/* The record stops, the meter holds a level, and the colon stays lit.
+	   All three would otherwise be snapped to their end state by the global
+	   reduced-motion rule — which leaves the eq standing at full height like
+	   a bar chart, and the colon stuck on the unlit half of its blink. */
+	.deck__disc {
+		animation: none !important;
+	}
+
+	.led__colon i {
+		animation: none !important;
+		background: var(--seg-on);
+	}
+
+	.eq i {
+		animation: none !important;
+		scale: 1 0.6;
+	}
+
+	.eq i:nth-child(2) {
+		scale: 1 1;
+	}
+	.eq i:nth-child(3) {
+		scale: 1 0.35;
+	}
+}

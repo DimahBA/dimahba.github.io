@@ -1,6 +1,7 @@
 import { $, h } from "./lib/dom.js";
 import { projects, slugs } from "./data/projects.js";
 import { mountLightbox, makeZoomable } from "./modules/lightbox.js";
+import { initPawTrail } from "./modules/paws.js";
 
 const SITE = "https://dimahba.github.io/";
 const YOUTUBE_ID = /^[\w-]{11}$/;
@@ -19,6 +20,8 @@ else if (requested) renderNotFound();
 else renderIndex();
 
 document.body.removeAttribute("data-loading");
+
+initPawTrail();
 
 /* ------------------------------------------------------------------ render */
 

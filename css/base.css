@@ -563,11 +563,34 @@ p {
 }
 
 /* --------------------------------------------------------------------------
-   11. Print
+   11. The paw trail
+   A cat follows the cursor. The trail is cat-paw-prints (js/vendor), which
+   styles its own container and prints inline from JS; the two rules it has no
+   way to ask for are here. js/modules/paws.js configures the rest.
+   -------------------------------------------------------------------------- */
+
+/* The library holds the container's z-index, size and pointer-events in an
+   inline style, so anything here would need !important to reach it. The id is
+   the library's own; #cat-paw-prints-container is not a name this site chose.
+
+   JS never starts a trail under reduced motion, and tears a running one down
+   if the preference is switched on mid-visit. This is the backstop for the
+   moment in between, and for the trail outliving a change JS somehow missed:
+   a cat chasing the cursor is precisely the kind of movement the preference
+   is asking not to see. */
+@media (prefers-reduced-motion: reduce) {
+	#cat-paw-prints-container {
+		display: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   12. Print
    Four lines that stop a scattered, rotated board printing as nonsense.
    -------------------------------------------------------------------------- */
 
 @media print {
+	#cat-paw-prints-container,
 	.nav,
 	.footer__top,
 	.board__toss,

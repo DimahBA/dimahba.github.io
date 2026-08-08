@@ -79,6 +79,7 @@
         <ul class="nav__links">
           <li><a class="nav__link" href="#qa" data-nav-link>q&amp;a</a></li>
           <li><a class="nav__link" href="#work" data-nav-link>work</a></li>
+          <li><a class="nav__link" href="#shelf" data-nav-link>bits</a></li>
           <li><a class="nav__link" href="#hello" data-nav-link>say hi</a></li>
         </ul>
       </div>
@@ -677,6 +678,244 @@
               </svg>
               Toss the cards
             </button>
+          </div>
+        </div>
+      </section>
+
+      <div class="divider" role="presentation"></div>
+
+      <!-- ==============================================================
+				 The shelf — five little things pinned to the café wall
+
+				 ┌──────────────────────────────────────────────────────────┐
+				 │ TODO Dimah — everything between the ★ marks below is a    │
+				 │ placeholder. Change the words, nothing else: the layout   │
+				 │ takes its shape from the copy, so a longer title or two   │
+				 │ more stamps just work.                                    │
+				 │   · the record  → song, artist, the two genre chips       │
+				 │   · the book    → title and author                        │
+				 │   · the stamps  → the count, then one <li> per country     │
+				 │   · the DS      → game and hours, on the two screens       │
+				 │ The clock has nothing to edit — it reads Europe/Paris.    │
+				 └──────────────────────────────────────────────────────────┘
+
+				 Static markup, like the project board and for the same reason:
+				 these are five short facts that change a few times a year, and
+				 a crawler or a reader with no JavaScript should still find them.
+				 Only the clock needs a script, and only the clock is hidden
+				 without one — a live time is the one thing here that cannot be
+				 written down in advance.
+				 =========================================================== -->
+      <section class="section section--shelf" id="shelf" data-shelf>
+        <div class="wrap">
+          <div class="section-head">
+            <p class="eyebrow">before you go</p>
+            <h2>Bits of me !</h2>
+          </div>
+
+          <!-- Three stacks of cards, not a grid of them. Each stack is an
+					     ordinary column and they are different heights, so the seams
+					     between them never line up — which is the whole look, and it
+					     costs nothing to maintain: move a card from one stack to
+					     another in the HTML and the arrangement re-forms around it.
+
+					     Below the three-column width the stacks stop being layout and
+					     become grouping, which is what `display: contents` removes: the
+					     five cards become children of the one-column grid and read in
+					     source order. -->
+          <div class="shelf">
+            <div class="shelf__col shelf__col--a">
+              <!-- ---------------------------------------------- the record -->
+              <article
+                class="knick paper stitch t-moss knick--deck"
+                style="--rest-rot: -1.4deg; --in-delay: 0ms"
+              >
+                <span class="tape tape--tl" role="presentation"></span>
+
+                <p class="knick__label">
+                  my current favorite song
+                  <span class="eq" role="presentation">
+                    <i></i><i></i><i></i><i></i>
+                  </span>
+                </p>
+
+                <div class="deck">
+                  <!-- One record on the platter, with the arm down on it. -->
+                  <div class="deck__stack" role="presentation">
+                    <img
+                      class="deck__disc"
+                      src="static/PixelArt/orangeVynil-export.png"
+                      alt=""
+                      width="240"
+                      height="240"
+                      loading="lazy"
+                    />
+                    <span class="deck__arm"></span>
+                  </div>
+
+                  <div class="deck__now">
+                    <!-- ★ -->
+                    <p class="knick__title">Amber</p>
+                    <p class="knick__sub">Maddie Ashman</p>
+                    <ul class="chips">
+                      <li class="chip">avant-pop</li>
+                      <li class="chip">hocket in 5/4</li>
+                    </ul>
+                    <a
+                      class="knick__link"
+                      href="https://www.youtube.com/watch?v=i5CVOiDyXu8"
+                      rel="noopener"
+                      >▶ listen on YouTube</a
+                    >
+                    <!-- ★ -->
+                  </div>
+                </div>
+              </article>
+
+              <!-- ----------------------------------------------- the clock -->
+              <article
+                class="knick paper stitch t-moss knick--clock"
+                style="--rest-rot: -2.2deg; --in-delay: 70ms"
+                data-clock
+              >
+                <span class="tape tape--tr" role="presentation"></span>
+
+                <p class="knick__label">meanwhile, in paris</p>
+
+                <!-- A seven-segment panel: four digits of seven bars each,
+								     with the unlit bars left faintly visible the way they
+								     are on a real one. The segments themselves are built by
+								     js/modules/shelf.js — 28 empty <i>s is not markup worth
+								     writing out, and this card is already the one thing here
+								     that does not exist without a script.
+
+								     The panel is a drawing, so it is hidden from assistive
+								     tech and the time is carried beside it as text. -->
+                <div class="led" data-clock-led aria-hidden="true">
+                  <span class="led__digit"></span>
+                  <span class="led__digit"></span>
+                  <span class="led__colon"><i></i><i></i></span>
+                  <span class="led__digit"></span>
+                  <span class="led__digit"></span>
+                </div>
+
+                <time class="visually-hidden" data-clock-time>--:--</time>
+              </article>
+            </div>
+
+            <div class="shelf__col shelf__col--b">
+              <!-- -------------------------------------------- the passport -->
+              <article
+                class="knick paper stitch t-peach knick--passport"
+                style="--rest-rot: 1.1deg; --in-delay: 140ms"
+              >
+                <p class="knick__label">visited countries</p>
+
+                <!-- The postmark is the café's own, which is the joke: you
+								     are being stamped in at the door. -->
+                <span class="postmark" role="presentation">
+                  <span>Buttercup</span><b>café</b><span>paris</span>
+                </span>
+
+                <!-- ★ -->
+                <p class="tally"><b>5</b> so far</p>
+
+                <ul class="stamps" role="list">
+                  <li class="stamp stitch">Italy</li>
+                  <li class="stamp stitch">France</li>
+                  <li class="stamp stitch">Spain</li>
+                  <li class="stamp stitch">Andorra</li>
+                  <li class="stamp stitch">Lebanon</li>
+                </ul>
+                <!-- ★ -->
+              </article>
+
+              <!-- ------------------------------------------------ the book -->
+              <article
+                class="knick paper stitch t-butter knick--book"
+                style="--rest-rot: -2deg; --in-delay: 280ms"
+              >
+                <p class="knick__label">currently reading</p>
+
+                <div class="book">
+                  <!-- The cover is drawn, not photographed: a block with a
+									     darker spine down one side and a ribbon coming out
+									     of the top. Decorative — the title beside it is the
+									     content. -->
+                  <div class="book__cover" role="presentation">
+                    <span class="book__spine"></span>
+                    <span class="book__mark"></span>
+                  </div>
+
+                  <div class="book__meta">
+                    <!-- ★ -->
+                    <p class="knick__title">Truly Like Lightning</p>
+                    <p class="knick__sub">David Duchovny</p>
+                    <!-- ★ -->
+                  </div>
+                </div>
+
+                <!-- Something growing out of the corner of the sheet. The
+								     only piece here that leaves its card, which is what
+								     keeps the five of them from reading as tiles. -->
+                <img
+                  class="sprig"
+                  src="static/PixelArt/sunflower.png"
+                  alt=""
+                  role="presentation"
+                  width="110"
+                  height="109"
+                  loading="lazy"
+                />
+              </article>
+            </div>
+
+            <div class="shelf__col shelf__col--c">
+              <!-- -------------------------------------------------- the DS -->
+              <article
+                class="knick paper stitch t-butter knick--ds"
+                style="--rest-rot: 2.4deg; --in-delay: 210ms"
+              >
+                <p class="knick__label">currently playing</p>
+
+                <!-- An open DS: lid, hinge, deck. Both screens are 4:3 and
+								     the same width as each other, which is the whole
+								     reason the shape reads as a DS and not as a generic
+								     handheld — get that ratio wrong and it is a letterbox
+								     with buttons.
+
+								     Six shapes and no more. The two screens carry the only
+								     text; everything else is flat shell. -->
+                <div class="ds">
+                  <div class="ds__lid">
+                    <div class="ds__screen">
+                      <!-- ★ -->
+                      <p class="ds__title">Hades</p>
+                      <!-- ★ -->
+                    </div>
+                  </div>
+
+                  <div class="ds__hinge" role="presentation">
+                    <span></span><span></span>
+                  </div>
+
+                  <div class="ds__deck">
+                    <span class="dpad" role="presentation"></span>
+
+                    <div class="ds__screen ds__screen--touch">
+                      <!-- ★ -->
+                      <p class="ds__hours">62 hrs</p>
+                      <!-- ★ -->
+                    </div>
+
+                    <span class="keys" role="presentation">
+                      <i></i><i></i><i></i><i></i>
+                    </span>
+                  </div>
+                </div>
+
+              </article>
+            </div>
           </div>
         </div>
       </section>
