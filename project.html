@@ -31,6 +31,7 @@
 
 		<link rel="stylesheet" href="css/base.css" />
 		<link rel="stylesheet" href="css/components.css" />
+		<link rel="stylesheet" href="css/lightbox.css" />
 		<link rel="stylesheet" href="css/project.css" />
 
 		<script type="module" src="js/case-study.js"></script>
@@ -56,9 +57,15 @@
 
 		<article class="case paper stitch" id="case">
 			<header class="case__head">
-				<span class="plaque" data-slot="badge" hidden></span>
-				<h1 class="case__title" data-slot="title"></h1>
-				<ul class="chips" data-slot="tags"></ul>
+				<div class="case__intro">
+					<span class="plaque" data-slot="badge" hidden></span>
+					<h1 class="case__title" data-slot="title"></h1>
+					<ul class="chips" data-slot="tags"></ul>
+					<p class="case__deck" data-slot="deck"></p>
+				</div>
+				<!-- The credits card. Empty, and display:none, on a project that
+				     doesn't carry a `meta` list. -->
+				<div class="case__aside" data-slot="meta"></div>
 			</header>
 
 			<div class="case__body" data-slot="body"></div>

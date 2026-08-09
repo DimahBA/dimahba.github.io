@@ -15,13 +15,25 @@ const requested = new URLSearchParams(location.search).get("id");
 const data =
 	requested && Object.hasOwn(projects, requested) ? projects[requested] : null;
 
-if (data) render(requested, data);
-else if (requested) renderNotFound();
-else renderIndex();
+/* A project whose case study is not a paper sheet lives on a page of its own.
+   The slug still resolves here, because project.html?id=… is the address that
+   is in the sitemap and on anything already printed — `replace`, not `assign`,
+   so the redirect does not sit in the history and trap the back button.
 
-document.body.removeAttribute("data-loading");
+   Which page it goes to is decided by the data file, never by the query
+   string: `requested` only ever selects an entry, and every `page` in that
+   file is a relative path to a file in this repo. */
+if (data?.page) {
+	location.replace(data.page);
+} else {
+	if (data) render(requested, data);
+	else if (requested) renderNotFound();
+	else renderIndex();
 
-initPawTrail();
+	document.body.removeAttribute("data-loading");
+
+	initPawTrail();
+}
 
 /* ------------------------------------------------------------------ render */
 
@@ -41,6 +53,19 @@ function render(id, project) {
 	$('[data-slot="tags"]').replaceChildren(
 		...(project.tags ?? []).map((tag) => h("li", { class: "chip", text: tag })),
 	);
+
+	/* The deck and the credits card are both optional, and both collapse to
+	   nothing when a project doesn't carry them — an older case study keeps
+	   the plain centred title it was written for.
+
+	   Both slots are also addressed defensively: a stale cached copy of the
+	   shell that predates them should cost the reader a masthead, not the
+	   whole case study — an uncaught throw here leaves the body empty. */
+	const deck = $('[data-slot="deck"]');
+	if (deck && project.meta && project.summary) deck.textContent = project.summary;
+
+	const aside = $('[data-slot="meta"]');
+	if (aside && project.meta) aside.replaceChildren(buildMeta(project.meta));
 
 	const body = $('[data-slot="body"]');
 	body.replaceChildren(...buildBody(project));
@@ -134,6 +159,8 @@ function sideOf(polaroid) {
 function buildBlock(block) {
 	if (block.p) return h("p", { class: "case__p" }, inline(block.p));
 	if (block.h2) return h("h2", { class: "case__h2", text: block.h2 });
+	if (block.quote) return buildQuote(block);
+	if (block.list) return buildList(block.list);
 	if (block.img) return buildFigure(block.img);
 	if (block.video) return buildVideo(block.video);
 	if (block.link) {
@@ -172,6 +199,44 @@ function inline(content) {
 		}
 		return document.createTextNode("");
 	});
+}
+
+/* The credits card beside the title: role, timeline, tooling. A description
+   list rather than a paragraph of slashes, because that is what it is — and
+   because it lets the stylesheet draw the rows without the copy having to
+   carry the punctuation that fakes them. */
+function buildMeta(rows) {
+	return h(
+		"dl",
+		{ class: "case__meta" },
+		...rows.flatMap((row) => [
+			h("dt", { text: row.k }),
+			h("dd", {}, ...inline(row.v)),
+		]),
+	);
+}
+
+/* A participant's own words, kept in the language they said them in. `cite`
+   is the attribution line; `translation` is shown under the quote rather than
+   replacing it, so the reader gets the sentence and the sense. */
+function buildQuote(block) {
+	return h(
+		"blockquote",
+		{ class: "case__quote" },
+		h("p", { lang: block.lang ?? null }, ...inline(block.quote)),
+		block.translation
+			? h("p", { class: "case__quote-gloss", text: block.translation })
+			: null,
+		block.cite ? h("cite", { text: block.cite }) : null,
+	);
+}
+
+function buildList(items) {
+	return h(
+		"ul",
+		{ class: "case__list" },
+		...items.map((item) => h("li", {}, ...inline(item))),
+	);
 }
 
 function buildFigure(image) {
@@ -347,7 +412,9 @@ function projectList() {
 		...slugs.map((slug) =>
 			h("a", {
 				class: "chip-link stitch",
-				href: `project.html?id=${encodeURIComponent(slug)}`,
+				href:
+					projects[slug].page ??
+					`project.html?id=${encodeURIComponent(slug)}`,
 				text: projects[slug].title,
 			}),
 		),

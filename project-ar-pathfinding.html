@@ -1,0 +1,1574 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Adaptive AR Pathfinding for Parkinson's Disease — Dimah</title>
+    <meta
+      name="description"
+      content="A Meta Quest 3 system that lets people with Parkinson's point at where they want to go, then lays a walking path across their own floor, around their own furniture. Best Poster at IEEE ISMAR 2025."
+    />
+    <meta name="theme-color" content="#fffbdd" />
+    <link
+      rel="canonical"
+      href="https://dimahba.github.io/project-ar-pathfinding.html"
+    />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Buttercup Café" />
+    <meta
+      property="og:title"
+      content="Adaptive AR Pathfinding for Parkinson's Disease"
+    />
+    <meta
+      property="og:description"
+      content="A Meta Quest 3 system that lets people with Parkinson's point at where they want to go, then lays a walking path across their own floor, around their own furniture."
+    />
+    <meta
+      property="og:url"
+      content="https://dimahba.github.io/project-ar-pathfinding.html"
+    />
+    <meta
+      property="og:image"
+      content="https://dimahba.github.io/static/projects/roomsetup-A.png"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link
+      rel="icon"
+      href="static/PixelArt/myChibi-cropped.png"
+      type="image/png"
+    />
+    <link rel="apple-touch-icon" href="static/PixelArt/myChibi-cropped.png" />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&amp;family=Space+Grotesk:wght@400..700&amp;display=swap"
+    />
+
+    <!-- Stamped before first paint, exactly as on the home page: the entrance
+		     states only apply when there is something around to trigger them.
+		     With scripting off every screen is simply present and readable. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/lightbox.css" />
+    <link rel="stylesheet" href="css/case-scroll.css" />
+
+    <script type="module" src="js/case-scroll.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#brief">Skip to content</a>
+
+    <!-- Width, not scroll position: the script writes one number per scroll
+		     event and CSS decides what it means. -->
+    <div class="progress" data-progress aria-hidden="true"></div>
+
+    <!-- The section rail. Hidden under 1180px by CSS, where there is no room
+		     beside the text for it — the screens are the navigation there. -->
+    <nav class="rail" data-rail aria-label="Sections">
+      <a class="rail__link" href="#brief"
+        ><span class="rail__dot"></span>In brief</a
+      >
+      <a class="rail__link" href="#freezing"
+        ><span class="rail__dot"></span>Freezing</a
+      >
+      <a class="rail__link" href="#cue"
+        ><span class="rail__dot"></span>Why a cue works</a
+      >
+      <a class="rail__link" href="#gap"
+        ><span class="rail__dot"></span>The gap</a
+      >
+      <a class="rail__link" href="#survey"
+        ><span class="rail__dot"></span>The survey</a
+      >
+      <a class="rail__link" href="#words"
+        ><span class="rail__dot"></span>In their words</a
+      >
+      <a class="rail__link" href="#requirement"
+        ><span class="rail__dot"></span>The requirement</a
+      >
+      <a class="rail__link" href="#wearing"
+        ><span class="rail__dot"></span>Wearing it</a
+      >
+      <a class="rail__link" href="#system"
+        ><span class="rail__dot"></span>The system</a
+      >
+      <a class="rail__link" href="#pilot"
+        ><span class="rail__dot"></span>The pilot</a
+      >
+      <a class="rail__link" href="#results"
+        ><span class="rail__dot"></span>What happened</a
+      >
+      <a class="rail__link" href="#next"
+        ><span class="rail__dot"></span>What I'd change</a
+      >
+    </nav>
+
+    <main data-scroller>
+      <!-- ==========================================================
+			     Hero
+			     ========================================================== -->
+      <section class="screen screen--hero" id="top" data-screen>
+        <div class="back-row">
+          <a class="back" href="index.html#work" data-reveal>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M15 19l-7-7 7-7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Back to projects
+          </a>
+        </div>
+
+        <div class="screen__inner hero">
+          <div class="hero__title-block">
+            <span class="plaque" data-reveal
+              >Best Poster — IEEE ISMAR 2025</span
+            >
+            <h1 class="hero__title" data-reveal style="--in-delay: 60ms">
+              Adaptive AR pathfinding for Parkinson's disease
+            </h1>
+          </div>
+
+          <p class="hero__deck" data-reveal style="--in-delay: 120ms">
+            A Meta Quest 3 system that lets people with Parkinson's point at
+            where they want to go, then lays a walking path across their home's
+            floor, avoiding every obstacle and furniture.
+          </p>
+
+          <dl class="credits" data-reveal style="--in-delay: 180ms">
+            <div class="credits__row">
+              <dt class="eyebrow">Role</dt>
+              <dd>Research, interaction design, prototype, evaluation</dd>
+            </div>
+            <div class="credits__row">
+              <dt class="eyebrow">Context</dt>
+              <dd>Télécom Paris — IP Paris, advised by Daniel Medeiros</dd>
+            </div>
+            <div class="credits__row">
+              <dt class="eyebrow">Timeline</dt>
+              <dd>Four months in 2025 — survey in May, presented in October</dd>
+            </div>
+            <div class="credits__row">
+              <dt class="eyebrow">Built with</dt>
+              <dd>Meta Quest 3 · Unity · C# · Mixed Reality Utility Kit</dd>
+            </div>
+            <div class="credits__row">
+              <dt class="eyebrow">Output</dt>
+              <dd>AR prototype, pilot with five patients, ISMAR poster</dd>
+            </div>
+          </dl>
+        </div>
+
+        <a class="readon" href="#brief">
+          <span>Read on</span>
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 5v14M6 13l6 6 6-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </section>
+
+      <!-- ==========================================================
+			     The ninety-second version
+			     ========================================================== -->
+      <section class="screen screen--sage" id="brief" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <h2>Project Summary</h2>
+          </div>
+
+          <div class="deck">
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 80ms"
+            >
+              <span class="eyebrow">01 — Problem</span>
+              <p>
+                <strong>Freezing of gait</strong> is a common problem for people
+                with Parkinson's disease. It causes people to suddenly freeze
+                while walking, often in doorways or narrow spaces, which can
+                lead to <strong>falls and injuries</strong>.
+              </p>
+            </div>
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 140ms"
+            >
+              <span class="eyebrow">02 — Known</span>
+              <p>
+                External cueing, such as lines on the floor or auditory beats,
+                can help people with Parkinson's initiate movement and overcome
+                freezing episodes.
+              </p>
+            </div>
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 200ms"
+            >
+              <span class="eyebrow">03 — Gap</span>
+              <p>
+                Existing AR systems for cueing require the route to be
+                pre-authored by a researcher, which does not allow patients to
+                choose their own destinations.
+              </p>
+            </div>
+            <div
+              class="brief brief--key paper stitch"
+              data-reveal
+              style="--in-delay: 260ms"
+            >
+              <span class="eyebrow">04 — Solution</span>
+              <p>
+                Patients can point at a destination, and the system maps the
+                room, solves a safe route around the furniture, and lays cues on
+                the floor.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     Freezing of gait
+			     ========================================================== -->
+      <section
+        class="screen screen--dark screen--tight"
+        id="freezing"
+        data-screen
+      >
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">01 — The problem</p>
+            <h2 class="screen__title--lg">Parkinson's affects gait.</h2>
+            <p class="screen__kicker">And then it stops it.</p>
+          </div>
+
+          <!-- Three trails of footprints, seen from above, drawn to one scale:
+					     an SVG unit is a centimetre, so every step length and every foot
+					     in here is its real size, and all three cross the same 6.12 m.
+
+					     The first two counts are P4's, out of the pilot at the bottom of
+					     this page: the same crossing took him 26 steps without the path
+					     and 10 with it. So the first lane is a normal-length step and the
+					     second is his — and the number the cue changed is the number the
+					     figure is drawn on.
+
+					     The shapes carry the rest. The first prints as a heel, a ball and
+					     toes, with the arch clear of the floor; the second prints the
+					     whole sole, with the drag of a foot that skimmed in rather than
+					     lifted; the third is the second one taken to its end, which is
+					     why it is in the same ink and why it does not reach the far side.
+
+					     Lanes rather than columns because what is being compared is how
+					     much of the same six metres each one covers, and that only reads
+					     off one shared ruler — so there is one, under all three, rather
+					     than a repeat of it between each pair. -->
+          <figure class="gait" data-reveal style="--in-delay: 120ms">
+            <svg class="gait__defs" aria-hidden="true" focusable="false">
+              <defs>
+                <!-- A footprint, toe to the right, arch and big toe on the +y
+								     side. The lanes mirror it so both arches face the middle,
+								     the way a pair of feet actually sit. -->
+                <g id="gait-toes">
+                  <ellipse cx="12.4" cy="2.6" rx="2.2" ry="1.85" />
+                  <circle cx="12.8" cy="-0.4" r="1.4" />
+                  <circle cx="12.3" cy="-2.6" r="1.2" />
+                  <circle cx="11.4" cy="-4.4" r="1.05" />
+                  <circle cx="10.1" cy="-5.8" r="0.85" />
+                </g>
+
+                <!-- Heel strike, then push-off. The load sits on the heel and
+								     on the ball; the arch never touches, so it never prints. -->
+                <g id="gait-roll" fill="currentColor">
+                  <ellipse cx="-8.6" cy="0.2" rx="3.8" ry="3.4" />
+                  <ellipse cx="6" cy="0.2" rx="5.3" ry="4.3" />
+                  <use href="#gait-toes" />
+                </g>
+
+                <!-- No roll: the sole lands all at once, so the arch prints
+								     too. The three scratches behind the heel are the scuff of
+								     a foot that came in along the floor instead of over it. -->
+                <g id="gait-flat" fill="currentColor">
+                  <g
+                    stroke="currentColor"
+                    stroke-width="0.85"
+                    stroke-linecap="round"
+                    stroke-opacity="0.34"
+                  >
+                    <path d="M-30.5-1.5-14.5-3" />
+                    <path d="M-32.5 0.3-14.5 0.3" />
+                    <path d="M-29.5 1.9-14.5 3.2" />
+                  </g>
+                  <ellipse cx="-8.6" cy="0.2" rx="3.8" ry="3.4" />
+                  <rect x="-9.2" y="-3.4" width="11.6" height="5.8" rx="2.5" />
+                  <ellipse cx="6" cy="0.2" rx="5.3" ry="4.3" />
+                  <use href="#gait-toes" />
+                </g>
+
+                <!-- The same flat sole, but the scuff behind it is only as
+								     long as the step was: a foot that travelled a centimetre
+								     or two and put itself straight back down. -->
+                <g id="gait-stuck" fill="currentColor">
+                  <g
+                    stroke="currentColor"
+                    stroke-width="0.85"
+                    stroke-linecap="round"
+                    stroke-opacity="0.3"
+                  >
+                    <path d="M-20-1.2-14.5-2.2" />
+                    <path d="M-21 0.3-14.5 0.3" />
+                    <path d="M-19.5 1.6-14.5 2.6" />
+                  </g>
+                  <ellipse cx="-8.6" cy="0.2" rx="3.8" ry="3.4" />
+                  <rect x="-9.2" y="-3.4" width="11.6" height="5.8" rx="2.5" />
+                  <ellipse cx="6" cy="0.2" rx="5.3" ry="4.3" />
+                  <use href="#gait-toes" />
+                </g>
+
+                <!-- A hand, from above, fingers to the right, thumb on the -y
+								     side. Same scale as the feet, because it is the same
+								     floor: a print that is only ever left by someone who
+								     went down on it. -->
+                <g id="gait-hand" fill="currentColor">
+                  <ellipse cx="0" cy="0" rx="4.9" ry="5.3" />
+                  <ellipse
+                    cx="9.4"
+                    cy="-4.8"
+                    rx="4.5"
+                    ry="1.5"
+                    transform="rotate(-24 9.4 -4.8)"
+                  />
+                  <ellipse cx="10.1" cy="-1" rx="4.9" ry="1.55" />
+                  <ellipse
+                    cx="9.6"
+                    cy="2.9"
+                    rx="4.5"
+                    ry="1.5"
+                    transform="rotate(13 9.6 2.9)"
+                  />
+                  <ellipse
+                    cx="8.2"
+                    cy="6.5"
+                    rx="3.8"
+                    ry="1.35"
+                    transform="rotate(28 8.2 6.5)"
+                  />
+                  <ellipse
+                    cx="0.8"
+                    cy="-8"
+                    rx="1.8"
+                    ry="4.1"
+                    transform="rotate(34 0.8 -8)"
+                  />
+                </g>
+              </defs>
+            </svg>
+
+            <div class="gait__lane">
+              <p class="gait__name">Typical gait <span>10 steps</span></p>
+              <p class="gait__meta">
+                The heel lands, the foot rolls, and the arch never touches the
+                floor.
+              </p>
+              <svg
+                class="gait__track"
+                viewBox="0 0 700 50"
+                role="img"
+                aria-label="Ten evenly spaced footprints crossing six metres, each printing as a separate heel pad, ball and toes with a clear arch between them."
+              >
+                <g transform="translate(26 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-roll" style="--d: 0ms" />
+                </g>
+                <g transform="translate(94 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-roll" style="--d: 320ms" />
+                </g>
+                <g transform="translate(162 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-roll" style="--d: 640ms" />
+                </g>
+                <g transform="translate(230 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-roll" style="--d: 960ms" />
+                </g>
+                <g transform="translate(298 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-roll" style="--d: 1280ms" />
+                </g>
+                <g transform="translate(366 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-roll" style="--d: 1600ms" />
+                </g>
+                <g transform="translate(434 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-roll" style="--d: 1920ms" />
+                </g>
+                <g transform="translate(502 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-roll" style="--d: 2240ms" />
+                </g>
+                <g transform="translate(570 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-roll" style="--d: 2560ms" />
+                </g>
+                <g transform="translate(638 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-roll" style="--d: 2880ms" />
+                </g>
+              </svg>
+            </div>
+
+            <div class="gait__lane gait__lane--pd">
+              <p class="gait__name">Parkinsonian gait <span>26 steps</span></p>
+              <p class="gait__meta">
+                The step shortens, so it takes more of them to cover the same
+                ground — and the sole skims in rather than lifts.
+              </p>
+              <svg
+                class="gait__track"
+                viewBox="0 0 700 50"
+                role="img"
+                aria-label="Twenty-six footprints crowded across the same six metres, each one a whole flat sole with a drag mark trailing behind the heel."
+              >
+                <g transform="translate(26 17.5) rotate(-11)">
+                  <use class="fp" href="#gait-flat" style="--d: 0ms" />
+                </g>
+                <g transform="translate(50.1 32.5) rotate(3) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 183ms" />
+                </g>
+                <g transform="translate(73.3 17.5) rotate(-6)">
+                  <use class="fp" href="#gait-flat" style="--d: 375ms" />
+                </g>
+                <g transform="translate(99.2 32.5) rotate(9) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 589ms" />
+                </g>
+                <g transform="translate(122.0 17.5) rotate(-3)">
+                  <use class="fp" href="#gait-flat" style="--d: 775ms" />
+                </g>
+                <g transform="translate(147.2 32.5) rotate(6) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 979ms" />
+                </g>
+                <g transform="translate(171.6 17.5) rotate(-2)">
+                  <use class="fp" href="#gait-flat" style="--d: 1185ms" />
+                </g>
+                <g transform="translate(194.3 32.5) rotate(8) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 1379ms" />
+                </g>
+                <g transform="translate(219.4 17.5) rotate(-9)">
+                  <use class="fp" href="#gait-flat" style="--d: 1581ms" />
+                </g>
+                <g transform="translate(242.0 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 1762ms" />
+                </g>
+                <g transform="translate(266.7 17.5) rotate(-10)">
+                  <use class="fp" href="#gait-flat" style="--d: 1943ms" />
+                </g>
+                <g transform="translate(289.5 32.5) rotate(5) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 2130ms" />
+                </g>
+                <g transform="translate(312.4 17.5) rotate(-8)">
+                  <use class="fp" href="#gait-flat" style="--d: 2338ms" />
+                </g>
+                <g transform="translate(337.0 32.5) rotate(7) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 2535ms" />
+                </g>
+                <g transform="translate(363.8 17.5) rotate(-7)">
+                  <use class="fp" href="#gait-flat" style="--d: 2727ms" />
+                </g>
+                <g transform="translate(386.9 32.5) rotate(6) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 2931ms" />
+                </g>
+                <g transform="translate(410.5 17.5) rotate(-10)">
+                  <use class="fp" href="#gait-flat" style="--d: 3129ms" />
+                </g>
+                <g transform="translate(436.2 32.5) rotate(11) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 3320ms" />
+                </g>
+                <g transform="translate(463.7 17.5) rotate(-6)">
+                  <use class="fp" href="#gait-flat" style="--d: 3533ms" />
+                </g>
+                <g transform="translate(489.2 32.5) rotate(8) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 3742ms" />
+                </g>
+                <g transform="translate(513.7 17.5) rotate(-3)">
+                  <use class="fp" href="#gait-flat" style="--d: 3931ms" />
+                </g>
+                <g transform="translate(541.3 32.5) rotate(8) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 4134ms" />
+                </g>
+                <g transform="translate(563.9 17.5) rotate(-8)">
+                  <use class="fp" href="#gait-flat" style="--d: 4335ms" />
+                </g>
+                <g transform="translate(590.9 32.5) rotate(11) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 4552ms" />
+                </g>
+                <g transform="translate(614.8 17.5) rotate(-9)">
+                  <use class="fp" href="#gait-flat" style="--d: 4762ms" />
+                </g>
+                <g transform="translate(638.0 32.5) rotate(5) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 4953ms" />
+                </g>
+              </svg>
+            </div>
+
+            <div class="gait__lane gait__lane--freeze">
+              <p class="gait__name">
+                Freezing of gait <span>stops at 2.9 m</span>
+              </p>
+              <p class="gait__meta">
+                Coming up to a doorway the step shortens — 22 cm, then 12, then
+                6 — until it stops advancing at all.
+              </p>
+              <svg
+                class="gait__track gait__track--tall"
+                viewBox="0 0 700 74"
+                role="img"
+                aria-label="A third trail across the same six metres. The prints begin at a normal Parkinsonian length and crowd closer and closer together until the last two come to rest beside each other about 2.9 metres in, where the trail of feet ends. A dashed line carries the body on forward to a pair of handprints on the floor, labelled the fall, and the last 3.2 metres are empty."
+              >
+                <!-- Walking: 24 cm steps, the parkinsonian trail again. -->
+                <g transform="translate(26 22.5) rotate(-11)">
+                  <use class="fp" href="#gait-flat" style="--d: 0ms" />
+                </g>
+                <g transform="translate(50 37.5) rotate(3) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 190ms" />
+                </g>
+                <g transform="translate(74 22.5) rotate(-6)">
+                  <use class="fp" href="#gait-flat" style="--d: 380ms" />
+                </g>
+                <g transform="translate(98 37.5) rotate(8) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 570ms" />
+                </g>
+                <g transform="translate(122 22.5) rotate(-9)">
+                  <use class="fp" href="#gait-flat" style="--d: 760ms" />
+                </g>
+                <g transform="translate(146 37.5) rotate(5) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 950ms" />
+                </g>
+                <g transform="translate(170 22.5) rotate(-7)">
+                  <use class="fp" href="#gait-flat" style="--d: 1140ms" />
+                </g>
+                <g transform="translate(194 37.5) rotate(6) scale(1 -1)">
+                  <use class="fp" href="#gait-flat" style="--d: 1330ms" />
+                </g>
+                <g transform="translate(218 22.5) rotate(-10)">
+                  <use class="fp" href="#gait-flat" style="--d: 1520ms" />
+                </g>
+
+                <!-- Festination: 22, 20, 18, 15, 12, 9, 6 cm. The cadence rises as the
+                         step falls, so the delays close in as the prints do and the feet
+                         track in toward each other. From here the soles land on top of one
+                         another, so each one carries a hairline of the background around it
+                         and stays a print instead of a smudge. -->
+                <g transform="translate(240 36.5) rotate(4) scale(1 -1)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 1700ms"
+                  />
+                </g>
+                <g transform="translate(260 23.5) rotate(-8)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 1865ms"
+                  />
+                </g>
+                <g transform="translate(278 35.5) rotate(5) scale(1 -1)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 2015ms"
+                  />
+                </g>
+                <g transform="translate(293 24.5) rotate(-6)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 2150ms"
+                  />
+                </g>
+                <g transform="translate(305 34.5) rotate(4) scale(1 -1)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 2270ms"
+                  />
+                </g>
+                <g transform="translate(314 25.5) rotate(-5)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 2375ms"
+                  />
+                </g>
+                <g transform="translate(320 34.5) rotate(3) scale(1 -1)">
+                  <use
+                    class="fp fp--stuck"
+                    href="#gait-stuck"
+                    style="--d: 2470ms"
+                  />
+                </g>
+
+                <!-- The freeze is where the prints stop, not a mark of its own: the two
+                         above are the last of them, side by side. Everything below is what
+                         happens next — the only part of the figure in the alert colour, and
+                         still drawn in the figure's own vocabulary rather than as a symbol.
+                         The feet are stopped and the body is not, so the next prints on the
+                         floor are hands. -->
+                <g class="gait__alert">
+                  <path
+                    class="gait__mark"
+                    style="--d: 2900ms"
+                    d="M330 30Q374 26 402 30"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.4"
+                    stroke-linecap="round"
+                    stroke-dasharray="2 6"
+                    stroke-opacity="0.7"
+                  />
+
+                  <g class="gait__mark" style="--d: 3120ms">
+                    <g transform="translate(414 12) rotate(-20)">
+                      <use href="#gait-hand" />
+                    </g>
+                    <g transform="translate(418 48) rotate(17) scale(1 -1)">
+                      <use href="#gait-hand" />
+                    </g>
+                  </g>
+
+                  <text
+                    class="gait__note gait__note--alert gait__mark"
+                    style="--d: 3240ms"
+                    x="420"
+                    y="68"
+                    text-anchor="middle"
+                  >
+                    the fall
+                  </text>
+                </g>
+
+                <!-- What is left of the crossing. -->
+                <path
+                  class="gait__mark gait__rest"
+                  style="--d: 3560ms"
+                  d="M462 30 632 30"
+                  stroke="currentColor"
+                  stroke-width="1"
+                  stroke-dasharray="1 7"
+                  stroke-linecap="round"
+                />
+                <text
+                  class="gait__note gait__mark"
+                  style="--d: 3660ms"
+                  x="547"
+                  y="21"
+                  text-anchor="middle"
+                >
+                  3.2 m never walked
+                </text>
+              </svg>
+            </div>
+
+            <div class="gait__ruler" aria-hidden="true">
+              <span style="--x: 26" data-m="0"></span>
+              <span style="--x: 126"></span>
+              <span style="--x: 226" data-m="2 m"></span>
+              <span style="--x: 326"></span>
+              <span style="--x: 426" data-m="4 m"></span>
+              <span style="--x: 526"></span>
+              <span style="--x: 626" data-m="6 m"></span>
+            </div>
+          </figure>
+
+          <p class="screen__pull" data-reveal style="--in-delay: 180ms">
+            Freezing of gait is a common symptom of Parkinson's disease, it can
+            lead to falls and injuries.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     Why an external cue works
+			     ========================================================== -->
+      <section class="screen" id="cue" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">02 — Why a cue works</p>
+            <h2>Planning movement</h2>
+          </div>
+
+          <div class="split">
+            <div class="split__text" data-reveal style="--in-delay: 80ms">
+              <p class="screen__body">
+                The basal ganglia are responsible for coordinating movement.
+                they recieve signals from the brain about what movement is
+                intended, and then send signals to the muscles to execute that
+                movement.
+              </p>
+              <p class="screen__body">
+                for people with Parkinson's, the internal route from intention
+                to movement is broken, that's why they freeze.
+              </p>
+
+              <p class="screen__body">
+                External cues provide an alternative route that bypasses the
+                basal ganglia, allowing them to initiate movement.
+              </p>
+            </div>
+
+            <figure
+              class="plate plate--diagram paper stitch"
+              data-reveal
+              style="--in-delay: 140ms"
+            >
+              <img
+                src="static/projects/pd-basal-ganglia.webp"
+                width="972"
+                height="594"
+                alt="Diagram of the human brain in cross-section with the basal ganglia and related structures labelled, including the caudate nucleus, putamen, thalamus, subthalamic nucleus and substantia nigra."
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The gap — who chooses the route
+			     ========================================================== -->
+      <section class="screen screen--sage" id="gap" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">03 — The gap</p>
+            <h2 class="screen__title--lg">The gap in research</h2>
+          </div>
+
+          <p class="screen__body" data-reveal style="--in-delay: 80ms">
+            Existing research tested the effectiveness of AR cues, it was found
+            to be as effective as physical cues and patients respond well to
+            them.
+          </p>
+
+          <p class="screen__body" data-reveal style="--in-delay: 120ms">
+            However, the research was limited to pre-authored routes, which does
+            not allow patients to choose their own destinations.
+          </p>
+
+          <div class="deck">
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 160ms"
+            >
+              <span class="eyebrow">Existing AR cueing</span>
+              <p>
+                <strong>The route is authored first.</strong> The destination is
+                fixed before the session starts and stays fixed. The patient
+                adapts their walking to the plan.
+              </p>
+            </div>
+
+            <div
+              class="brief brief--key paper stitch"
+              data-reveal
+              style="--in-delay: 220ms"
+            >
+              <span class="eyebrow">What was missing</span>
+              <p>
+                An adaptive system that allows patients to choose their own
+                destinations and generates a safe route in real time. In their
+                own home and environement.
+              </p>
+            </div>
+          </div>
+
+          <p class="screen__pull" data-reveal style="--in-delay: 280ms">
+            The gap in research is user autonomy.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The survey
+			     ========================================================== -->
+      <section class="screen" id="survey" data-screen>
+        <div class="screen__inner">
+          <div class="split split--intro">
+            <div class="split__text">
+              <div class="screen__head" data-reveal>
+                <p class="eyebrow">04 — Research</p>
+                <h2>Getting to know my users</h2>
+                <p class="screen__body">
+                  I sent a short French survey about walking and freezing to
+                  France Parkinson. The manager I reached there has Parkinson's
+                  herself. She answered it, then forwarded it through her
+                  network. Twelve people replied.
+                </p>
+              </div>
+
+              <!-- The one number the screen is about, next to the sentence it
+			         belongs to rather than in a band of its own. A rate, so it is
+			         drawn as area — the same ring the headset questions use on
+			         screen 05. -->
+              <figure
+                class="stat stat--lead stat--inline"
+                data-reveal
+                style="--in-delay: 120ms"
+              >
+                <svg
+                  viewBox="0 0 120 120"
+                  role="img"
+                  aria-label="Fifty-eight per cent — seven of twelve."
+                >
+                  <circle class="stat__track" cx="60" cy="60" r="46" />
+                  <circle
+                    class="stat__arc"
+                    cx="60"
+                    cy="60"
+                    r="46"
+                    stroke="var(--moss-deep)"
+                    stroke-dasharray="167.6 289"
+                    transform="rotate(-90 60 60)"
+                  />
+                  <text class="stat__num" x="60" y="60">58%</text>
+                  <text class="stat__den" x="60" y="79">7 of 12</text>
+                </svg>
+                <figcaption>
+                  <b>freeze while walking</b> — trouble starting, or trouble
+                  continuing. Not the edge case on this list. The middle of it.
+                </figcaption>
+              </figure>
+
+              <p class="screen__note" data-reveal style="--in-delay: 180ms">
+                12 responses · France Parkinson network · May–June 2025
+              </p>
+            </div>
+
+            <figure
+              class="snap paper stitch"
+              data-reveal
+              style="--in-delay: 90ms"
+            >
+              <img
+                src="static/projects/pd-france-parkinson.webp"
+                width="952"
+                height="1265"
+                alt="A France Parkinson roll-up banner reading “Ensemble, faisons reculer la maladie de Parkinson”, standing beside two illustrated panels about anxiety."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                France Parkinson — the association that opened every door on
+                this project.
+              </figcaption>
+            </figure>
+          </div>
+
+          <!-- Where it happens — the same screen, one seam down. The triggers
+			     are what the twelve were answering about, so they read as the
+			     second half of the survey rather than as a section with a title
+			     of its own. -->
+          <div class="subscreen">
+            <div class="screen__head" data-reveal>
+              <p class="eyebrow">Where it happens</p>
+              <p class="screen__body screen__body--lead">
+                Participants were asked to list the triggers that cause
+                freezing. They fell into three categories: terrain, body and
+                mind.
+              </p>
+            </div>
+
+            <div class="triggers">
+              <div
+                class="trigger trigger--terrain"
+                data-reveal
+                style="--in-delay: 80ms"
+              >
+                <span class="eyebrow">Terrain</span>
+                <ul class="chips">
+                  <li class="chip">doorways</li>
+                  <li class="chip">stairs</li>
+                  <li class="chip">obstacles</li>
+                  <li class="chip">kerbs</li>
+                  <li class="chip">uneven stone</li>
+                  <li class="chip">narrow passages</li>
+                </ul>
+              </div>
+              <div
+                class="trigger trigger--body"
+                data-reveal
+                style="--in-delay: 140ms"
+              >
+                <span class="eyebrow">Body</span>
+                <ul class="chips">
+                  <li class="chip">standing still too long</li>
+                  <li class="chip">cold</li>
+                  <li class="chip">fatigue</li>
+                  <li class="chip">the OFF hours between doses</li>
+                </ul>
+              </div>
+              <div
+                class="trigger trigger--mind"
+                data-reveal
+                style="--in-delay: 200ms"
+              >
+                <span class="eyebrow">Mind</span>
+                <ul class="chips">
+                  <li class="chip">stress</li>
+                  <li class="chip">being rushed</li>
+                  <li class="chip">being watched</li>
+                </ul>
+              </div>
+            </div>
+
+            <p class="screen__pull" data-reveal style="--in-delay: 250ms">
+              Anxiety and terrain are the most common triggers, we can reduce
+              anxiety by giving the user a clear path to follow and avoid
+              terrain that is difficult to navigate.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     In their words
+			     ========================================================== -->
+      <section class="screen screen--sage" id="words" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">In their words</p>
+            <h2>Everyone had already invented their own cue.</h2>
+            <p class="screen__body">
+              Counting steps. Exaggerating stride. Breathing to a cadence. And
+              the one I keep thinking about: not looking at the obstacle.
+            </p>
+          </div>
+
+          <div class="deck">
+            <!-- <details>, not a scripted toggle. The French is the answer; the
+						     English is a gloss the reader can ask for. With scripting off
+						     it still opens, which a button would not. -->
+            <blockquote
+              class="verbatim paper stitch"
+              data-reveal
+              style="--in-delay: 70ms"
+            >
+              <p lang="fr">« Je ne supporte pas quelque chose sur mon nez. »</p>
+              <details class="gloss">
+                <summary>
+                  <span class="gloss__closed">Show translation</span>
+                  <span class="gloss__open">Hide translation</span>
+                </summary>
+                <p>I can't stand having something on my nose.</p>
+              </details>
+              <cite>Twelve years since diagnosis</cite>
+            </blockquote>
+            <blockquote
+              class="verbatim paper stitch"
+              data-reveal
+              style="--in-delay: 120ms"
+            >
+              <p lang="fr">« Une respiration cadencée est suffisante. »</p>
+              <details class="gloss">
+                <summary>
+                  <span class="gloss__closed">Show translation</span>
+                  <span class="gloss__open">Hide translation</span>
+                </summary>
+                <p>A paced breath is enough.</p>
+              </details>
+              <cite>Asked what helps them get moving</cite>
+            </blockquote>
+            <blockquote
+              class="verbatim paper stitch"
+              data-reveal
+              style="--in-delay: 170ms"
+            >
+              <p lang="fr">
+                « Un rythme régulier sur des morceaux que je prends plaisir à
+                écouter. »
+              </p>
+              <details class="gloss">
+                <summary>
+                  <span class="gloss__closed">Show translation</span>
+                  <span class="gloss__open">Hide translation</span>
+                </summary>
+                <p>A steady beat, on music I actually enjoy listening to.</p>
+              </details>
+              <cite>One of the two who said music helps</cite>
+            </blockquote>
+            <blockquote
+              class="verbatim paper stitch"
+              data-reveal
+              style="--in-delay: 220ms"
+            >
+              <p lang="fr">« Militaire ou scout. »</p>
+              <details class="gloss">
+                <summary>
+                  <span class="gloss__closed">Show translation</span>
+                  <span class="gloss__open">Hide translation</span>
+                </summary>
+                <p>Military or scout marches.</p>
+              </details>
+              <cite>Asked which music helps them walk</cite>
+            </blockquote>
+          </div>
+
+          <p class="screen__note" data-reveal style="--in-delay: 260ms">
+            Verbatim responses, translated by me. Only two of twelve said music
+            helped at all.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The real requirement
+			     ========================================================== -->
+      <section class="screen screen--dark" id="requirement" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">05 — The real requirement</p>
+            <h2 class="screen__title--xl">
+              Nobody was worried it wouldn't work.
+            </h2>
+          </div>
+
+          <!-- The two headset questions, kept together because neither means
+			     much alone: nobody had seen AR, and nobody said yes to it. Two
+			     numbers, read at a glance — the counting is the whole point and
+			     it is over in a second. -->
+          <div class="counts" data-reveal style="--in-delay: 80ms">
+            <p class="count">
+              <b class="count__num">0 of 12</b>
+              <span class="count__label">had ever tried VR or AR</span>
+            </p>
+
+            <p class="count">
+              <span class="count__split">
+                <span class="count__pair"
+                  ><b class="count__num is-yes">0</b
+                  ><span class="count__unit" lang="fr">oui</span></span
+                >
+                <span class="count__pair"
+                  ><b class="count__num is-maybe">5</b
+                  ><span class="count__unit" lang="fr">peut-être</span></span
+                >
+                <span class="count__pair"
+                  ><b class="count__num is-no">7</b
+                  ><span class="count__unit" lang="fr">non</span></span
+                >
+              </span>
+              <span class="count__label"
+                >would wear AR glasses — answering on looks, not on
+                function</span
+              >
+            </p>
+          </div>
+
+          <!-- Each word carries the colour of its own share of the bar below:
+			     the sentence and the figure have to be saying the same thing. -->
+          <p class="bigwords" data-reveal style="--in-delay: 140ms" lang="fr">
+            <span style="--tint: var(--butter-deep)">facilité d'utilisation</span>
+            <span style="--tint: var(--moss-deep)">discrétion</span>
+            <span style="--tint: var(--tan-deep)">légèreté</span>
+          </p>
+
+          <figure class="wants" data-reveal style="--in-delay: 180ms">
+            <div class="wants__bar" aria-hidden="true">
+              <span style="--share: 37.5; --fill: var(--butter-deep)"></span>
+              <span style="--share: 25; --fill: var(--moss-deep)"></span>
+              <span style="--share: 25; --fill: var(--tan-deep)"></span>
+              <span style="--share: 12.5; --fill: var(--peach-deep)"></span>
+            </div>
+            <figcaption class="wants__legend">
+              <span style="--fill: var(--butter-deep)"
+                >37.5% <span lang="fr">facilité d'utilisation</span></span
+              >
+              <span style="--fill: var(--moss-deep)"
+                >25% <span lang="fr">discrétion</span></span
+              >
+              <span style="--fill: var(--tan-deep)"
+                >25% <span lang="fr">légèreté</span></span
+              >
+              <span style="--fill: var(--peach-deep)"
+                >12.5% “not on my nose”</span
+              >
+            </figcaption>
+          </figure>
+
+          <p class="screen__pull screen__pull--wide" data-reveal style="--in-delay: 240ms">
+            Nobody asked for accuracy or range. They were afraid of looking ill
+            in public, not of the cues failing them — the hard constraint is not
+            the pathfinding, it is the thing on your face.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     Fieldwork — the awareness day
+			     ========================================================== -->
+      <section class="screen" id="wearing" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">06 — Fieldwork</p>
+            <h2>Then they invited me to feel it.</h2>
+            <p class="screen__body">
+              France Parkinson runs awareness days where visitors can experience
+              how the disease can affect their daily lives. One of the stations was about freezing of gait, and I was invited to try it out !
+            </p>
+          </div>
+
+          <div class="gallery">
+            <figure
+              class="snap paper stitch"
+              data-reveal
+              style="--in-delay: 70ms; --rot: -2deg"
+            >
+              <img
+                src="static/projects/pd-workshop-table.webp"
+                width="952"
+                height="1265"
+                alt="A table at the awareness workshop holding a weighted vest, wrist and ankle weights and shoe protections, next to a laminated sheet headed “3. Les troubles de la marche”."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                Walking troubles station and its instructions. visitors are invited to wear on weights and walk a short striped path.
+              </figcaption>
+            </figure>
+            <figure
+              class="snap paper stitch"
+              data-reveal
+              style="--in-delay: 120ms; --rot: 1.5deg"
+            >
+              <img
+                src="static/projects/pd-ankle-weights.webp"
+                width="1265"
+                height="952"
+                alt="Looking down at a pair of trainers with black shoe protections strapped over them and 2kg weights fastened around both ankles."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                I wore 2 kg per ankle. with sticky shoe protections to simulate the stiffness of Parkinson's, and a weighted vest to simulate the fatigue.
+              </figcaption>
+            </figure>
+            <figure
+              class="snap paper stitch"
+              data-reveal
+              style="--in-delay: 170ms; --rot: -1deg"
+            >
+              <img
+                src="static/projects/pd-striped-mat.webp"
+                width="952"
+                height="1265"
+                alt="A blue exercise mat laid on the ground with wide black velcro strips running across it at regular intervals."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                And the striped mat that sticks to the shoes to make it harder to lift them.
+              </figcaption>
+            </figure>
+          </div>
+
+          <p class="screen__pull" data-reveal style="--in-delay: 220ms">
+			It was indeed a difficult short path to walk, 
+			I could empathize with the people who have to live with it every day. 
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The system
+			     ========================================================== -->
+      <section class="screen screen--sage" id="system" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">07 — The build</p>
+            <h2>Point at where you want to go.</h2>
+          </div>
+
+          <div class="split">
+            <ol class="steps" data-reveal style="--in-delay: 80ms">
+              <li class="step">
+                <span class="step__n">1</span>
+                <div>
+                  <strong>The headset already knows the room</strong>
+                  <p>
+                    Meta's Mixed Reality Utility Kit gives a live mesh of walls,
+                    floor and furniture, captured once in the room the person
+                    actually walks in.
+                  </p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step__n">2</span>
+                <div>
+                  <strong>You point</strong>
+                  <p>
+                    A ray from the controller lands on a spot on the floor. That
+                    is the destination. It is yours, and you can change it at
+                    any moment — re-targeting redraws the route without erasing
+                    the cue under your feet.
+                  </p>
+                </div>
+              </li>
+              <li class="step">
+                <span class="step__n">3</span>
+                <div>
+                  <strong>The floor answers</strong>
+                  <p>
+                    Unity's NavMesh solves a route around the furniture, spline
+                    interpolation takes the jerk out of the corners — a right
+                    angle is precisely where freezing happens — and the path is
+                    drawn as 15 cm cues at 75 cm spacing, the stride length the
+                    cueing literature converges on.
+                  </p>
+                </div>
+              </li>
+            </ol>
+
+            <figure
+              class="plate paper stitch"
+              data-reveal
+              style="--in-delay: 140ms"
+            >
+              <svg
+                viewBox="0 0 340 240"
+                role="img"
+                aria-label="Perspective view of a room floor with a cue path of evenly spaced blocks curving around two pieces of furniture to a chosen target."
+              >
+                <rect
+                  x="0"
+                  y="0"
+                  width="340"
+                  height="240"
+                  rx="6"
+                  fill="var(--paper-warm)"
+                />
+                <path
+                  d="M0 96 L340 96 L340 240 L0 240 Z"
+                  fill="color-mix(in srgb, var(--tan) 45%, var(--paper-warm))"
+                />
+                <rect
+                  x="24"
+                  y="66"
+                  width="86"
+                  height="40"
+                  rx="4"
+                  fill="var(--tan)"
+                />
+                <rect
+                  x="236"
+                  y="118"
+                  width="82"
+                  height="46"
+                  rx="4"
+                  fill="var(--tan-deep)"
+                  opacity="0.7"
+                />
+                <path
+                  class="plan__flow"
+                  d="M52 222 C 118 214, 132 176, 168 158 S 226 116, 250 96"
+                  fill="none"
+                  stroke="var(--moss-deep)"
+                  stroke-width="16"
+                  stroke-dasharray="12 24"
+                />
+                <g transform="translate(250 96)">
+                  <circle
+                    class="plan__ping"
+                    r="13"
+                    fill="none"
+                    stroke="var(--peach-deep)"
+                    stroke-width="2.5"
+                  />
+                  <circle r="4.5" fill="var(--peach-deep)" />
+                </g>
+                <circle cx="52" cy="222" r="10" fill="var(--slate)" />
+                <g class="plan__label">
+                  <text x="70" y="228">you</text>
+                  <text x="266" y="90">target</text>
+                  <text x="120" y="150" transform="rotate(-24 120 150)">
+                    75 cm apart
+                  </text>
+                </g>
+              </svg>
+              <figcaption>
+                The path is regenerated live: move, or point somewhere else, and
+                the cues re-lay themselves around the furniture.
+              </figcaption>
+            </figure>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The pilot
+			     ========================================================== -->
+      <section class="screen" id="pilot" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">08 — Pilot</p>
+            <h2>Five people, in a room with real furniture in it.</h2>
+            <p class="screen__body">
+              A 5 × 5 m physiotherapy room, furniture as obstacles, one
+              destination chair. Three conditions in order — unassisted, a
+              pre-computed AR path, then the interactive one — so baseline,
+              guidance and adaptivity could be told apart.
+            </p>
+          </div>
+
+          <div class="setup">
+            <figure
+              class="plate paper stitch"
+              data-reveal
+              style="--in-delay: 60ms"
+            >
+              <img
+                src="static/projects/roomsetup-A.png"
+                width="303"
+                height="338"
+                alt="Photograph of the pilot study room with AR visual cues overlaid on the floor as strips leading between the furniture."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                The room as the participant sees it, cues overlaid.
+              </figcaption>
+            </figure>
+            <figure
+              class="plate paper stitch"
+              data-reveal
+              style="--in-delay: 110ms"
+            >
+              <img
+                src="static/projects/roomsetup-B.png"
+                width="216"
+                height="338"
+                alt="Plan of the pilot study room showing the walking area and the furniture placed as obstacles."
+                loading="lazy"
+                decoding="async"
+              />
+              <figcaption>
+                The same room in plan — furniture placed as real obstacles, not
+                markers.
+              </figcaption>
+            </figure>
+            <dl class="facts" data-reveal style="--in-delay: 160ms">
+              <div class="fact">
+                <dt>66 – 84</dt>
+                <dd class="eyebrow">age range</dd>
+              </div>
+              <div class="fact">
+                <dt>Stage 3</dt>
+                <dd class="eyebrow">Hoehn &amp; Yahr, all five</dd>
+              </div>
+              <div class="fact">
+                <dt>None</dt>
+                <dd class="eyebrow">had used AR before</dd>
+              </div>
+            </dl>
+          </div>
+
+          <ul class="cohort" data-reveal style="--in-delay: 200ms">
+            <li class="person paper stitch">
+              <strong class="person__id">P1</strong>
+              <span class="eyebrow">Did not complete</span>
+              <p>
+                Recently diagnosed with cognitive impairment. Couldn't complete
+                the interactive condition — choosing a destination is itself a
+                cognitive load.
+              </p>
+            </li>
+            <li class="person paper stitch">
+              <strong class="person__id">P2</strong>
+              <span class="eyebrow">Dystonia</span>
+              <p>
+                One of the three who gained most. The cue gave the first step
+                somewhere to land.
+              </p>
+            </li>
+            <li class="person paper stitch">
+              <strong class="person__id">P3</strong>
+              <span class="eyebrow">Freezing</span>
+              <p>
+                Freezes at doorways unassisted. Walked the same route with the
+                path on and stopped less.
+              </p>
+            </li>
+            <li class="person person--key paper stitch">
+              <strong class="person__id">P4</strong>
+              <span class="eyebrow">Bradykinetic gait</span>
+              <p>
+                Crossed the room in 10 steps with guidance where he'd taken 26
+                without — shuffle to full stride. Said knowing where the path
+                went reduced his anxiety about the obstacles, and he froze less.
+              </p>
+            </li>
+            <li class="person paper stitch">
+              <strong class="person__id">P5</strong>
+              <span class="eyebrow">Uses a walker daily</span>
+              <p>
+                Gained almost nothing. Her limits were motor, not informational
+                — there was nothing for a cue to unlock.
+              </p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     What happened
+			     ========================================================== -->
+      <section class="screen screen--sage" id="results" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">09 — What happened</p>
+            <h2 class="screen__title--lg">All five chose their own target.</h2>
+          </div>
+
+          <div class="deck">
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 80ms"
+            >
+              <span class="eyebrow">Autonomy</span>
+              <p>
+                Participants walked to destinations they picked, not ones
+                assigned to them. That was the point of the study, and it held
+                for every one of the five.
+              </p>
+            </div>
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 130ms"
+            >
+              <span class="eyebrow">Learnability</span>
+              <p>
+                Nobody in the group had used AR before. Pointing at the floor
+                needed one demonstration, and no further explanation.
+              </p>
+            </div>
+            <div
+              class="brief paper stitch"
+              data-reveal
+              style="--in-delay: 180ms"
+            >
+              <span class="eyebrow">The cues</span>
+              <p>
+                Walking improved with the path on. What the survey had already
+                predicted was confirmed in the room: the headset, not the
+                cueing, is what people would refuse.
+              </p>
+            </div>
+          </div>
+
+          <p class="screen__pull" data-reveal style="--in-delay: 220ms">
+            Two of the five getting little from it isn't a footnote, it's the
+            finding: adaptive cueing is for people whose problem is starting
+            movement rather than producing it, and who can hold a destination in
+            mind while walking to it.
+          </p>
+
+          <p class="screen__note" data-reveal style="--in-delay: 250ms">
+            Five participants is a pilot, not a trial. Step counts and
+            observation, not step length, velocity or cadence — the measured
+            gait outcomes are in the ISMAR poster.
+          </p>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     What I'd change
+			     ========================================================== -->
+      <section class="screen" id="next" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">10 — Honestly</p>
+            <h2>What I'd change.</h2>
+          </div>
+
+          <div class="admissions">
+            <div class="admit admit--1" data-reveal style="--in-delay: 70ms">
+              <strong>The headset is the study's own confound.</strong>
+              <p>
+                A Quest 3 weighs about half a kilo and sits on the face of
+                someone who told me, in writing, that they can't stand anything
+                on their nose. Every result here is measured through that. The
+                next version belongs on light see-through glasses, or it doesn't
+                leave the lab.
+              </p>
+            </div>
+            <div class="admit admit--2" data-reveal style="--in-delay: 120ms">
+              <strong>Twelve responses is a conversation, not a sample.</strong>
+              <p>
+                It was enough to change what I built. It is not enough to claim
+                anything about the population, and I've tried not to.
+              </p>
+            </div>
+            <div class="admit admit--3" data-reveal style="--in-delay: 170ms">
+              <strong>Stress is an input the system can't see.</strong>
+              <p>
+                The mesh knows where the doorway is. It doesn't know that
+                someone is watching, or that the person is in an OFF hour. That
+                is the next thing worth reading, and it isn't geometry.
+              </p>
+            </div>
+            <div class="admit admit--4" data-reveal style="--in-delay: 220ms">
+              <strong>Test it in the hallway, not the study room.</strong>
+              <p>
+                The system was built to work in a person's own home, around
+                their own furniture. So far it has only ever been asked to work
+                in ours.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="outro">
+      <div class="screen__inner">
+        <span class="plaque">Best Poster — IEEE ISMAR 2025, Daejeon</span>
+        <p>
+          Presented at ISMAR 2025 in South Korea. Dimah Bassal &amp; Daniel
+          Medeiros, Télécom Paris — IP Paris.
+        </p>
+        <div class="outro__links">
+          <a
+            class="btn"
+            href="https://hal.science/hal-05281349"
+            target="_blank"
+            rel="noopener"
+            >Read the paper</a
+          >
+          <a class="btn" href="index.html#work">Back to the table</a>
+          <a class="btn" href="index.html#hello">Say hi ☕</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

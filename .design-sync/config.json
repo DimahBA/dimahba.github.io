@@ -1,0 +1,12 @@
+{
+  "projectId": "133f93d6-83ba-4d8d-938a-c47a257895d3",
+  "shape": "package",
+  "pkg": "buttercup-cafe",
+  "globalName": "ButtercupCafe",
+  "entry": ".ds-pkg/entry.mjs",
+  "buildCmd": "node .design-sync/build-pkg.mjs",
+  "cssEntry": "css/components.css",
+  "tokensPkg": "buttercup-cafe-tokens",
+  "tokensGlob": "css/*.css",
+  "readmeHeader": ".design-sync/conventions.md"
+}

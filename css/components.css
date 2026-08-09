@@ -227,7 +227,39 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   5. Buttons and link chips
+   5. Back link
+   The way out of a case study. Both case-study shapes use it, so the shape of
+   the link lives here; each page decides only how wide its row is and what
+   colour the link is tinted against (--page-fill).
+   -------------------------------------------------------------------------- */
+
+.back {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	color: color-mix(in oklab, var(--ink) 76%, var(--page-fill, var(--bg-page)));
+	transition: color var(--dur) var(--ease-out), gap var(--dur) var(--ease-out);
+}
+
+.back:hover {
+	color: var(--ink);
+	gap: var(--sp-3);
+}
+
+/* Sized in ems so the arrow tracks the label. Stated rather than left to the
+   SVG's own intrinsic size: with a viewBox and no width/height an inline SVG
+   defaults to 300 × 150, which is the whole hero. */
+.back svg {
+	width: 1.1em;
+	height: 1.1em;
+	flex: none;
+}
+
+/* --------------------------------------------------------------------------
+   6. Buttons and link chips
    -------------------------------------------------------------------------- */
 
 .btn {
@@ -241,14 +273,14 @@ html.is-dragging * {
 	font-size: var(--fs-300);
 	font-weight: 600;
 	color: var(--ink);
-	box-shadow: var(--sh-contact), var(--sh-hi);
+	box-shadow: var(--sh-contact);
 	transition: translate var(--dur) var(--ease-spring),
 		box-shadow var(--dur) var(--ease-out);
 }
 
 .btn:hover:not(:disabled) {
 	translate: 0 -2px;
-	box-shadow: var(--sh-contact), var(--sh-ambient), var(--sh-hi);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
 }
 
 .btn:active:not(:disabled) {
@@ -275,7 +307,7 @@ html.is-dragging * {
 	font-family: var(--ff-display);
 	font-size: var(--fs-300);
 	font-weight: 600;
-	box-shadow: var(--sh-contact), var(--sh-hi);
+	box-shadow: var(--sh-contact);
 	transition: translate var(--dur) var(--ease-spring),
 		box-shadow var(--dur) var(--ease-out), background var(--dur) var(--ease-out);
 }
@@ -283,7 +315,7 @@ html.is-dragging * {
 .chip-link:hover {
 	translate: 0 -3px;
 	background: var(--paper-warm);
-	box-shadow: var(--sh-contact), var(--sh-ambient), var(--sh-hi);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
 }
 
 .chip-link svg {
@@ -293,7 +325,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   6. Speech bubble
+   7. Speech bubble
    The pixel-art bubble PNGs are replaced with a real CSS bubble: it scales
    with its text instead of stretching a bitmap, and the tail is a rotated
    square that inherits the border.
@@ -409,7 +441,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   7. Caret
+   8. Caret
    -------------------------------------------------------------------------- */
 
 .caret {
@@ -435,7 +467,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   8. Chibi portrait
+   9. Chibi portrait
    -------------------------------------------------------------------------- */
 
 .chibi {
@@ -472,7 +504,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   9. The jar of folded questions
+   10. The jar of folded questions
 
    A glass jar with four folded slips fanned inside it, and the note that
    comes out of it. Only the look of those two objects lives here — where they
@@ -1300,7 +1332,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   10. The say panel
+   11. The say panel
 
    Dimah's voice, wherever it appears — the café intro in the hero and the
    answers on the Q&A board are the same act, so they are the same component.
@@ -1505,7 +1537,7 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
-   11. Reduced motion — the calm board
+   12. Reduced motion — the calm board
    Straight, evenly spaced, no rotation, no tilt, no drag, nothing that
    moves on its own. The content is identical.
    -------------------------------------------------------------------------- */

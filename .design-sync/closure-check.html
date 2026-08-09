@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Buttercup Café DS — closure check</title>
+		<!--
+		  Copy this file to ds-bundle/.check.html and open it to verify a build.
+		  (Dot-prefixed there so it stays local and is never uploaded; a rebuild
+		  wipes the out dir, so re-copy it each time.)
+
+		    cp .design-sync/closure-check.html ds-bundle/.check.html
+		    node .ds-sync/storybook/http-serve.mjs ./ds-bundle
+
+		  styles.css below is the ONLY stylesheet, deliberately: a rendered
+		  design receives exactly its transitive @import closure and nothing
+		  else, so anything styled here is something the design agent can
+		  actually reproduce. Markup is lifted verbatim from index.html.
+		-->
+		<link rel="stylesheet" href="./styles.css" />
+		<style>
+			body {
+				background: var(--bg-page);
+			}
+			.probe {
+				padding: var(--sp-8) var(--gutter);
+			}
+			.row {
+				display: flex;
+				flex-wrap: wrap;
+				gap: var(--sp-4);
+				align-items: flex-start;
+			}
+			.swatches {
+				display: flex;
+				flex-wrap: wrap;
+				gap: var(--sp-2);
+			}
+			.sw {
+				width: 4.5rem;
+				height: 3rem;
+				border-radius: var(--r-md);
+				box-shadow: var(--sh-contact);
+				display: grid;
+				place-items: end center;
+				font-size: var(--fs-100);
+				padding-block-end: 2px;
+			}
+		</style>
+	</head>
+	<body>
+		<main class="probe wrap">
+			<p class="eyebrow">closure check</p>
+			<h1 class="display">Buttercup Café</h1>
+			<p class="lede">
+				Markup lifted verbatim from index.html. Everything here is styled by
+				<code>styles.css</code> alone — no page CSS is loaded.
+			</p>
+
+			<hr class="divider" />
+
+			<h2 class="section-head">Tokens — raw palette</h2>
+			<div class="swatches">
+				<div class="sw" style="background: var(--sage)">sage</div>
+				<div class="sw" style="background: var(--cream)">cream</div>
+				<div class="sw" style="background: var(--paper)">paper</div>
+				<div class="sw" style="background: var(--paper-warm)">paper-warm</div>
+				<div class="sw" style="background: var(--butter)">butter</div>
+				<div class="sw" style="background: var(--butter-deep)">butter-deep</div>
+				<div class="sw" style="background: var(--peach)">peach</div>
+				<div class="sw" style="background: var(--peach-deep)">peach-deep</div>
+				<div class="sw" style="background: var(--tan)">tan</div>
+				<div class="sw" style="background: var(--tan-deep)">tan-deep</div>
+				<div class="sw" style="background: var(--moss)">moss</div>
+				<div class="sw" style="background: var(--moss-deep)">moss-deep</div>
+				<div class="sw" style="background: var(--slate); color: var(--paper)">
+					slate
+				</div>
+			</div>
+
+			<hr class="divider" />
+
+			<h2 class="section-head">Buttons &amp; chips</h2>
+			<div class="row">
+				<button class="btn">Primary action</button>
+				<button class="btn" disabled>Disabled</button>
+				<a class="chip-link" href="#">A link chip →</a>
+			</div>
+			<ul class="chips" style="margin-block-start: var(--sp-4)">
+				<li class="chip">Research</li>
+				<li class="chip">HCI</li>
+				<li class="chip">Mixed Reality</li>
+			</ul>
+
+			<hr class="divider" />
+
+			<h2 class="section-head">Cards — the three themes</h2>
+			<div class="row">
+				<a
+					class="card paper stitch t-moss"
+					href="#"
+					draggable="false"
+					style="--i: 0; --z: 1"
+				>
+					<span class="plaque card__plaque">Best Poster — IEEE ISMAR 2025</span>
+					<h3 class="card__title">
+						Adaptive AR Pathfinding for Parkinson's Disease
+					</h3>
+					<ul class="chips">
+						<li class="chip">Research</li>
+						<li class="chip">HCI</li>
+					</ul>
+					<p class="card__desc">
+						A Quest 3 system that lets people with Parkinson's point at where
+						they want to go, and lays a walking path across their own floor.
+					</p>
+					<span class="card__more">read the case study →</span>
+				</a>
+
+				<a class="card paper stitch t-peach" href="#" style="--i: 1; --z: 2">
+					<h3 class="card__title">
+						Interactive Manipulation for 3D Gaussian Splatting
+					</h3>
+					<ul class="chips">
+						<li class="chip">WebGL</li>
+						<li class="chip">GLSL</li>
+					</ul>
+					<p class="card__desc">
+						Interactive 3D scene editing with multi-modal segmentation and a
+						hit-testing algorithm.
+					</p>
+					<span class="card__more">read the case study →</span>
+				</a>
+
+				<a class="card paper stitch t-butter" href="#" style="--i: 2; --z: 3">
+					<h3 class="card__title">Line Drawing Vectorization</h3>
+					<ul class="chips">
+						<li class="chip">Python</li>
+					</ul>
+					<p class="card__desc">
+						Bitmap-to-vector conversion for hand-drawn sketches using skeleton
+						extraction.
+					</p>
+					<span class="card__more">read the case study →</span>
+				</a>
+			</div>
+
+			<hr class="divider" />
+
+			<h2 class="section-head">Paper &amp; speech bubble</h2>
+			<div class="row">
+				<div class="paper" style="padding: var(--sp-5); max-width: 22rem">
+					<p class="stack">
+						A plain <code>.paper</code> sheet — the shared surface primitive.
+					</p>
+					<p class="stack">Second block, spaced by <code>.stack</code>.</p>
+				</div>
+				<div class="bubble" style="--tail-x: 2rem; max-width: 22rem">
+					A <code>.bubble</code> speech panel with its tail.
+				</div>
+			</div>
+		</main>
+	</body>
+</html>

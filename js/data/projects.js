@@ -25,69 +25,18 @@
 */
 
 export const projects = {
+	/* This one is not a paper sheet. It is the full-bleed narrative in
+	   project-ar-pathfinding.html — its own markup, its own stylesheet, and
+	   its own screens — so there is no `body` here to render.
+
+	   The entry stays anyway, and js/case-study.js sends the slug on to the
+	   page: project.html?id=ar-pathfinding is the address in the old sitemap
+	   and on anything already printed, and it has to keep landing somewhere.
+	   It is also what keeps the project in `slugs`, so the not-found page
+	   still lists it. */
 	"ar-pathfinding": {
-		title: "Adaptive Augmented Reality Pathfinding for Parkinson's Disease",
-		theme: "moss",
-		badge: "ISMAR Best Poster Award 2025",
-		tags: [
-			"Augmented Reality",
-			"Unity AR",
-			"C#",
-			"Human-Computer Interaction",
-		],
-		summary:
-			"AR system using Meta Quest 3 integrating dynamic visual cues to help Parkinson's patients navigate complex spaces",
-		body: [
-			{
-				p: "I've always believed that technology should serve everyone, especially those who need it most. This became my most ambitious solo project, combining everything I learned about HCI and AR programming to create something that could genuinely improve people's lives.",
-			},
-			// TODO Dimah: this sentence is cut off in the original — how did it end?
-			{
-				p: "Parkinson's disease causes debilitating gait impairments that severely impact mobility and independence. While AR visual cueing had shown promise in helping patients walk, none of the existing systems provided the patient with the ability to choose their own",
-			},
-			{
-				p: "I developed an adaptive AR pathfinding system using the Meta Quest 3 to address this issue. Patients simply point to where they want to go, and the system dynamically generates a safe path through their actual environment, displaying visual cues (like strips on the ground) that guide them around furniture and obstacles. The system adapts to them, not the other way around.",
-			},
-			{
-				p: "Building the system meant diving deep into Unity's NavMesh algorithms, integrating Meta's Mixed Reality Utility Kit for real-time spatial mapping and obstacle detection, and implementing smooth spline interpolation so the paths wouldn't have jarring turns.",
-			},
-			// TODO Dimah: this sentence is cut off in the original — how did it end?
-			{
-				p: "Testing the prototype with real patients gave me so much inspiration, they showed real improvements and they were able to gain autonomy by choosing their own target. I would love to see how this project can evolve with more advanced AR technology, using light-weight see-through glasses so that it can",
-			},
-			{
-				p: "This project was presented at the ISMAR 2025 conference in South Korea, where it received the Best Poster Award.",
-			},
-			{
-				link: {
-					href: "https://hal.science/hal-05281349",
-					label: "Check it out !",
-				},
-			},
-		],
-		polaroids: [
-			{
-				src: "static/projects/roomsetup-A.png",
-				w: 303,
-				h: 338,
-				alt: "Photograph of the pilot study room with AR visual cues overlaid on the floor as strips leading between the furniture.",
-				caption:
-					"Pilot Study Overview: real-world with overlaid AR visual cues",
-				side: "right",
-				anchor: 1,
-				rot: 3,
-			},
-			{
-				src: "static/projects/roomsetup-B.png",
-				w: 216,
-				h: 338,
-				alt: "Plan of the pilot study room showing the walking area and the furniture placed as obstacles.",
-				caption: "Layout of the pilot study room",
-				side: "left",
-				anchor: 3,
-				rot: -6,
-			},
-		],
+		title: "Adaptive AR Pathfinding for Parkinson's Disease",
+		page: "project-ar-pathfinding.html",
 	},
 
 	"gaussian-splatting": {

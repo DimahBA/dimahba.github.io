@@ -1,0 +1,1478 @@
+/* ==========================================================================
+   Buttercup Café — the full-bleed case study
+   A second shape for a case study, beside the paper sheet in css/project.css.
+   That one is an object on a desk: one column, photographs taped into the
+   margin, read at your own pace. This one is a sequence of screens, each
+   holding exactly one idea, and the scroll is the argument.
+
+   Everything below is built out of the same tokens and the same primitives —
+   .paper, .stitch, .chip, .plaque, .btn, .eyebrow all come in unchanged from
+   base.css and components.css. Nothing here re-states a colour or a size that
+   already has a name.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Page
+   -------------------------------------------------------------------------- */
+
+:root {
+	/* This case study's accent, the way [data-theme] sets it on the sheet
+	   pages. The lightbox reads it, so it has to be on :root rather than on a
+	   wrapper — the <dialog> is rendered in the top layer, outside everything. */
+	--accent: var(--moss-deep);
+	--chip-bg: var(--moss-deep);
+
+	/* The accent is a line colour, not a text colour: moss-deep on cream is
+	   about 1.9:1, which is fine for a rule or an outline and nowhere near
+	   readable as words. Anything that says something in the accent uses this
+	   instead — the same hue, walked most of the way to the ink. */
+	--accent-ink: color-mix(in oklab, var(--moss-deep) 40%, var(--ink));
+
+	/* One number, written by js/case-scroll.js and read only here. */
+	--progress: 0;
+}
+
+html {
+	/* There is no sticky nav on this page to duck under, and the anchors are
+	   whole screens: base.css's 5.5rem would land every jump that much early. */
+	scroll-padding-top: 0;
+}
+
+body {
+	background: var(--bg-page);
+	/* Full bleed. Each screen owns its own gutter, because each screen owns
+	   its own background colour and they have to meet edge to edge. */
+	padding: 0;
+}
+
+/* --------------------------------------------------------------------------
+   2. Reading progress
+   A width, not a transform: the bar starts at zero width, so there is nothing
+   to see before the first scroll event lands.
+   -------------------------------------------------------------------------- */
+
+.progress {
+	position: fixed;
+	inset: 0 auto auto 0;
+	z-index: 900;
+	height: 3px;
+	width: calc(var(--progress) * 100%);
+	background: var(--accent);
+}
+
+/* --------------------------------------------------------------------------
+   3. The section rail
+   Only appears once there is room for it beside the text. Below that the
+   screens themselves are the navigation — a thirteen-item list stacked over
+   the writing would be the widest thing on a phone.
+   -------------------------------------------------------------------------- */
+
+.rail {
+	display: none;
+}
+
+/* The breakpoint is arithmetic, not a guess: the writing column is --wrap
+   (68rem), so the margin beside it is (100vw − 68rem) / 2. The rail needs
+   about 11rem of that — its longest label plus its offset from the edge —
+   which is the first viewport where it can sit beside the text instead of
+   on top of it. */
+@media (min-width: 90rem) {
+	.rail {
+		position: fixed;
+		inset-block-start: 50%;
+		inset-inline-start: clamp(1rem, 2.4vw, 2.75rem);
+		z-index: 800;
+		display: grid;
+		gap: var(--sp-1);
+		translate: 0 -50%;
+		font-family: var(--ff-display);
+		font-size: var(--fs-100);
+		letter-spacing: 0.02em;
+	}
+}
+
+.rail__link {
+	display: grid;
+	grid-template-columns: 10px auto;
+	align-items: center;
+	gap: var(--sp-2);
+	padding-block: 0.15rem;
+	color: var(--ink-faint);
+	transition: color var(--dur) var(--ease-out);
+}
+
+.rail__dot {
+	width: 7px;
+	height: 7px;
+	border: 1.5px solid var(--accent);
+	border-radius: var(--r-pill);
+	scale: 0.6;
+	transition: scale var(--dur) var(--ease-out),
+		background var(--dur) var(--ease-out);
+}
+
+.rail__link:hover,
+.rail__link[aria-current="true"] {
+	color: var(--ink);
+}
+
+.rail__link[aria-current="true"] .rail__dot {
+	background: var(--accent);
+	scale: 1.15;
+}
+
+/* --------------------------------------------------------------------------
+   4. A screen
+   One idea, one viewport, vertically centred. `min-height` rather than
+   `height`, always: a screen whose content outgrows the window — a phone in
+   landscape, a large font size — has to be allowed to get taller instead of
+   hiding the bottom of itself.
+   -------------------------------------------------------------------------- */
+
+.screen {
+	display: grid;
+	align-content: center;
+	min-height: 100svh;
+	padding: clamp(4.5rem, 11vh, 8rem) var(--gutter);
+	/* Contained here rather than on <html>: setting overflow on the root
+	   element stops Chromium's implicit IntersectionObserver root from firing,
+	   which would silently kill every entrance on the page. Same reasoning as
+	   the note in base.css. */
+	overflow-x: clip;
+}
+
+.screen__inner {
+	display: grid;
+	gap: clamp(2rem, 5vh, 3rem);
+	width: 100%;
+	max-width: var(--wrap);
+	margin-inline: auto;
+}
+
+.screen--sage {
+	background: var(--sage);
+}
+
+/* For a screen whose one idea is a figure rather than a sentence. The figure
+   needs the height more than the screen needs the air around it, and this is
+   the difference between the whole comparison landing in one view and the
+   third lane of it starting below the fold. */
+.screen--tight {
+	padding-block: clamp(2.75rem, 6vh, 4.5rem);
+}
+
+.screen--tight .screen__inner {
+	gap: clamp(1.25rem, 3vh, 2rem);
+}
+
+.screen--dark {
+	background: var(--slate);
+	color: var(--cream);
+}
+
+.screen--dark .eyebrow {
+	color: color-mix(in srgb, var(--cream) 60%, transparent);
+}
+
+.screen--sage .eyebrow {
+	color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+/* --- the parts every screen is made of ----------------------------------- */
+
+.screen__head {
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
+}
+
+.screen__head h2 {
+	max-width: 18ch;
+}
+
+/* Two steps up from the default h2, for the screens that carry the argument
+   rather than a section of it. */
+.screen__title--lg {
+	font-size: clamp(2rem, 1.3rem + 3vw, 3.75rem);
+	max-width: 19ch;
+}
+
+.screen__title--xl {
+	font-size: clamp(2rem, 1.3rem + 3vw, 4rem);
+	max-width: 15ch;
+}
+
+/* The line that finishes the heading's sentence, set in the display face so
+   it reads as part of the title rather than as the first paragraph. */
+.screen__kicker {
+	font-family: var(--ff-display);
+	font-size: clamp(1.4rem, 1rem + 1.6vw, 2.4rem);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: var(--lh-tight);
+	color: var(--butter-deep);
+}
+
+.screen__body {
+	max-width: 54ch;
+	font-size: var(--fs-500);
+	line-height: 1.6;
+}
+
+.screen--dark .screen__body {
+	color: color-mix(in srgb, var(--cream) 88%, transparent);
+}
+
+/* For a block inside a screen that has an eyebrow but no h2 — the sentence
+   has to carry the weight the missing heading would have carried, without
+   taking a heading's short measure. */
+.screen__body--lead {
+	font-family: var(--ff-display);
+	font-weight: 700;
+	line-height: 1.45;
+	max-width: 62ch;
+}
+
+/* A second block under the same screen heading, cut off by the same dashed
+   thread the page uses everywhere else. A seam, not a new page: the triggers
+   are what the twelve people were answering about. */
+.subscreen {
+	display: grid;
+	gap: var(--sp-6);
+	padding-block-start: var(--sp-6);
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
+}
+
+/* A conclusion, not a paragraph. Display face, short measure, no more than a
+   couple of lines — it is meant to be read as one gesture. */
+.screen__pull {
+	max-width: 38ch;
+	font-family: var(--ff-display);
+	font-size: clamp(1.15rem, 1rem + 0.7vw, 1.6rem);
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	line-height: 1.35;
+}
+
+/* A pull that has to finish a whole argument rather than land one line: the
+   short measure would break these three clauses across five ragged lines. */
+.screen__pull--wide {
+	max-width: 52ch;
+}
+
+/* Where the number came from, and how much weight it will carry. */
+.screen__note {
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	color: var(--ink-faint);
+}
+
+.screen--sage .screen__note {
+	color: color-mix(in srgb, var(--ink) 55%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   5. Entrances
+   Scoped to `.js`, like every entrance on the home page: with scripting off
+   each screen is simply present. The screen is what is observed and the
+   children stagger themselves off --in-delay, so thirteen observers do the
+   work of forty.
+   -------------------------------------------------------------------------- */
+
+.js [data-reveal] {
+	opacity: 0;
+	translate: 0 22px;
+	transition: opacity var(--dur-slow) var(--ease-out),
+		translate var(--dur-slow) var(--ease-out);
+	transition-delay: var(--in-delay, 0ms);
+}
+
+.js .screen.is-in [data-reveal] {
+	opacity: 1;
+	translate: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	/* Matches the specificity of the rule above, so nothing is left invisible
+	   waiting for a transition that will never run. */
+	.js [data-reveal],
+	[data-reveal] {
+		opacity: 1;
+		translate: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   6. Hero
+   -------------------------------------------------------------------------- */
+
+.screen--hero {
+	position: relative;
+	padding-block: clamp(4rem, 9vh, 7rem) clamp(5rem, 10vh, 7rem);
+}
+
+.back-row {
+	position: absolute;
+	inset: clamp(1.25rem, 4vh, 2.5rem) var(--gutter) auto;
+	max-width: var(--wrap);
+	margin-inline: auto;
+}
+
+.hero {
+	gap: clamp(1.5rem, 4vh, 3.25rem);
+}
+
+.hero__title-block {
+	display: grid;
+	justify-items: start;
+	gap: var(--sp-4);
+}
+
+/* Sized against the height as well as the width. The title is four lines at
+   its largest, and a laptop is a wide, short window — left to grow on vw
+   alone it pushes the credits, and then "read on", off the bottom of the
+   screen the hero is supposed to be. */
+.hero__title {
+	font-size: min(clamp(2.6rem, 1.2rem + 4vw, 4.75rem), 1.5rem + 5.5vh);
+	max-width: 15ch;
+}
+
+.hero__deck {
+	max-width: 46ch;
+	font-size: clamp(1.15rem, 1rem + 0.55vw, 1.6rem);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+/* The credits card from the sheet pages, unrolled into a row of columns —
+   there is no aside to put it in here, and under the deck it reads as the
+   masthead of the piece. */
+.credits {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+	gap: var(--sp-6) var(--sp-8);
+	padding-block-start: var(--sp-6);
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
+}
+
+.credits__row dt {
+	margin-block-end: 0.35rem;
+}
+
+.credits__row dd {
+	font-size: var(--fs-300);
+	line-height: 1.45;
+}
+
+.readon {
+	position: absolute;
+	inset: auto auto clamp(1.5rem, 4vh, 3rem) 50%;
+	display: grid;
+	justify-items: center;
+	gap: var(--sp-1);
+	translate: -50% 0;
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+	transition: color var(--dur) var(--ease-out);
+}
+
+.readon:hover {
+	color: var(--ink);
+}
+
+.readon svg {
+	animation: nudge 2.6s var(--ease-out) infinite;
+}
+
+@keyframes nudge {
+	0%,
+	100% {
+		translate: 0 0;
+	}
+	50% {
+		translate: 0 7px;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   7. Card decks
+   The one grid that most of the screens are built on: as many equal columns
+   as fit, and never a column so narrow the writing in it breaks up.
+   -------------------------------------------------------------------------- */
+
+.deck {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	gap: var(--sp-5);
+}
+
+/* A cream card wants a thread that is not also cream — the home cards get
+   theirs from the coloured fill underneath, and these have no fill to borrow
+   from. Tan at 45% is the same thread the footer chips use. */
+.brief,
+.verbatim,
+.plate,
+.routes,
+.person,
+.snap {
+	--stitch-color: color-mix(in srgb, var(--tan-deep) 45%, transparent);
+}
+
+.brief {
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
+	border-radius: var(--r-card);
+}
+
+.brief p {
+	font-size: var(--fs-300);
+	line-height: 1.55;
+}
+
+/* The card the screen is actually about. An outline rather than a different
+   fill: the deck has to stay one material. */
+.brief--key {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+.brief--key .eyebrow {
+	color: var(--accent-ink);
+}
+
+/* --------------------------------------------------------------------------
+   8. Two-column splits
+   -------------------------------------------------------------------------- */
+
+.split {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(19rem, 1fr));
+	gap: clamp(1.5rem, 4vw, 3rem);
+	align-items: center;
+}
+
+.split--intro {
+	grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+}
+
+.split__text {
+	display: grid;
+	gap: var(--sp-5);
+	align-content: start;
+}
+
+.split__text .screen__body {
+	max-width: 46ch;
+	font-size: var(--fs-400);
+	line-height: 1.65;
+}
+
+/* --------------------------------------------------------------------------
+   9. Figures
+   Three shapes, one material. `.plate` is a diagram mounted on paper,
+   `.snap` is a photograph pinned to the page at an angle, and both put their
+   caption below in the display face.
+   -------------------------------------------------------------------------- */
+
+.plate,
+.snap {
+	display: grid;
+	gap: var(--sp-3);
+	border-radius: var(--r-card);
+}
+
+.plate img,
+.plate svg,
+.snap img {
+	width: 100%;
+	border-radius: var(--r-sm);
+}
+
+.plate figcaption,
+.snap figcaption,
+.stat figcaption {
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+/* The brain diagram arrives with its own pale grey card baked into the file.
+   Multiply drops that ground into the paper underneath, so the drawing sits
+   on the same sheet as everything else instead of in a grey rectangle. */
+.plate--diagram img {
+	mix-blend-mode: multiply;
+}
+
+.snap {
+	rotate: var(--rot, 0deg);
+	transition: rotate var(--dur) var(--ease-spring),
+		translate var(--dur) var(--ease-spring),
+		box-shadow var(--dur) var(--ease-out);
+}
+
+.snap:hover,
+.snap:focus-within {
+	rotate: 0deg;
+	translate: 0 -4px;
+	box-shadow: var(--shadow-lift);
+}
+
+.snap img {
+	aspect-ratio: 4 / 5;
+	object-fit: cover;
+}
+
+.split--intro .snap {
+	rotate: 1.6deg;
+	justify-self: center;
+	max-width: 22rem;
+}
+
+.split--intro .snap img {
+	aspect-ratio: 3 / 4;
+}
+
+.split--intro .snap figcaption {
+	text-align: center;
+}
+
+/* Narrower than the column it sits in. Three portrait crops given the full
+   68rem are 26rem tall each, which turns a supporting aside into the tallest
+   thing on the page — these are evidence, not the argument. */
+.gallery {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr));
+	gap: var(--sp-5);
+	align-items: start;
+	width: 100%;
+	max-width: 52rem;
+}
+
+/* The zoom button is the figure's only child that can take a hover, so the
+   hint has to be asked for by name. */
+.plate .zoom:hover img,
+.snap .zoom:hover img {
+	scale: 1.02;
+}
+
+/* --------------------------------------------------------------------------
+   10. Inline diagrams
+   Drawn in the page rather than exported, so they take the palette, the type
+   and the theme with them — and stay sharp at any size.
+   -------------------------------------------------------------------------- */
+
+.plan__label {
+	font-family: var(--ff-display);
+	font-size: 11px;
+	fill: var(--ink-soft);
+}
+
+.plate .plan__label {
+	font-size: 12px;
+}
+
+/* The cue path, flowing the way the cues do: the dashes travel toward the
+   destination. The dash pattern is 11 + 22 in the room plans and 12 + 24 in
+   the perspective view, so one full cycle is 33 and 36 — four cycles each,
+   which is why the two offsets differ. */
+.plan__flow {
+	animation: dashflow 4.4s linear infinite;
+}
+
+.plate .plan__flow {
+	animation-duration: 5s;
+	animation-name: dashflow-wide;
+}
+
+@keyframes dashflow {
+	to {
+		stroke-dashoffset: -132;
+	}
+}
+
+@keyframes dashflow-wide {
+	to {
+		stroke-dashoffset: -144;
+	}
+}
+
+.plan__ping {
+	animation: softpulse 2.4s var(--ease-out) infinite;
+}
+
+@keyframes softpulse {
+	0%,
+	100% {
+		opacity: 0.3;
+	}
+	50% {
+		opacity: 1;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   11. The two gaits
+   Two trails of footprints seen from above, drawn to one scale — one SVG unit
+   is one centimetre in both lanes, and both lanes are ten steps. So the only
+   thing the drawing asserts is what the measurements say: the same number of
+   steps, taken in about the same time, covering very different ground.
+
+   Everything is authored in the markup because the coordinates *are* the
+   content. What lives here is the scale, the colour and the timing.
+   -------------------------------------------------------------------------- */
+
+	.gait {
+	display: grid;
+	gap: clamp(var(--sp-3), 2.2vh, var(--sp-4));
+
+	/* The lane's own ink. The typical trail is the page's paper colour; the
+	   parkinsonian one is warm and a shade off it, so the two read as a pair
+	   rather than as good and bad. */
+	--gait-ink: var(--cream);
+}
+
+/* Referenced, never drawn — but a bare <svg> still takes a replaced element's
+   default 300×150 out of the grid. */
+.gait__defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.gait__lane {
+	display: grid;
+	gap: var(--sp-1);
+}
+
+.gait__lane--pd {
+	--gait-ink: var(--peach);
+}
+
+/* The freeze lane keeps the parkinsonian ink on purpose: it is not a third
+   gait, it is the second one taken to its end, and colouring it separately
+   would say otherwise. The one thing that is a different colour is the fall,
+   because the fall is the only event on the figure — and it is the page's
+   attention yellow, which already means exactly that. */
+.gait__lane--freeze {
+	--gait-ink: var(--peach);
+	--gait-alert: var(--butter-deep);
+}
+
+.gait__name {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--sp-1) var(--sp-3);
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 700;
+	letter-spacing: 0.01em;
+	color: var(--gait-ink);
+}
+
+/* The count is the finding, so it is set as a count rather than as more of
+   the sentence. */
+.gait__name span {
+	padding: 0.15em 0.6em 0.25em;
+	border: 1px solid color-mix(in srgb, var(--gait-ink) 45%, transparent);
+	border-radius: var(--r-pill);
+	font-size: var(--fs-100);
+	font-weight: 500;
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+}
+
+.gait__meta {
+	max-width: 68ch;
+	font-size: var(--fs-200);
+	line-height: 1.4;
+	color: color-mix(in srgb, var(--cream) 62%, transparent);
+}
+
+.gait__track {
+	width: 100%;
+	height: auto;
+	/* The viewBox is 700 units wide and the drawing is to scale, so the whole
+	   figure has one job: be as wide as it is allowed to be. Below this the
+	   feet stop being feet, and the lane scrolls instead of shrinking. */
+	min-width: 34rem;
+	margin-block-start: var(--sp-1);
+	color: var(--gait-ink);
+	overflow: visible;
+}
+
+/* Under about 36rem the drawing can't shrink any further and stay a drawing,
+   so the two lanes and the ruler scroll together inside one window. They have
+   to be *one* scroller or the lanes would come out of register with each
+   other, which is the only comparison the figure makes. */
+@media (max-width: 38rem) {
+	.gait {
+		overflow-x: auto;
+		overscroll-behavior-x: contain;
+		padding-block-end: var(--sp-2);
+	}
+
+	.gait__meta {
+		max-width: 34rem;
+	}
+}
+
+/* --- a footprint ---------------------------------------------------------- */
+
+.fp {
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+/* --- the room, the fall, and the floor that is left ----------------------- */
+
+/* The freeze lane is half a metre of floor taller than the other two: the
+   hands land wider than the feet ever do, and they have to be at the same
+   centimetre as everything else. Same 700 units across, so the ruler under
+   all three still lines up. */
+.gait__track--tall {
+	margin-block-start: var(--sp-2);
+}
+
+/* Once the step is down to a few centimetres the soles land on top of each
+   other, which is the truth about festination and a smudge on paper. A
+   hairline of the screen's own background behind each print, painted under
+   the fill rather than over it, keeps the pile legible as prints. */
+.fp--stuck {
+	stroke: var(--slate);
+	stroke-width: 1.1;
+	paint-order: stroke fill;
+}
+
+.gait__note {
+	font-family: var(--ff-display);
+	font-size: 8.5px;
+	font-weight: 500;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	fill: color-mix(in srgb, var(--cream) 55%, transparent);
+}
+
+.gait__alert {
+	color: var(--gait-alert);
+}
+
+.gait__note--alert {
+	fill: var(--gait-alert);
+	font-weight: 700;
+	letter-spacing: 0.08em;
+}
+
+.gait__rest {
+	color: color-mix(in srgb, var(--cream) 40%, transparent);
+}
+
+/* --- the shared ruler ----------------------------------------------------- */
+
+.gait__ruler {
+	position: relative;
+	min-width: 34rem;
+	height: 1.4rem;
+	margin-block-start: calc(var(--sp-3) * -1);
+	border-block-start: 1px solid color-mix(in srgb, var(--cream) 22%, transparent);
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	color: color-mix(in srgb, var(--cream) 55%, transparent);
+}
+
+/* The tick sits at its own centimetre: the same 700-unit space the two lanes
+   are drawn in, so a metre mark lands under the print that reached it. */
+.gait__ruler span {
+	position: absolute;
+	inset-block-start: 0;
+	inset-inline-start: calc(var(--x) * 100% / 700);
+	width: 1px;
+	height: 5px;
+	background: color-mix(in srgb, var(--cream) 35%, transparent);
+}
+
+.gait__ruler span[data-m]::after {
+	content: attr(data-m);
+	position: absolute;
+	inset-block-start: 7px;
+	inset-inline-start: 0;
+	translate: -50% 0;
+	white-space: nowrap;
+}
+
+.gait__caption {
+	max-width: 56ch;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: color-mix(in srgb, var(--cream) 60%, transparent);
+}
+
+/* --- walking -------------------------------------------------------------- */
+/* Each print carries the millisecond it lands on, taken from the cadence the
+   lane is drawn at — 110 steps a minute on one, 112 on the other. Playback is
+   0.72x real time on both, so the gap between them is still the gap the
+   measurements describe: the same six metres, three more footfalls, and the
+   second lane still laying prints after the first has arrived.
+
+   It plays once, when the screen comes into view, and the state it settles
+   into is the state the figure is meant to be read in — so with scripting off,
+   or with motion turned down, nothing at all is missing. */
+
+@keyframes gait-land {
+	from {
+		opacity: 0;
+		transform: scale(1.55);
+	}
+	65% {
+		opacity: 1;
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.js .gait .fp {
+	opacity: 0;
+}
+
+.js .screen.is-in .gait .fp {
+	animation: gait-land 240ms var(--ease-spring) both;
+	animation-delay: calc(var(--d) + var(--gait-lead, 450ms));
+}
+
+/* The skid, the momentum line, the mark on the floor and the two notes. They
+   are not footfalls, so they don't land like one — they arrive after the last
+   print has, on the same clock, and only fade. */
+@keyframes gait-mark {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+.js .gait .gait__mark {
+	opacity: 0;
+}
+
+.js .screen.is-in .gait .gait__mark {
+	animation: gait-mark 420ms var(--ease-out) both;
+	animation-delay: calc(var(--d) + var(--gait-lead, 450ms));
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.js .gait .fp,
+	.js .screen.is-in .gait .fp,
+	.js .gait .gait__mark,
+	.js .screen.is-in .gait .gait__mark {
+		animation: none;
+		opacity: 1;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   12. The two routes
+   -------------------------------------------------------------------------- */
+
+.routes {
+	display: grid;
+	gap: var(--sp-4);
+	border-radius: var(--r-card);
+}
+
+.route {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	gap: var(--sp-4);
+	align-items: center;
+}
+
+.route strong {
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+}
+
+.route p {
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+.route__dot {
+	width: 12px;
+	height: 12px;
+	border-radius: var(--r-pill);
+}
+
+.route--broken .route__dot {
+	background: var(--peach-deep);
+}
+
+.route--intact .route__dot {
+	background: var(--moss-deep);
+}
+
+/* --------------------------------------------------------------------------
+   13. Survey figures
+   How many freeze is a rate, so it is drawn as area — a ring, the same shape
+   the headset questions take on screen 05. On the research screen the ring
+   sits inside the intro column, beside the sentence it belongs to, rather
+   than in a band of its own below the fold.
+   -------------------------------------------------------------------------- */
+
+/* 13a. The ring ----------------------------------------------------------- */
+
+.stat {
+	display: grid;
+	justify-items: start;
+	align-content: start;
+	gap: var(--sp-3);
+}
+
+.stat figcaption {
+	max-width: 30ch;
+}
+
+/* Ring and caption side by side: one reads the number, then finishes its
+   sentence to the right of it. They share a centre line, because a caption
+   hung off the top of the ring would read as a label for it instead. */
+.stat--inline {
+	grid-template-columns: auto minmax(11rem, 1fr);
+	align-items: center;
+	gap: var(--sp-5);
+}
+
+.stat--inline.stat--lead svg {
+	width: clamp(7rem, 11vw, 9.5rem);
+}
+
+/* On a phone the ring and its sentence are each about as narrow as they can
+   be already — side by side they would leave the caption three words wide. */
+@media (max-width: 26rem) {
+	.stat--inline {
+		grid-template-columns: minmax(0, 1fr);
+		justify-items: start;
+		gap: var(--sp-3);
+	}
+}
+
+/* The caption finishes the number's sentence, so the part that finishes it
+   carries the number's weight and its colour. */
+.stat figcaption b {
+	color: var(--ink);
+}
+
+.stat--lead svg {
+	width: clamp(9rem, 16vw, 12.5rem);
+	height: auto;
+}
+
+.stat__track {
+	fill: none;
+	stroke: var(--tan);
+	stroke-width: 16;
+}
+
+.stat__arc {
+	fill: none;
+	stroke-width: 16;
+}
+
+.stat text {
+	text-anchor: middle;
+	font-family: var(--ff-display);
+	fill: var(--ink);
+}
+
+.stat__num {
+	font-size: 27px;
+	font-weight: 700;
+}
+
+.stat__den {
+	font-size: 12px;
+	letter-spacing: 0.04em;
+	fill: var(--ink-soft);
+}
+
+/* 13b. The two headline counts -------------------------------------------- */
+
+/* Twelve squares per question, twice over, was two rows of counting for two
+   facts that land in a second: none of them had ever seen AR, and seven of
+   twelve said no to it anyway. The numbers say it faster, and the screen
+   keeps its air for the words they did ask for. */
+.counts {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+	gap: var(--sp-5) var(--sp-8);
+	align-items: start;
+	padding-block-start: var(--sp-5);
+	border-block-start: 1px solid
+		color-mix(in srgb, var(--cream) 22%, transparent);
+}
+
+/* The number and its gloss share a baseline, so the small type reads as a
+   caption hung off the figure rather than as a line underneath it. */
+.count {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--sp-2) var(--sp-4);
+}
+
+.count__num {
+	font-family: var(--ff-display);
+	font-size: clamp(2.2rem, 1.4rem + 2.8vw, 3.6rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1;
+	color: var(--cream);
+}
+
+.count__label {
+	flex: 1 1 9rem;
+	max-width: 24ch;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	line-height: 1.35;
+	color: color-mix(in srgb, var(--cream) 70%, transparent);
+}
+
+/* Three answers to one question, so they stay one run of type: wider gaps
+   between the pairs than inside them is the only thing grouping them. */
+.count__split {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: var(--sp-2) var(--sp-4);
+}
+
+.count__pair {
+	display: inline-flex;
+	align-items: baseline;
+	gap: 0.3em;
+}
+
+.count__unit {
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	color: color-mix(in srgb, var(--cream) 70%, transparent);
+}
+
+/* Monochrome, and not for want of colour: the bar further down already spends
+   butter, moss, tan and peach on the four things they asked for. Reusing
+   those hues here would have peach meaning *non* in one figure and “not on my
+   nose” in the next. So refusal is drawn as one ramp — the further from the
+   background, the harder the no, and nought is barely there at all. */
+.count__num.is-yes {
+	color: color-mix(in srgb, var(--cream) 45%, transparent);
+}
+
+.count__num.is-maybe {
+	color: color-mix(in srgb, var(--cream) 72%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   14. Triggers
+   The rule above each column is the column's colour, and the colours are the
+   argument: two of the three are things the headset can see.
+   -------------------------------------------------------------------------- */
+
+.triggers {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	gap: var(--sp-6);
+}
+
+.trigger {
+	display: grid;
+	gap: var(--sp-4);
+	align-content: start;
+	padding-block-start: var(--sp-4);
+	border-block-start: 4px solid var(--tone, var(--moss-deep));
+}
+
+.trigger .chip {
+	background: var(--tone, var(--moss-deep));
+}
+
+.trigger p {
+	font-size: var(--fs-200);
+	line-height: 1.55;
+	color: var(--ink-soft);
+}
+
+.trigger--terrain {
+	--tone: var(--moss-deep);
+}
+.trigger--body {
+	--tone: var(--tan-deep);
+}
+.trigger--mind {
+	--tone: var(--peach-deep);
+}
+
+/* --------------------------------------------------------------------------
+   15. Verbatims
+   The French is the answer; the English is a gloss the reader can ask for.
+   A <details> rather than a scripted toggle — it opens with scripting off,
+   and the disclosure state is the platform's rather than this page's.
+   -------------------------------------------------------------------------- */
+
+.verbatim {
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
+	border-radius: var(--r-card);
+}
+
+.verbatim > p[lang] {
+	font-size: var(--fs-500);
+	line-height: 1.4;
+	letter-spacing: -0.01em;
+}
+
+.verbatim cite {
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-style: normal;
+	letter-spacing: 0.02em;
+	color: var(--ink-faint);
+}
+
+.gloss > summary {
+	display: block; /* removes the disclosure triangle in every engine */
+	width: fit-content;
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.16em;
+	text-transform: uppercase;
+	color: var(--accent-ink);
+	cursor: pointer;
+	transition: color var(--dur) var(--ease-out);
+}
+
+.gloss > summary:hover {
+	color: var(--ink);
+	text-decoration: underline;
+	text-underline-offset: 3px;
+}
+
+.gloss > summary::-webkit-details-marker {
+	display: none;
+}
+
+.gloss > p {
+	margin-block-start: var(--sp-2);
+	font-size: var(--fs-300);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+.gloss__open,
+.gloss[open] .gloss__closed {
+	display: none;
+}
+
+.gloss[open] .gloss__open {
+	display: inline;
+}
+
+/* --------------------------------------------------------------------------
+   16. What they asked for
+   -------------------------------------------------------------------------- */
+
+.bigwords {
+	display: flex;
+	flex-wrap: wrap;
+	gap: clamp(1rem, 4vw, 3.5rem);
+	font-family: var(--ff-display);
+	font-size: clamp(1.6rem, 1rem + 2.6vw, 3.4rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1.1;
+}
+
+/* Each word is tinted with its own share of the bar below, in the bar's own
+   order — the word and the segment have to be the same colour, or the figure
+   and the sentence are telling different stories. Set per word, the way
+   .wants__bar sets --fill, because the mapping is data and not style. */
+.bigwords > span {
+	color: var(--tint, inherit);
+}
+
+/* Wide enough that the bar reads as the same measure as the three words above
+   it — a short bar under long words looks like a different figure. */
+.wants {
+	display: grid;
+	gap: var(--sp-3);
+	max-width: 56rem;
+}
+
+.wants__bar {
+	display: flex;
+	height: 22px;
+	border-radius: var(--r-sm);
+	overflow: hidden;
+}
+
+.wants__bar > span {
+	flex: var(--share, 1);
+	background: var(--fill, var(--tan));
+}
+
+.wants__legend {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp-2) var(--sp-5);
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	color: color-mix(in srgb, var(--cream) 75%, transparent);
+}
+
+/* A four-colour bar with an unkeyed list under it is a legend that does not
+   legend. Each entry carries the swatch of the segment it names. */
+.wants__legend > span {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+}
+
+.wants__legend > span::before {
+	content: "";
+	width: 0.7em;
+	height: 0.7em;
+	border-radius: 2px;
+	background: var(--fill, var(--tan));
+}
+
+/* --------------------------------------------------------------------------
+   17. How it works
+   -------------------------------------------------------------------------- */
+
+.steps {
+	display: grid;
+	gap: var(--sp-5);
+}
+
+.step {
+	display: grid;
+	grid-template-columns: 2.25rem 1fr;
+	gap: var(--sp-4);
+	align-items: start;
+}
+
+.step__n {
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	background: var(--paper);
+	border-radius: var(--r-pill);
+	box-shadow: var(--sh-contact);
+	font-family: var(--ff-display);
+	font-weight: 700;
+}
+
+.step strong {
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	letter-spacing: -0.02em;
+}
+
+.step p {
+	margin-block-start: 0.25rem;
+	font-size: var(--fs-300);
+	line-height: 1.55;
+}
+
+/* --------------------------------------------------------------------------
+   18. The pilot
+   -------------------------------------------------------------------------- */
+
+.setup {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
+	gap: var(--sp-5);
+	align-items: start;
+}
+
+.setup .plate img {
+	aspect-ratio: 303 / 338;
+	object-fit: contain;
+	background: var(--paper-warm);
+}
+
+.facts {
+	display: grid;
+	gap: var(--sp-4);
+	align-content: start;
+}
+
+.fact dt {
+	font-family: var(--ff-display);
+	font-size: clamp(1.8rem, 1.4rem + 1.2vw, 2.6rem);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.fact dd {
+	margin-block-start: 0.15rem;
+}
+
+/* Five paper slips, one per participant. The notes are shown, not hidden behind a
+   hover: two of the five getting little out of the system is the study's
+   finding, and a finding does not live in a tooltip. */
+.cohort {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
+	gap: var(--sp-4);
+	padding-block-start: var(--sp-5);
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
+}
+
+.person {
+	display: grid;
+	gap: var(--sp-2);
+	align-content: start;
+	border-radius: var(--r-card);
+	transition: translate var(--dur) var(--ease-spring),
+		box-shadow var(--dur) var(--ease-out);
+}
+
+.person:hover {
+	translate: 0 -6px;
+	box-shadow: var(--shadow-lift);
+}
+
+.person__id {
+	font-family: var(--ff-display);
+	font-size: var(--fs-600);
+	font-weight: 700;
+	letter-spacing: -0.03em;
+	line-height: 1;
+}
+
+.person p {
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+.person--key {
+	outline: 2px solid var(--accent);
+	outline-offset: -2px;
+}
+
+.person--key .eyebrow {
+	color: var(--accent-ink);
+}
+
+/* --------------------------------------------------------------------------
+   19. What I'd change
+   -------------------------------------------------------------------------- */
+
+.admissions {
+	display: grid;
+	gap: var(--sp-6);
+	max-width: 52rem;
+}
+
+.admit {
+	display: grid;
+	gap: var(--sp-2);
+	padding-inline-start: var(--sp-5);
+	border-inline-start: 4px solid var(--tone, var(--moss-deep));
+}
+
+.admit strong {
+	font-family: var(--ff-display);
+	font-size: var(--fs-500);
+	letter-spacing: -0.02em;
+}
+
+.admit p {
+	font-size: var(--fs-300);
+	line-height: 1.6;
+	color: var(--ink-soft);
+}
+
+.admit--1 {
+	--tone: var(--moss-deep);
+}
+.admit--2 {
+	--tone: var(--tan-deep);
+}
+.admit--3 {
+	--tone: var(--peach-deep);
+}
+.admit--4 {
+	--tone: var(--slate);
+}
+
+/* --------------------------------------------------------------------------
+   20. Close
+   -------------------------------------------------------------------------- */
+
+.outro {
+	padding: clamp(3.5rem, 9vh, 6rem) var(--gutter) clamp(3rem, 6vh, 4rem);
+	background: color-mix(in srgb, var(--paper-warm) 55%, var(--cream));
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 60%, transparent);
+}
+
+.outro .screen__inner {
+	gap: var(--sp-8);
+	justify-items: center;
+	text-align: center;
+}
+
+.outro p {
+	max-width: 44ch;
+	font-size: var(--fs-400);
+	line-height: 1.6;
+	color: var(--ink-soft);
+}
+
+.outro__links {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: var(--sp-4);
+}
+
+/* --------------------------------------------------------------------------
+   21. Print
+   The screens stop being screens: no forced height, no fixed chrome, and
+   nothing tilted.
+   -------------------------------------------------------------------------- */
+
+@media print {
+	.progress,
+	.rail,
+	.readon,
+	#cat-paw-prints-container {
+		display: none;
+	}
+
+	.screen {
+		min-height: 0;
+		padding-block: var(--sp-8);
+		break-inside: avoid;
+	}
+
+	.snap {
+		rotate: none;
+		box-shadow: none;
+	}
+}

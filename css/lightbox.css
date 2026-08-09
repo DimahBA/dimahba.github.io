@@ -1,0 +1,305 @@
+/* ==========================================================================
+   Buttercup Café — zoom affordance and lightbox
+   Shared by every page that shows a photograph you can open: the sheet-shaped
+   case studies (css/project.css) and the full-bleed ones (css/case-scroll.css).
+   Both hand their images to js/modules/lightbox.js, so the styling it depends
+   on lives here rather than in either page's own stylesheet.
+
+   The one thing this file expects from its host page: `--accent`.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Zoom affordance
+
+   Every image on the page is wrapped in a real <button>, not a click handler
+   on the <img>. That is the whole of the keyboard and screen-reader story:
+   tab order, Enter/Space, and an accessible name all come free, and there is
+   no invisible interaction that only a mouse can find.
+   -------------------------------------------------------------------------- */
+
+.zoom {
+	display: block;
+	width: 100%;
+	border-radius: inherit;
+	cursor: zoom-in;
+}
+
+.zoom img {
+	transition: scale var(--dur) var(--ease-out);
+}
+
+
+/* --------------------------------------------------------------------------
+   2. The lightbox
+
+   A <dialog> opened with showModal(), which buys the top layer, the focus
+   trap, inert background content and Esc — none of which is worth
+   reimplementing by hand, and all of which hand-rolled overlays get subtly
+   wrong.
+
+   The opening move is a FLIP: the frame is drawn at rest by CSS, and the
+   script writes only how far it currently is from rest (--fx/--fy/--fs),
+   then drops those on the next frame so the transition runs home. Same
+   division of labour as the rest of the site — CSS owns the resting pose,
+   the script owns the deviation, and neither writes the other's number.
+   `scale` therefore has exactly one author: the flight. That is why the
+   sheet fades without scaling; two things scaling at once is how you get a
+   photograph that swims.
+   -------------------------------------------------------------------------- */
+
+html.is-zoomed {
+	overflow: hidden;
+	/* The scrollbar's own width, measured once at open. Without it the page
+	   jumps sideways underneath the scrim as the bar disappears. */
+	padding-inline-end: var(--sbw, 0px);
+}
+
+.lightbox {
+	/* The photograph's budget, and the only place a size is decided.
+
+	   Both are lengths, never percentages. A percentage here would have to
+	   resolve against a panel that is itself being sized by the photograph,
+	   and the circularity does not fail loudly — it fails by the grid refusing
+	   to shrink its image column below the file's own pixel width, so a wide
+	   plot pushes the writing off the side of the screen. Subtracting the
+	   chrome from the viewport instead is arithmetic the browser can do before
+	   it knows anything about the contents.
+
+	   The subtrahends are everything that is not the photograph, at its
+	   widest: the mount (1.65rem), the gap (2.25rem), the writing column
+	   (22rem), the sheet's padding (3.5rem) and the dialog's (5rem). */
+	--img-max-w: min(52rem, calc(100vw - 35rem));
+	--img-max-h: min(38rem, calc(100svh - 11rem));
+
+	position: fixed;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	width: 100%;
+	max-width: 100%;
+	height: 100%;
+	max-height: 100%;
+	margin: 0;
+	padding: clamp(1rem, 3vw, 2.5rem);
+	border: 0;
+	background: transparent;
+	overflow: hidden;
+	overscroll-behavior: contain;
+}
+
+/* Put back what the rule above took away.
+
+   A closed <dialog> is hidden by `dialog:not([open]) { display: none }` in the
+   user-agent stylesheet — an ordinary author-overridable rule, not magic. So
+   `display: grid` up there silently beat it, and a closed panel stayed a
+   full-viewport fixed box lying over the page: invisible, because the scrim
+   and the sheet are both at opacity 0, and still hit-testable. Every click
+   after the first one landed on the dead panel, so the photographs stopped
+   opening and nothing on the page could be clicked again.
+
+   It has to be restated rather than avoided, because the open state genuinely
+   needs `display: grid` to centre the sheet. */
+.lightbox:not([open]) {
+	display: none;
+}
+
+/* The wash is a real element rather than ::backdrop, because ::backdrop
+   cannot be faded in and out without the discrete-property dance and this
+   one has to be in step with the frame's flight to the millisecond. Tinted
+   with the same warm brown as every shadow on the site: a neutral black
+   scrim over cream turns the whole page grey. */
+.lightbox::backdrop {
+	background: transparent;
+}
+
+.lightbox__scrim {
+	position: fixed;
+	inset: 0;
+	background: rgb(88 70 52 / 0.62);
+	backdrop-filter: blur(4px);
+	opacity: 0;
+	transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.lightbox.is-open .lightbox__scrim {
+	opacity: 1;
+}
+
+.lightbox__sheet {
+	--card-bg: var(--cream);
+	--stitch-color: var(--accent);
+	--stitch-inset: 0.7rem;
+	--r-card: 14px;
+	position: relative;
+	display: grid;
+	/* The photograph's column is content-sized and the sheet hugs it, rather
+	   than both columns being handed a share of a fixed width. A wide panel
+	   around a tall narrow image is mostly the gap between the two — the paper
+	   should be the shape of what is on it. */
+	grid-template-columns: auto minmax(13rem, 22rem);
+	align-items: center;
+	gap: clamp(1rem, 2.5vw, 2.25rem);
+	width: fit-content;
+	max-width: min(74rem, 100%);
+	max-height: 100%;
+	padding: clamp(1rem, 2.2vw, 1.75rem);
+	opacity: 0;
+	transition: opacity var(--dur-slow) var(--ease-out);
+}
+
+.lightbox.is-open .lightbox__sheet {
+	opacity: 1;
+}
+
+/* One image only, and no caption inside the mount — the writing lives in the
+   column beside it, which is the point of opening the thing. Uniform padding
+   is load-bearing: it puts the frame's centre exactly on the photograph's
+   centre, which is what lets the flight scale the frame about its own centre
+   and still land the photograph on the thumbnail.
+
+   The mount is sized to the picture and the panel is sized to the mount, so
+   nothing here spans to a fixed width. `content-box` puts the ratio on the
+   inside of the padding, which is where the photograph is, and the width is
+   the smaller of the two budgets: how wide it may be, and how wide the height
+   budget lets it be at this shape. Solving both axes as one width is what
+   makes the fit exact — a portrait and a panorama both come out whole, and
+   neither is ever stretched, because only one dimension is ever authored. */
+.lightbox__frame {
+	box-sizing: content-box;
+	width: min(var(--img-max-w), calc(var(--img-max-h) * var(--ar, 1)));
+	aspect-ratio: var(--ar, 1);
+	padding: 0.7rem;
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
+	border-radius: 6px;
+	box-shadow: var(--sh-contact), var(--shadow-lift);
+	translate: var(--fx, 0px) var(--fy, 0px);
+	scale: var(--fs, 1);
+	transition: translate var(--dur-slow) var(--ease-out),
+		scale var(--dur-slow) var(--ease-out);
+}
+
+/* The one frame in the gesture where the frame is parked on top of the
+   thumbnail. It must not animate its way there — only home from there. */
+.lightbox.is-flipping .lightbox__frame {
+	transition: none;
+}
+
+/* No fill behind the photograph. Several of these images are cut-outs on
+   transparency, and any colour here is a rectangle drawn around a drawing —
+   the same box the inline figures had to lose. The mount's own paper is what
+   shows through, which is what you would see under a real print anyway. */
+.lightbox__frame img {
+	width: 100%;
+	height: 100%;
+	border-radius: 2px;
+}
+
+.lightbox__note {
+	align-self: center;
+	max-height: var(--img-max-h);
+	padding-inline-end: var(--sp-2);
+	overflow-y: auto;
+	overscroll-behavior: contain;
+}
+
+.lightbox__eyebrow {
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+/* The rule sits under the project's name rather than under the caption. It is
+   the project's accent — the one place in the panel that says which case study
+   you are standing in — and here it separates two things that are genuinely
+   different: where you are, and what you are looking at. Under the caption it
+   would be a divider with nothing below it, which reads as a piece of the
+   panel that failed to load. */
+.lightbox__eyebrow::after {
+	content: "";
+	display: block;
+	width: 2.5rem;
+	margin-block: var(--sp-3);
+	border-block-start: 3px dashed var(--accent);
+}
+
+.lightbox__title {
+	font-size: var(--fs-500);
+	line-height: var(--lh-snug);
+	text-wrap: pretty;
+}
+
+.lightbox__close {
+	position: absolute;
+	inset-block-start: calc(var(--sp-2) * -1);
+	inset-inline-end: calc(var(--sp-2) * -1);
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
+	border-radius: var(--r-pill);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	line-height: 1;
+	color: var(--ink-soft);
+	transition: rotate var(--dur) var(--ease-spring),
+		background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+.lightbox__close:hover {
+	rotate: 90deg;
+	background: var(--paper-warm);
+	color: var(--ink);
+}
+
+/* An image with nothing written about it gets the whole sheet rather than an
+   empty column beside it. */
+.lightbox__sheet:not(:has(.lightbox__note)) {
+	grid-template-columns: auto;
+}
+
+/* Below this the two columns would each be too narrow to be worth having, so
+   the panel becomes a card: photograph above, writing below. A short, wide
+   window is deliberately not in this query — side by side is the right shape
+   there, and --img-max-h already shrinks the picture to fit it. */
+@media (max-width: 60rem) {
+	.lightbox {
+		/* Nothing beside the photograph any more, so the width budget only has
+		   to clear the mount, the sheet and the dialog. The height budget now
+		   shares the sheet with the writing rather than sitting next to it. */
+		--img-max-w: calc(100vw - 6rem);
+		--img-max-h: min(24rem, 42svh);
+	}
+
+	.lightbox__sheet {
+		grid-template-columns: minmax(0, 1fr);
+		align-content: start;
+		overflow-y: auto;
+		overscroll-behavior: contain;
+	}
+
+	.lightbox__frame {
+		justify-self: center;
+	}
+
+	.lightbox__note {
+		max-height: none;
+		overflow: visible;
+	}
+}
+
+/* Nothing flies. The panel is simply there, which is the whole request. */
+@media (prefers-reduced-motion: reduce) {
+	.lightbox__scrim,
+	.lightbox__sheet,
+	.lightbox__frame,
+	.zoom img {
+		transition: none;
+	}
+}

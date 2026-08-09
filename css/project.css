@@ -51,27 +51,11 @@ body {
    2. Back link
    -------------------------------------------------------------------------- */
 
+/* The link itself is in css/components.css. What belongs to this page is only
+   where it sits: on the sheet's own left edge, above the paper. */
 .back {
-	display: inline-flex;
-	align-items: center;
-	gap: var(--sp-2);
 	max-width: var(--sheet);
 	margin: 0 auto var(--sp-6);
-	font-family: var(--ff-display);
-	font-size: var(--fs-300);
-	font-weight: 600;
-	color: color-mix(in oklab, var(--ink) 76%, var(--page-fill));
-	transition: color var(--dur) var(--ease-out), gap var(--dur) var(--ease-out);
-}
-
-.back:hover {
-	color: var(--ink);
-	gap: var(--sp-3);
-}
-
-.back svg {
-	width: 1.1em;
-	height: 1.1em;
 }
 
 .back-row {
@@ -120,6 +104,79 @@ body {
 	font-size: var(--fs-700);
 }
 
+/* The empty aside on a project with no `meta` list must not open a gap
+   between the title and the tags. */
+.case__aside:empty {
+	display: none;
+}
+
+/* -- split header ------------------------------------------------------
+
+   A case study that carries a credits card gets a masthead instead of a
+   centred title: the name of the thing on the left at full size, the facts
+   about it pinned up on the right. Selected with :has() rather than a class
+   from the renderer so the markup stays declarative — and the centred flex
+   column above is a perfectly good fallback wherever :has() isn't understood,
+   since the two children simply stack. */
+.case__head:has(.case__meta) {
+	display: grid;
+	grid-template-columns: minmax(0, 1.25fr) minmax(15rem, 0.75fr);
+	align-items: start;
+	gap: clamp(1.5rem, 3vw, 3.5rem);
+	max-width: none;
+	margin-block-end: var(--sp-12);
+	text-align: start;
+}
+
+.case__intro {
+	display: flex;
+	flex-direction: column;
+	align-items: start;
+	gap: var(--sp-4);
+}
+
+.case__head:has(.case__meta) .case__title {
+	font-size: var(--fs-800);
+	line-height: var(--lh-tight);
+	text-wrap: balance;
+}
+
+.case__head:has(.case__meta) .chips {
+	justify-content: start;
+}
+
+/* The one-sentence version, for the reader who is deciding whether to read
+   the rest. Empty on projects without a deck, and then it must not add a gap
+   to the flex column. */
+.case__deck {
+	max-width: 34rem;
+	font-size: var(--fs-500);
+	line-height: var(--lh-snug);
+	color: var(--ink-soft);
+	text-wrap: pretty;
+}
+
+.case__deck:empty {
+	display: none;
+}
+
+@media (max-width: 52rem) {
+	.case__head:has(.case__meta) {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	/* At masthead size the title alone fills a phone screen, so the reader
+	   scrolls once before learning anything. Back to the ordinary heading
+	   size, where the title, the tags and the deck arrive together. */
+	.case__head:has(.case__meta) .case__title {
+		font-size: var(--fs-700);
+	}
+
+	.case__deck {
+		font-size: var(--fs-400);
+	}
+}
+
 /* --------------------------------------------------------------------------
    4. Body grid
 
@@ -151,13 +208,142 @@ body {
 	color: var(--ink);
 }
 
+/* Sections are set far apart on purpose: the reader should arrive at one
+   heading at a time, with nothing else in the same eyeful. The rule under the
+   heading is the same drawn mark the chips and stitching use. */
 .case__h2 {
-	margin-block: var(--sp-8) var(--sp-4);
+	position: relative;
+	margin-block: var(--sp-16) var(--sp-6);
+	padding-block-end: var(--sp-3);
 	font-size: var(--fs-600);
+}
+
+.case__h2::after {
+	content: "";
+	position: absolute;
+	inset-inline-start: 0;
+	inset-block-end: 0;
+	width: 2.75rem;
+	height: 3px;
+	border-radius: 2px;
+	background: var(--accent);
 }
 
 .case__h2:first-child {
 	margin-block-start: 0;
+}
+
+/* -- credits card ------------------------------------------------------
+
+   Role, timeline, tooling: a card of paper pinned up beside the title, tilted
+   the same degree or two as the photographs further down. Labels stack over
+   their values rather than sitting in a column beside them — a label column
+   wide enough for "built with" leaves "Mixed Reality Utility Kit" breaking
+   across four lines in what's left. */
+
+.case__meta {
+	margin: 0;
+	padding: var(--sp-5) var(--sp-6);
+	background: var(--paper);
+	border: 2px solid color-mix(in oklab, var(--accent) 55%, var(--paper));
+	border-radius: 6px;
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	rotate: 1deg;
+	font-size: var(--fs-300);
+	transition: rotate var(--dur) var(--ease-spring);
+}
+
+.case__meta:hover {
+	rotate: 0deg;
+}
+
+.case__meta dt {
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 700;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+/* A hairline between entries, drawn in the project's accent — the ruling on a
+   card rather than a border between rows of a table. */
+.case__meta dt:not(:first-of-type) {
+	margin-block-start: var(--sp-4);
+	padding-block-start: var(--sp-4);
+	border-block-start: 1px dashed
+		color-mix(in oklab, var(--accent) 45%, var(--paper));
+}
+
+.case__meta dd {
+	margin: 0.15rem 0 0;
+	line-height: var(--lh-snug);
+	color: var(--ink);
+}
+
+/* -- participant quote -------------------------------------------------
+
+   A slip of paper laid on the sheet at a slight angle. The quotes are in the
+   participants' own French; the gloss underneath is the translation, so the
+   sentence and its sense both survive. */
+
+.case__quote {
+	margin-block: var(--sp-6) var(--sp-8);
+	padding: var(--sp-5) var(--sp-6);
+	background: var(--paper-warm);
+	border-radius: var(--r-md);
+	box-shadow: var(--sh-contact), var(--sh-ambient);
+	rotate: -0.6deg;
+}
+
+.case__quote p {
+	font-size: var(--fs-500);
+	line-height: var(--lh-snug);
+	color: var(--ink);
+}
+
+.case__quote p.case__quote-gloss {
+	margin-block-start: var(--sp-2);
+	font-size: var(--fs-300);
+	color: var(--ink-soft);
+}
+
+.case__quote cite {
+	display: block;
+	margin-block-start: var(--sp-3);
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	font-style: normal;
+	color: var(--ink-soft);
+}
+
+/* -- list --------------------------------------------------------------- */
+
+.case__list {
+	margin-block: 0 var(--sp-6);
+	padding-inline-start: var(--sp-5);
+	list-style: none;
+	font-size: var(--fs-400);
+	line-height: var(--lh);
+	color: var(--ink);
+}
+
+.case__list li {
+	position: relative;
+	margin-block-end: var(--sp-3);
+}
+
+/* Drawn, not a bullet glyph: the marker picks up the project accent the same
+   way the stitching does. */
+.case__list li::before {
+	content: "";
+	position: absolute;
+	inset-inline-start: -1rem;
+	inset-block-start: 0.62em;
+	width: 0.45rem;
+	height: 0.45rem;
+	border-radius: 50%;
+	background: var(--accent);
 }
 
 /* An inline figure in the main column.
@@ -400,6 +586,9 @@ body {
 
 	.case__body > .case__p,
 	.case__body > .case__h2,
+	.case__body > .case__meta,
+	.case__body > .case__quote,
+	.case__body > .case__list,
 	.case__body > .case__link,
 	.case__body > .case__figure {
 		max-width: var(--measure-col);
@@ -435,308 +624,21 @@ body {
 
 /* --------------------------------------------------------------------------
    6. Zoom affordance
+   The button itself, and the lightbox it opens, are in css/lightbox.css —
+   shared with the full-bleed case studies. Only the hint that belongs to this
+   page's own figures is here.
 
-   Every image on the page is wrapped in a real <button>, not a click handler
-   on the <img>. That is the whole of the keyboard and screen-reader story:
-   tab order, Enter/Space, and an accessible name all come free, and there is
-   no invisible interaction that only a mouse can find.
+   The polaroid already lifts as a whole on hover (via :focus-within, so the
+   keyboard gets the same lift), so only the bare inline figures need a hint
+   of their own.
    -------------------------------------------------------------------------- */
 
-.zoom {
-	display: block;
-	width: 100%;
-	border-radius: inherit;
-	cursor: zoom-in;
-}
-
-.zoom img {
-	transition: scale var(--dur) var(--ease-out);
-}
-
-/* The polaroid already lifts as a whole on hover (via :focus-within, so the
-   keyboard gets the same lift), so only the bare inline figures need a hint
-   of their own. */
 .case__figure .zoom:hover img {
 	scale: 1.02;
 }
 
 /* --------------------------------------------------------------------------
-   7. The lightbox
-
-   A <dialog> opened with showModal(), which buys the top layer, the focus
-   trap, inert background content and Esc — none of which is worth
-   reimplementing by hand, and all of which hand-rolled overlays get subtly
-   wrong.
-
-   The opening move is a FLIP: the frame is drawn at rest by CSS, and the
-   script writes only how far it currently is from rest (--fx/--fy/--fs),
-   then drops those on the next frame so the transition runs home. Same
-   division of labour as the rest of the site — CSS owns the resting pose,
-   the script owns the deviation, and neither writes the other's number.
-   `scale` therefore has exactly one author: the flight. That is why the
-   sheet fades without scaling; two things scaling at once is how you get a
-   photograph that swims.
-   -------------------------------------------------------------------------- */
-
-html.is-zoomed {
-	overflow: hidden;
-	/* The scrollbar's own width, measured once at open. Without it the page
-	   jumps sideways underneath the scrim as the bar disappears. */
-	padding-inline-end: var(--sbw, 0px);
-}
-
-.lightbox {
-	/* The photograph's budget, and the only place a size is decided.
-
-	   Both are lengths, never percentages. A percentage here would have to
-	   resolve against a panel that is itself being sized by the photograph,
-	   and the circularity does not fail loudly — it fails by the grid refusing
-	   to shrink its image column below the file's own pixel width, so a wide
-	   plot pushes the writing off the side of the screen. Subtracting the
-	   chrome from the viewport instead is arithmetic the browser can do before
-	   it knows anything about the contents.
-
-	   The subtrahends are everything that is not the photograph, at its
-	   widest: the mount (1.65rem), the gap (2.25rem), the writing column
-	   (22rem), the sheet's padding (3.5rem) and the dialog's (5rem). */
-	--img-max-w: min(52rem, calc(100vw - 35rem));
-	--img-max-h: min(38rem, calc(100svh - 11rem));
-
-	position: fixed;
-	inset: 0;
-	display: grid;
-	place-items: center;
-	width: 100%;
-	max-width: 100%;
-	height: 100%;
-	max-height: 100%;
-	margin: 0;
-	padding: clamp(1rem, 3vw, 2.5rem);
-	border: 0;
-	background: transparent;
-	overflow: hidden;
-	overscroll-behavior: contain;
-}
-
-/* Put back what the rule above took away.
-
-   A closed <dialog> is hidden by `dialog:not([open]) { display: none }` in the
-   user-agent stylesheet — an ordinary author-overridable rule, not magic. So
-   `display: grid` up there silently beat it, and a closed panel stayed a
-   full-viewport fixed box lying over the page: invisible, because the scrim
-   and the sheet are both at opacity 0, and still hit-testable. Every click
-   after the first one landed on the dead panel, so the photographs stopped
-   opening and nothing on the page could be clicked again.
-
-   It has to be restated rather than avoided, because the open state genuinely
-   needs `display: grid` to centre the sheet. */
-.lightbox:not([open]) {
-	display: none;
-}
-
-/* The wash is a real element rather than ::backdrop, because ::backdrop
-   cannot be faded in and out without the discrete-property dance and this
-   one has to be in step with the frame's flight to the millisecond. Tinted
-   with the same warm brown as every shadow on the site: a neutral black
-   scrim over cream turns the whole page grey. */
-.lightbox::backdrop {
-	background: transparent;
-}
-
-.lightbox__scrim {
-	position: fixed;
-	inset: 0;
-	background: rgb(88 70 52 / 0.62);
-	backdrop-filter: blur(4px);
-	opacity: 0;
-	transition: opacity var(--dur-slow) var(--ease-out);
-}
-
-.lightbox.is-open .lightbox__scrim {
-	opacity: 1;
-}
-
-.lightbox__sheet {
-	--card-bg: var(--cream);
-	--stitch-color: var(--accent);
-	--stitch-inset: 0.7rem;
-	--r-card: 14px;
-	position: relative;
-	display: grid;
-	/* The photograph's column is content-sized and the sheet hugs it, rather
-	   than both columns being handed a share of a fixed width. A wide panel
-	   around a tall narrow image is mostly the gap between the two — the paper
-	   should be the shape of what is on it. */
-	grid-template-columns: auto minmax(13rem, 22rem);
-	align-items: center;
-	gap: clamp(1rem, 2.5vw, 2.25rem);
-	width: fit-content;
-	max-width: min(74rem, 100%);
-	max-height: 100%;
-	padding: clamp(1rem, 2.2vw, 1.75rem);
-	opacity: 0;
-	transition: opacity var(--dur-slow) var(--ease-out);
-}
-
-.lightbox.is-open .lightbox__sheet {
-	opacity: 1;
-}
-
-/* One image only, and no caption inside the mount — the writing lives in the
-   column beside it, which is the point of opening the thing. Uniform padding
-   is load-bearing: it puts the frame's centre exactly on the photograph's
-   centre, which is what lets the flight scale the frame about its own centre
-   and still land the photograph on the thumbnail.
-
-   The mount is sized to the picture and the panel is sized to the mount, so
-   nothing here spans to a fixed width. `content-box` puts the ratio on the
-   inside of the padding, which is where the photograph is, and the width is
-   the smaller of the two budgets: how wide it may be, and how wide the height
-   budget lets it be at this shape. Solving both axes as one width is what
-   makes the fit exact — a portrait and a panorama both come out whole, and
-   neither is ever stretched, because only one dimension is ever authored. */
-.lightbox__frame {
-	box-sizing: content-box;
-	width: min(var(--img-max-w), calc(var(--img-max-h) * var(--ar, 1)));
-	aspect-ratio: var(--ar, 1);
-	padding: 0.7rem;
-	background: var(--paper);
-	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
-	border-radius: 6px;
-	box-shadow: var(--sh-contact), var(--shadow-lift);
-	translate: var(--fx, 0px) var(--fy, 0px);
-	scale: var(--fs, 1);
-	transition: translate var(--dur-slow) var(--ease-out),
-		scale var(--dur-slow) var(--ease-out);
-}
-
-/* The one frame in the gesture where the frame is parked on top of the
-   thumbnail. It must not animate its way there — only home from there. */
-.lightbox.is-flipping .lightbox__frame {
-	transition: none;
-}
-
-/* No fill behind the photograph. Several of these images are cut-outs on
-   transparency, and any colour here is a rectangle drawn around a drawing —
-   the same box the inline figures had to lose. The mount's own paper is what
-   shows through, which is what you would see under a real print anyway. */
-.lightbox__frame img {
-	width: 100%;
-	height: 100%;
-	border-radius: 2px;
-}
-
-.lightbox__note {
-	align-self: center;
-	max-height: var(--img-max-h);
-	padding-inline-end: var(--sp-2);
-	overflow-y: auto;
-	overscroll-behavior: contain;
-}
-
-.lightbox__eyebrow {
-	font-family: var(--ff-display);
-	font-size: var(--fs-100);
-	font-weight: 600;
-	letter-spacing: 0.12em;
-	text-transform: uppercase;
-	color: var(--ink-faint);
-}
-
-/* The rule sits under the project's name rather than under the caption. It is
-   the project's accent — the one place in the panel that says which case study
-   you are standing in — and here it separates two things that are genuinely
-   different: where you are, and what you are looking at. Under the caption it
-   would be a divider with nothing below it, which reads as a piece of the
-   panel that failed to load. */
-.lightbox__eyebrow::after {
-	content: "";
-	display: block;
-	width: 2.5rem;
-	margin-block: var(--sp-3);
-	border-block-start: 3px dashed var(--accent);
-}
-
-.lightbox__title {
-	font-size: var(--fs-500);
-	line-height: var(--lh-snug);
-	text-wrap: pretty;
-}
-
-.lightbox__close {
-	position: absolute;
-	inset-block-start: calc(var(--sp-2) * -1);
-	inset-inline-end: calc(var(--sp-2) * -1);
-	display: grid;
-	place-items: center;
-	width: 2.25rem;
-	height: 2.25rem;
-	background: var(--paper);
-	border: 2px solid color-mix(in oklab, var(--accent) 62%, var(--paper));
-	border-radius: var(--r-pill);
-	box-shadow: var(--sh-contact), var(--sh-ambient);
-	font-family: var(--ff-display);
-	font-size: var(--fs-400);
-	line-height: 1;
-	color: var(--ink-soft);
-	transition: rotate var(--dur) var(--ease-spring),
-		background var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
-}
-
-.lightbox__close:hover {
-	rotate: 90deg;
-	background: var(--paper-warm);
-	color: var(--ink);
-}
-
-/* An image with nothing written about it gets the whole sheet rather than an
-   empty column beside it. */
-.lightbox__sheet:not(:has(.lightbox__note)) {
-	grid-template-columns: auto;
-}
-
-/* Below this the two columns would each be too narrow to be worth having, so
-   the panel becomes a card: photograph above, writing below. A short, wide
-   window is deliberately not in this query — side by side is the right shape
-   there, and --img-max-h already shrinks the picture to fit it. */
-@media (max-width: 60rem) {
-	.lightbox {
-		/* Nothing beside the photograph any more, so the width budget only has
-		   to clear the mount, the sheet and the dialog. The height budget now
-		   shares the sheet with the writing rather than sitting next to it. */
-		--img-max-w: calc(100vw - 6rem);
-		--img-max-h: min(24rem, 42svh);
-	}
-
-	.lightbox__sheet {
-		grid-template-columns: minmax(0, 1fr);
-		align-content: start;
-		overflow-y: auto;
-		overscroll-behavior: contain;
-	}
-
-	.lightbox__frame {
-		justify-self: center;
-	}
-
-	.lightbox__note {
-		max-height: none;
-		overflow: visible;
-	}
-}
-
-/* Nothing flies. The panel is simply there, which is the whole request. */
-@media (prefers-reduced-motion: reduce) {
-	.lightbox__scrim,
-	.lightbox__sheet,
-	.lightbox__frame,
-	.zoom img {
-		transition: none;
-	}
-}
-
-/* --------------------------------------------------------------------------
-   8. Loading and not-found states
+   7. Loading and not-found states
    -------------------------------------------------------------------------- */
 
 body[data-loading] .case__body::before {
@@ -763,7 +665,7 @@ body[data-loading] .case__body::before {
 }
 
 /* --------------------------------------------------------------------------
-   9. Page footer
+   8. Page footer
    -------------------------------------------------------------------------- */
 
 .case-foot {

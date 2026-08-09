@@ -1,0 +1,9 @@
+.DS_Store
+
+# design-sync (see .design-sync/ for the committed sync inputs)
+.ds-sync/
+.ds-pkg/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
