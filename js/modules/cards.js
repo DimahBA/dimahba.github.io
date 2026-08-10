@@ -631,6 +631,20 @@ export function initCards({ board, tossButton }) {
 		const el = card.el;
 		const on = (type, handler) => el.addEventListener(type, handler, { signal });
 
+		/* Hovering a card brings it to the front and leaves it there. The lift
+		   in CSS already floats it over its neighbours for as long as the
+		   pointer is on it, but the moment it left, the card dropped back under
+		   whatever was covering it — so reading a half-buried sheet meant
+		   holding the mouse still on it. Raising the ladder here makes the
+		   pointer sort the pile as it wanders over it, the way a hand does.
+
+		   Mouse only: a finger has no hover, and its pointerenter is just the
+		   first half of a tap that is about to open the case study anyway. */
+		on("pointerenter", (e) => {
+			if (e.pointerType === "touch") return;
+			raise(card);
+		});
+
 		on("pointerdown", (e) => onDown(card, e));
 		on("pointermove", (e) => onMove(card, e));
 		on("pointerup", (e) => onUp(card, e));
@@ -646,6 +660,16 @@ export function initCards({ board, tossButton }) {
 		/* Kills the native link-drag ghost. draggable="false" in the markup
 		   covers Firefox; Safari wants the listener too. */
 		on("dragstart", (e) => e.preventDefault());
+	}
+
+	/* One step up the ladder, and the only writer of --z outside layout(). The
+	   ladder is never renumbered — it only ever counts up from wherever the
+	   last arrangement left it, so a card raised now is above every card raised
+	   before it and nothing else has to move. A toss deals fresh z values and
+	   takes the ladder with it, which is the one thing that resets the order. */
+	function raise(card) {
+		if (card.el.style.getPropertyValue("--z") === String(topZ)) return;
+		card.el.style.setProperty("--z", String((topZ += 1)));
 	}
 
 	function onDown(card, e) {
@@ -699,7 +723,7 @@ export function initCards({ board, tossButton }) {
 		card.flying = false;
 		card.vx = card.vy = card.vrot = 0;
 		card.el.classList.add("is-drag");
-		card.el.style.setProperty("--z", String((topZ += 1)));
+		raise(card);
 		document.documentElement.classList.add("is-dragging");
 		window.getSelection()?.removeAllRanges();
 	}

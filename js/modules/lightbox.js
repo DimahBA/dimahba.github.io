@@ -369,10 +369,16 @@ export function mountLightbox(root, options = {}) {
 
 /* Wraps every image under `root` in a zoom button, in place. Done here rather
    than in the renderer so that the markup shape and the behaviour that
-   depends on it stay in one file. */
+   depends on it stay in one file.
+
+   A figure marked `data-no-zoom` is left alone. The panel exists to give a
+   photograph or a diagram the room the page can't — an illustration that is
+   already at its full size has nothing to open into, and a button around it
+   only promises one. */
 export function makeZoomable(root) {
 	for (const img of $$("figure img", root)) {
 		if (img.closest("[data-zoom]")) continue;
+		if (img.closest("[data-no-zoom]")) continue;
 
 		const figure = img.closest("figure");
 		const label = $("figcaption", figure)?.textContent?.trim() || img.alt || "";

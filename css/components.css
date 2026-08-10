@@ -227,6 +227,295 @@ html.is-dragging * {
 }
 
 /* --------------------------------------------------------------------------
+   4b. Foil
+   The trading-card treatment: a gold edge on the ISMAR card, and the award
+   itself as a stamped seal. One palette, so the two are recognisably the same
+   material at two sizes.
+
+   Drawn, not simulated. This site is pixel art and cut paper, and a
+   photographic gold — smooth ramps, white speculars, a bloom around the edge
+   — belongs to a different picture; next to the café it reads as chrome
+   dropped onto a storybook. So the metal is cel-shaded: flat tones with hard
+   stops between them. No gradients that blur, no glow, and nothing that
+   moves.
+
+   No outlines either. An ink keyline is how a comic draws gold, but nothing
+   else on this site is outlined — the stitch, the chips and the plaid are all
+   held together by tone against tone — and a dark rule around the frame is
+   the one thing that makes it look borrowed. The edges here are found the
+   same way: the deepest tone *is* the edge.
+
+   `.foil` is an empty <span> rather than a pseudo-element for a dull reason:
+   .card already spends ::before on the stitch and ::after on the lift shadow.
+
+   The band is cut by the mask pair: paint the whole box, punch out the
+   content box, keep what is between them.
+   -------------------------------------------------------------------------- */
+
+:root {
+	/* Five tones per metal, every surface mixed from them — which is what
+	   stops a card edge and its seal from drifting into two different
+	   materials. The golds are the café's own butters pushed one step warmer,
+	   not metal borrowed from somewhere else: --gold is --butter, --gold-mid
+	   is --butter-deep, and the two ends extend that run far enough to read as
+	   a material. The silvers are the same idea over the paper greys, kept
+	   slightly warm so they sit next to cream rather than on top of it. */
+	--gold-lit: #fff6d2;
+	--gold: #fce8a9;
+	--gold-mid: #fcde6e;
+	--gold-deep: #e0b246;
+	--gold-shade: #bf8c2a;
+
+	--silver-lit: #fffefa;
+	--silver: #f0f1ea;
+	--silver-mid: #dcded4;
+	--silver-deep: #b4b8aa;
+	--silver-shade: #8b9084;
+
+	/* Which metal the foil and the seal are currently cut from. Everything
+	   below reads these and never the palette directly, so one class swaps the
+	   material on a card and on the stamp inside it at the same time. */
+	--metal-lit: var(--gold-lit);
+	--metal: var(--gold);
+	--metal-mid: var(--gold-mid);
+	--metal-deep: var(--gold-deep);
+	--metal-shade: var(--gold-shade);
+}
+
+.foil {
+	position: absolute;
+	inset: 0;
+	z-index: 5;
+	border-radius: inherit;
+	padding: var(--foil-w, 4px);
+
+	/* Hard stops, no blending: each tone holds its band and then changes at a
+	   line. Four bands running once from lit at the top-left to deep at the
+	   bottom-right — the frame is lit from one side and shaded away from it,
+	   which is the whole of how a drawing says "metal".
+
+	   Once, and in order, matters. An earlier version repeated the light tone
+	   twice along the run to suggest a second glint, and on a 5px band tracing
+	   a 400px rectangle those extra stops land at unrelated points on each
+	   edge: the frame stops reading as shaded and starts reading as blotchy.
+
+	   The lit tone is only a corner glint, and the run proper starts a step
+	   down. The page is cream and the palest gold is very nearly cream, so a
+	   band that opens on it loses its whole top-left edge to the background. */
+	background: linear-gradient(
+		135deg,
+		var(--metal-lit) 0 8%,
+		var(--metal-mid) 8% 40%,
+		var(--metal-deep) 40% 72%,
+		var(--metal-shade) 72% 100%
+	);
+
+	-webkit-mask: linear-gradient(#000 0 0) content-box,
+		linear-gradient(#000 0 0);
+	mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+	-webkit-mask-composite: xor;
+	mask-composite: exclude;
+
+	pointer-events: none;
+}
+
+/* ---- the card wearing it ------------------------------------------------ */
+
+/* Nothing added to the sheet's own shadow: no outline, no outer glow — the
+   band is wide enough to be the frame by itself.
+
+   The thread comes off. The stitch is what an ordinary sheet has instead of a
+   frame, and running both means two borders 6px apart arguing about where the
+   edge of the card is. The class stays on the element, though: it carries the
+   card's radius and the padding that keeps text off the edge, so it is the
+   thread that is switched off, not the stitch.
+
+   `em`, so the band comes down with a card the stage has shrunk. */
+.card--foil {
+	--foil-w: 0.44em;
+	--stitch-color: transparent;
+}
+
+/* The other metal. Sits on the card, where both the frame and the seal inside
+   it inherit it — or on a seal directly, for one standing on its own. */
+.foil-silver {
+	--metal-lit: var(--silver-lit);
+	--metal: var(--silver);
+	--metal-mid: var(--silver-mid);
+	--metal-deep: var(--silver-deep);
+	--metal-shade: var(--silver-shade);
+}
+
+/* ---- the award seal ------------------------------------------------------
+
+   The award is a stamp, not a label: a disc of the same gold pressed flat
+   onto the paper. No plate edge and no drop shadow — a stamp is *in* the
+   sheet, and anything that lifts it off makes it a sticker again.
+
+   Everything except the type is one background stack on one element: the rim
+   in the deepest tone, a pale ring inside it, and the metal underneath in the
+   same flat bands as the card edge. Rings are drawn as hard-stopped radial
+   gradients rather than as borders or extra elements — a ring at radius r is
+   just a gradient that is transparent either side of r.
+
+   The scalloped rim is three mask layers: `inner ADD (teeth INTERSECT disc)`.
+   The inner disc, inset by the tooth depth, is the body of the seal; the
+   repeating conic is the teeth. The third layer is the one that is easy to
+   leave out and impossible to miss once you have — a conic gradient covers
+   the whole box, so without a full-radius disc to intersect with, the teeth
+   carry on past the rim and the seal renders as a sunburst. Mask layers
+   composite bottom-up, so the operator list reads in the opposite order to
+   the layers it applies to.
+   -------------------------------------------------------------------------- */
+
+.seal {
+	/* The stamp is one drawing measured in `em`, so its font-size is the only
+	   dial: 5em across, teeth and rings and padding all fractions of the same
+	   em. Set the font-size and the whole thing scales.
+
+	   It has to be that way round. The obvious version — a `--seal-size`
+	   length with `font-size: calc(var(--seal-size) * 0.088)` — quietly eats
+	   itself: `width: var(--seal-size)` in em resolves against the element's
+	   *own* font-size, which that rule has just made a fraction of the size,
+	   so the seal comes out at a third of what it asks for.
+
+	   The payoff is that a seal on a board card can simply inherit. The stage
+	   scales a shrunk card by dropping its font-size, and the stamp comes down
+	   with the sheet on its own. */
+	--seal-size: 5em;
+	--seal-teeth: 0.225em;
+	--seal-ring: 0.425em;
+
+	font-size: 1.3rem;
+
+	position: relative;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 0.28em;
+
+	flex: none;
+	width: var(--seal-size);
+	height: var(--seal-size);
+	padding: 0.5em;
+	border-radius: 50%;
+
+	/* No `overflow: hidden` here, deliberately. The mask is already the shape,
+	   and a round overflow clips to the *padding* box — a circle a good deal
+	   narrower than the seal, which cuts the ends off the longest line. */
+
+	/* Stamped by hand, so it is a few degrees off true. */
+	rotate: var(--seal-tilt, -5deg);
+
+	/* Every circle here is `closest-side`, and that is load-bearing. A
+	   percentage colour-stop is a position along the gradient *ray*, and the
+	   default ray runs to the farthest corner — so on a square box `50%` lands
+	   at 0.71 of the radius, and rings authored as "8px in from the edge" come
+	   out well short of it. `closest-side` puts 100% exactly on the rim, which
+	   is what the arithmetic below assumes. `background-origin` moves with it:
+	   backgrounds are laid out against the padding box by default, which is a
+	   smaller circle than the one the mask cuts. */
+	background-origin: border-box;
+	background: /* The rim, teeth included, in the deepest tone. This is the
+			 seal's outline, done the way the rest of the site does an edge —
+			 by dropping a step in tone rather than by drawing a dark line —
+			 and it is what keeps the stamp legible on cream, on sage and on
+			 the moss card alike. */ radial-gradient(
+			circle closest-side at 50% 50%,
+			transparent calc(100% - var(--seal-teeth) - 0.06em),
+			var(--metal-shade) calc(100% - var(--seal-teeth) - 0.06em) 100%
+		),
+		radial-gradient(
+			circle closest-side at 50% 50%,
+			transparent calc(100% - var(--seal-ring)),
+			var(--metal-lit) calc(100% - var(--seal-ring))
+				calc(100% - var(--seal-ring) + 0.1em),
+			transparent calc(100% - var(--seal-ring) + 0.1em)
+		),
+		linear-gradient(
+			135deg,
+			var(--metal) 0 22%,
+			var(--metal-lit) 22% 34%,
+			var(--metal) 34% 52%,
+			var(--metal-mid) 52% 78%,
+			var(--metal-deep) 78% 100%
+		);
+
+	-webkit-mask: radial-gradient(
+			circle closest-side at 50% 50%,
+			#000 calc(100% - var(--seal-teeth)),
+			transparent calc(100% - var(--seal-teeth))
+		),
+		repeating-conic-gradient(#000 0 6deg, transparent 6deg 12deg),
+		radial-gradient(circle closest-side at 50% 50%, #000 100%, transparent 100%);
+	mask: radial-gradient(
+			circle closest-side at 50% 50%,
+			#000 calc(100% - var(--seal-teeth)),
+			transparent calc(100% - var(--seal-teeth))
+		),
+		repeating-conic-gradient(#000 0 6deg, transparent 6deg 12deg),
+		radial-gradient(circle closest-side at 50% 50%, #000 100%, transparent 100%);
+	-webkit-mask-composite: source-over, source-in, source-over;
+	mask-composite: add, intersect, add;
+
+	font-family: var(--ff-display);
+	text-transform: uppercase;
+	text-align: center;
+	color: var(--ink);
+}
+
+.seal__lead {
+	font-size: 0.5em;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	line-height: 1.1;
+	white-space: nowrap;
+}
+
+.seal__rule {
+	width: 48%;
+	height: 0.06em;
+	background: var(--metal-shade);
+}
+
+.seal__meta {
+	font-size: 0.425em;
+	font-weight: 600;
+	letter-spacing: 0.07em;
+	line-height: 1.35;
+	color: var(--ink-soft);
+	white-space: nowrap;
+}
+
+/* On the board the seal is stuck to the corner of the sheet, where an award
+   sticker goes. Absolutely positioned, and that is the whole point: the eight
+   cards are one deck and have to stay one size, so the stamp is not allowed
+   to contribute a single pixel of height to the sheet it sits on.
+
+   `font-size: 1em` is the whole trick: the stamp takes the sheet's own type
+   scale, so a card the stage has shrunk wears a stamp shrunk to match. */
+.card__seal {
+	font-size: 1em;
+	--seal-tilt: -7deg;
+	position: absolute;
+	right: var(--sp-3);
+	bottom: var(--sp-3);
+}
+
+/* The gutter the stamp stands in. Reserved on the two elements that reach the
+   bottom of the sheet, so no line of copy ever runs under the medal. In em,
+   like the stamp itself, so the reserve holds when the sheet shrinks.
+
+   Cheaper than it looks: the stamp replaced a plaque that used to take a
+   whole row of the card's flow, so the reserve is spending height the sheet
+   had already given back. */
+.card--foil .card__desc,
+.card--foil .card__more {
+	padding-inline-end: 5.75em;
+}
+
+/* --------------------------------------------------------------------------
    5. Back link
    The way out of a case study. Both case-study shapes use it, so the shape of
    the link lives here; each page decides only how wide its row is and what

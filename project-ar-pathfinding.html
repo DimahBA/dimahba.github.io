@@ -9,7 +9,7 @@
       name="description"
       content="A Meta Quest 3 system that lets people with Parkinson's point at where they want to go, then lays a walking path across their own floor, around their own furniture. Best Poster at IEEE ISMAR 2025."
     />
-    <meta name="theme-color" content="#fffbdd" />
+    <meta name="theme-color" content="#cdd8b7" />
     <link
       rel="canonical"
       href="https://dimahba.github.io/project-ar-pathfinding.html"
@@ -116,7 +116,7 @@
       <!-- ==========================================================
 			     Hero
 			     ========================================================== -->
-      <section class="screen screen--hero" id="top" data-screen>
+      <section class="screen screen--hero screen--sage" id="top" data-screen>
         <div class="back-row">
           <a class="back" href="index.html#work" data-reveal>
             <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -133,22 +133,52 @@
         </div>
 
         <div class="screen__inner hero">
-          <div class="hero__title-block">
-            <span class="plaque" data-reveal
-              >Best Poster — IEEE ISMAR 2025</span
-            >
-            <h1 class="hero__title" data-reveal style="--in-delay: 60ms">
-              Adaptive AR pathfinding for Parkinson's disease
-            </h1>
+          <div class="hero__lede">
+            <!-- The stamp is floated, so it has to come before the words it
+						     sits beside. That is also the order it should be read in: the
+						     award, then the piece it was given to. -->
+            <div class="hero__title-block">
+              <span class="seal" data-reveal>
+                <span class="seal__lead">Best Poster</span>
+                <span class="seal__rule" aria-hidden="true"></span>
+                <span class="seal__meta">IEEE ISMAR<br />2025</span>
+              </span>
+              <h1 class="hero__title" data-reveal style="--in-delay: 60ms">
+                Adaptive AR pathfinding for Parkinson's disease
+              </h1>
+            </div>
+
+            <p class="hero__deck" data-reveal style="--in-delay: 120ms">
+              A Meta Quest 3 system that lets people with Parkinson's point at
+              where they want to go, then lays a walking path across their
+              home's floor, avoiding every obstacle and furniture.
+            </p>
           </div>
 
-          <p class="hero__deck" data-reveal style="--in-delay: 120ms">
-            A Meta Quest 3 system that lets people with Parkinson's point at
-            where they want to go, then lays a walking path across their home's
-            floor, avoiding every obstacle and furniture.
-          </p>
+          <!-- The deck in one drawing: someone in the headset, pointing, and
+					     the path that answers going the long way round the furniture.
+					     It is decorative in the sense that the sentence beside it says
+					     the same thing — but it says it first, so it is described.
 
-          <dl class="credits" data-reveal style="--in-delay: 180ms">
+					     Not zoomable, unlike every other image on the page: it is line
+					     art already at the size it was drawn for, so there is nothing
+					     behind it for a panel to open into. -->
+          <figure
+            class="hero__art"
+            data-no-zoom
+            data-reveal
+            style="--in-delay: 180ms"
+          >
+            <img
+              src="static/parkinson-AR.png"
+              width="468"
+              height="533"
+              alt="Line drawing of a person wearing a mixed-reality headset, pointing ahead. A dashed path runs from their feet and curves around a sofa and a side table."
+              decoding="async"
+            />
+          </figure>
+
+          <dl class="credits" data-reveal style="--in-delay: 240ms">
             <div class="credits__row">
               <dt class="eyebrow">Role</dt>
               <dd>Research, interaction design, prototype, evaluation</dd>
@@ -195,7 +225,7 @@
       <!-- ==========================================================
 			     The ninety-second version
 			     ========================================================== -->
-      <section class="screen screen--sage" id="brief" data-screen>
+      <section class="screen screen--cream" id="brief" data-screen>
         <div class="screen__inner">
           <div class="screen__head" data-reveal>
             <h2>Project Summary</h2>
@@ -270,26 +300,25 @@
             <p class="screen__kicker">And then it stops it.</p>
           </div>
 
-          <!-- Three trails of footprints, seen from above, drawn to one scale:
+          <!-- Two trails of footprints, seen from above, drawn to one scale:
 					     an SVG unit is a centimetre, so every step length and every foot
-					     in here is its real size, and all three cross the same 6.12 m.
+					     in here is its real size, and both set out across the same 6.12 m.
 
-					     The first two counts are P4's, out of the pilot at the bottom of
-					     this page: the same crossing took him 26 steps without the path
-					     and 10 with it. So the first lane is a normal-length step and the
-					     second is his — and the number the cue changed is the number the
-					     figure is drawn on.
+					     One trail crosses it and the other doesn't, which is the whole
+					     figure. The first is a normal step, ten of them, the length P4
+					     was walking at with the path under him in the pilot at the bottom
+					     of this page. The second starts at a third of that stride, keeps
+					     shortening, and stops.
 
 					     The shapes carry the rest. The first prints as a heel, a ball and
 					     toes, with the arch clear of the floor; the second prints the
 					     whole sole, with the drag of a foot that skimmed in rather than
-					     lifted; the third is the second one taken to its end, which is
-					     why it is in the same ink and why it does not reach the far side.
+					     lifted.
 
 					     Lanes rather than columns because what is being compared is how
 					     much of the same six metres each one covers, and that only reads
-					     off one shared ruler — so there is one, under all three, rather
-					     than a repeat of it between each pair. -->
+					     off one shared ruler — so there is one, under both, rather than a
+					     repeat of it between them. -->
           <figure class="gait" data-reveal style="--in-delay: 120ms">
             <svg class="gait__defs" aria-hidden="true" focusable="false">
               <defs>
@@ -436,114 +465,22 @@
               </svg>
             </div>
 
-            <div class="gait__lane gait__lane--pd">
-              <p class="gait__name">Parkinsonian gait <span>26 steps</span></p>
-              <p class="gait__meta">
-                The step shortens, so it takes more of them to cover the same
-                ground — and the sole skims in rather than lifts.
-              </p>
-              <svg
-                class="gait__track"
-                viewBox="0 0 700 50"
-                role="img"
-                aria-label="Twenty-six footprints crowded across the same six metres, each one a whole flat sole with a drag mark trailing behind the heel."
-              >
-                <g transform="translate(26 17.5) rotate(-11)">
-                  <use class="fp" href="#gait-flat" style="--d: 0ms" />
-                </g>
-                <g transform="translate(50.1 32.5) rotate(3) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 183ms" />
-                </g>
-                <g transform="translate(73.3 17.5) rotate(-6)">
-                  <use class="fp" href="#gait-flat" style="--d: 375ms" />
-                </g>
-                <g transform="translate(99.2 32.5) rotate(9) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 589ms" />
-                </g>
-                <g transform="translate(122.0 17.5) rotate(-3)">
-                  <use class="fp" href="#gait-flat" style="--d: 775ms" />
-                </g>
-                <g transform="translate(147.2 32.5) rotate(6) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 979ms" />
-                </g>
-                <g transform="translate(171.6 17.5) rotate(-2)">
-                  <use class="fp" href="#gait-flat" style="--d: 1185ms" />
-                </g>
-                <g transform="translate(194.3 32.5) rotate(8) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 1379ms" />
-                </g>
-                <g transform="translate(219.4 17.5) rotate(-9)">
-                  <use class="fp" href="#gait-flat" style="--d: 1581ms" />
-                </g>
-                <g transform="translate(242.0 32.5) rotate(7) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 1762ms" />
-                </g>
-                <g transform="translate(266.7 17.5) rotate(-10)">
-                  <use class="fp" href="#gait-flat" style="--d: 1943ms" />
-                </g>
-                <g transform="translate(289.5 32.5) rotate(5) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 2130ms" />
-                </g>
-                <g transform="translate(312.4 17.5) rotate(-8)">
-                  <use class="fp" href="#gait-flat" style="--d: 2338ms" />
-                </g>
-                <g transform="translate(337.0 32.5) rotate(7) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 2535ms" />
-                </g>
-                <g transform="translate(363.8 17.5) rotate(-7)">
-                  <use class="fp" href="#gait-flat" style="--d: 2727ms" />
-                </g>
-                <g transform="translate(386.9 32.5) rotate(6) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 2931ms" />
-                </g>
-                <g transform="translate(410.5 17.5) rotate(-10)">
-                  <use class="fp" href="#gait-flat" style="--d: 3129ms" />
-                </g>
-                <g transform="translate(436.2 32.5) rotate(11) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 3320ms" />
-                </g>
-                <g transform="translate(463.7 17.5) rotate(-6)">
-                  <use class="fp" href="#gait-flat" style="--d: 3533ms" />
-                </g>
-                <g transform="translate(489.2 32.5) rotate(8) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 3742ms" />
-                </g>
-                <g transform="translate(513.7 17.5) rotate(-3)">
-                  <use class="fp" href="#gait-flat" style="--d: 3931ms" />
-                </g>
-                <g transform="translate(541.3 32.5) rotate(8) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 4134ms" />
-                </g>
-                <g transform="translate(563.9 17.5) rotate(-8)">
-                  <use class="fp" href="#gait-flat" style="--d: 4335ms" />
-                </g>
-                <g transform="translate(590.9 32.5) rotate(11) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 4552ms" />
-                </g>
-                <g transform="translate(614.8 17.5) rotate(-9)">
-                  <use class="fp" href="#gait-flat" style="--d: 4762ms" />
-                </g>
-                <g transform="translate(638.0 32.5) rotate(5) scale(1 -1)">
-                  <use class="fp" href="#gait-flat" style="--d: 4953ms" />
-                </g>
-              </svg>
-            </div>
-
             <div class="gait__lane gait__lane--freeze">
               <p class="gait__name">
                 Freezing of gait <span>stops at 2.9 m</span>
               </p>
               <p class="gait__meta">
-                Coming up to a doorway the step shortens — 22 cm, then 12, then
-                6 — until it stops advancing at all.
+                The step is a third as long to begin with, and the sole skims in
+                rather than lifts. Coming up to a doorway it shortens further —
+                22 cm, then 12, then 6 — until it stops advancing at all.
               </p>
               <svg
                 class="gait__track gait__track--tall"
                 viewBox="0 0 700 74"
                 role="img"
-                aria-label="A third trail across the same six metres. The prints begin at a normal Parkinsonian length and crowd closer and closer together until the last two come to rest beside each other about 2.9 metres in, where the trail of feet ends. A dashed line carries the body on forward to a pair of handprints on the floor, labelled the fall, and the last 3.2 metres are empty."
+                aria-label="A second trail across the same six metres, its prints far shorter and closer together than the first. They crowd closer and closer still until the last two come to rest beside each other about 2.9 metres in, where the trail of feet ends. A dashed line carries the body on forward to a pair of handprints on the floor, labelled the fall, and the last 3.2 metres are empty."
               >
-                <!-- Walking: 24 cm steps, the parkinsonian trail again. -->
+                <!-- Walking: 24 cm steps, about a third of the lane above. -->
                 <g transform="translate(26 22.5) rotate(-11)">
                   <use class="fp" href="#gait-flat" style="--d: 0ms" />
                 </g>
@@ -1194,7 +1131,7 @@
           <p class="screen__pull" data-reveal style="--in-delay: 220ms">
 			It was indeed a difficult short path to walk, 
 			I could empathize with the people who have to live with it every day. 
-          </p>
+          </p>so 
         </div>
       </section>
 
@@ -1552,7 +1489,11 @@
 
     <footer class="outro">
       <div class="screen__inner">
-        <span class="plaque">Best Poster — IEEE ISMAR 2025, Daejeon</span>
+        <span class="seal">
+          <span class="seal__lead">Best Poster</span>
+          <span class="seal__rule" aria-hidden="true"></span>
+          <span class="seal__meta">IEEE ISMAR<br />2025 · Daejeon</span>
+        </span>
         <p>
           Presented at ISMAR 2025 in South Korea. Dimah Bassal &amp; Daniel
           Medeiros, Télécom Paris — IP Paris.

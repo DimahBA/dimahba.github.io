@@ -153,6 +153,14 @@ body {
 	background: var(--sage);
 }
 
+/* Cream, stated rather than inherited. It is the page colour a plain screen
+   already falls back to, but this screen is named for it on purpose: what
+   carries the colour on it is the deck of moss cards, and those need a ground
+   that is definitely not green. */
+.screen--cream {
+	background: var(--cream);
+}
+
 /* For a screen whose one idea is a figure rather than a sentence. The figure
    needs the height more than the screen needs the air around it, and this is
    the difference between the whole comparison landing in one view and the
@@ -322,11 +330,84 @@ body {
 	gap: clamp(1.5rem, 4vh, 3.25rem);
 }
 
-.hero__title-block {
+/* The title and the deck travel together — on a wide window the drawing sits
+   beside the pair of them, not beside one of them. */
+.hero__lede {
 	display: grid;
-	justify-items: start;
-	gap: var(--sp-4);
+	align-content: center;
+	gap: clamp(1.5rem, 4vh, 3.25rem);
 }
+
+/* Line art on a transparent ground: no card, no thread, nothing between the
+   drawing and the sage. It is the one image on the page that is an
+   illustration rather than a photograph or a diagram, and it should read that
+   way — as something drawn straight onto the page.
+
+   This is the stacked size, for a phone, where the hero is already four lines
+   of title and five of deck: big enough to be the opening image, small enough
+   that it is not a second screen of scrolling on its own. */
+.hero__art {
+	justify-self: center;
+	width: min(100%, 15rem);
+	margin: 0;
+}
+
+.hero__art img {
+	width: 100%;
+	height: auto;
+}
+
+/* Two columns only once there is room for the drawing without squeezing the
+   title into three words a line. Under that it goes back under the words,
+   where it still reads as the opening image. The credits stay full width in
+   both: they are the masthead of the piece, not a third column of it. */
+@media (min-width: 62rem) {
+	.hero {
+		grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+		align-items: center;
+		column-gap: clamp(2rem, 5vw, 4rem);
+	}
+
+	/* Sized against the window's height as well as its width, the same way the
+	   title is: a laptop is wide and short, and a drawing wide enough to fill
+	   the column there is taller than the hero has to give it. */
+	.hero__art {
+		grid-column: 2;
+		grid-row: 1;
+		width: min(100%, 28rem, 50vh);
+	}
+
+	.credits {
+		grid-column: 1 / -1;
+	}
+}
+
+/* A plain block, not a grid: the stamp beside the title is a float, and a
+   grid container has no floats in it to flow around. */
+.hero__title-block {
+	display: block;
+}
+
+/* The stamp goes beside the title rather than above it — an award pressed
+   into the top corner of a poster, not a label filed in front of its name.
+
+   Floated rather than placed, because the title is the one piece of type on
+   the site whose line breaks are the window's business and not mine: it is
+   sized against the height as well as the width, so how many lines it is and
+   how long each one runs changes with the shape of the screen. A float is the
+   one arrangement that cannot collide with any of that — the lines beside the
+   stamp are shortened by the stamp, and `shape-outside` shortens them to the
+   disc rather than to the box it sits in. */
+.hero__title-block .seal {
+	/* Down from 1.3rem: the stamp is taking a bite out of the title now, and
+	   the title is the thing the hero is for. */
+	font-size: clamp(1rem, 0.75rem + 0.5vw, 1.2rem);
+	float: right;
+	shape-outside: circle(50%);
+	margin-inline-start: clamp(var(--sp-3), 2vw, var(--sp-5));
+	margin-block-end: var(--sp-2);
+}
+
 
 /* Sized against the height as well as the width. The title is four lines at
    its largest, and a laptop is a wide, short window — left to grow on vw
@@ -427,6 +508,14 @@ body {
 	gap: var(--sp-3);
 	align-content: start;
 	border-radius: var(--r-card);
+}
+
+/* Moss cards on the cream screen. Paper on cream is the site's quietest card
+   there is, and this deck is the summary — the four things the whole page
+   argues. Moss gives it an edge without a second material: same sheet, one
+   step greener, and a lighter green than the sage screens it sits between. */
+.screen--cream .brief {
+	--card-bg: var(--moss);
 }
 
 .brief p {
@@ -619,9 +708,9 @@ body {
 /* --------------------------------------------------------------------------
    11. The two gaits
    Two trails of footprints seen from above, drawn to one scale — one SVG unit
-   is one centimetre in both lanes, and both lanes are ten steps. So the only
-   thing the drawing asserts is what the measurements say: the same number of
-   steps, taken in about the same time, covering very different ground.
+   is one centimetre in both lanes, and both lanes set out across the same six
+   metres. So the only thing the drawing asserts is what the measurements say:
+   one trail arrives in ten steps and the other never arrives at all.
 
    Everything is authored in the markup because the coordinates *are* the
    content. What lives here is the scale, the colour and the timing.
@@ -650,15 +739,11 @@ body {
 	gap: var(--sp-1);
 }
 
-.gait__lane--pd {
-	--gait-ink: var(--peach);
-}
-
-/* The freeze lane keeps the parkinsonian ink on purpose: it is not a third
-   gait, it is the second one taken to its end, and colouring it separately
-   would say otherwise. The one thing that is a different colour is the fall,
-   because the fall is the only event on the figure — and it is the page's
-   attention yellow, which already means exactly that. */
+/* The one thing on the figure in a colour of its own is the fall, because the
+   fall is the only event on it — and it is the page's attention yellow, which
+   already means exactly that. The trail it ends is in the lane's own warm ink,
+   not a third colour, because the freeze is where that walk goes, not a
+   separate thing that happens to it. */
 .gait__lane--freeze {
 	--gait-ink: var(--peach);
 	--gait-alert: var(--butter-deep);
@@ -732,10 +817,10 @@ body {
 
 /* --- the room, the fall, and the floor that is left ----------------------- */
 
-/* The freeze lane is half a metre of floor taller than the other two: the
+/* The freeze lane is half a metre of floor taller than the other one: the
    hands land wider than the feet ever do, and they have to be at the same
    centimetre as everything else. Same 700 units across, so the ruler under
-   all three still lines up. */
+   both still lines up. */
 .gait__track--tall {
 	margin-block-start: var(--sp-2);
 }
@@ -816,10 +901,10 @@ body {
 
 /* --- walking -------------------------------------------------------------- */
 /* Each print carries the millisecond it lands on, taken from the cadence the
-   lane is drawn at — 110 steps a minute on one, 112 on the other. Playback is
-   0.72x real time on both, so the gap between them is still the gap the
-   measurements describe: the same six metres, three more footfalls, and the
-   second lane still laying prints after the first has arrived.
+   lane is drawn at, and both lanes run on the same clock. So the two play the
+   way the measurements read: the first lane is across in ten unhurried
+   footfalls; the second is still putting feet down, faster and faster and
+   barely moving, when the first has already arrived.
 
    It plays once, when the screen comes into view, and the state it settles
    into is the state the figure is meant to be read in — so with scripting off,
@@ -1461,7 +1546,7 @@ body {
 	.progress,
 	.rail,
 	.readon,
-	#cat-paw-prints-container {
+	.paw-trail {
 		display: none;
 	}
 

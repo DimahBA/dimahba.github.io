@@ -564,22 +564,59 @@ p {
 
 /* --------------------------------------------------------------------------
    11. The paw trail
-   A cat follows the cursor. The trail is cat-paw-prints (js/vendor), which
-   styles its own container and prints inline from JS; the two rules it has no
-   way to ask for are here. js/modules/paws.js configures the rest.
+   A cat follows the cursor. js/modules/paws.js appends two canvases and paints
+   the prints into them; the gait, the sizes and the fade all live there. What
+   is here is where the layer sits and how it meets the page.
    -------------------------------------------------------------------------- */
 
-/* The library holds the container's z-index, size and pointer-events in an
-   inline style, so anything here would need !important to reach it. The id is
-   the library's own; #cat-paw-prints-container is not a name this site chose.
+.paw-trail {
+	position: fixed;
+	inset: 0;
+	width: 100%;
+	height: 100%;
+	pointer-events: none;
 
-   JS never starts a trail under reduced motion, and tears a running one down
+	/* Not a 9999 that ties with .skip-link and wins on document order — paws
+	   would paint over the one control a keyboard reader needs first. 600
+	   clears the nav (500) so the trail does not stop dead at the top of the
+	   screen, and a <dialog> is in the top layer and above all of it either
+	   way, which is the wanted answer for the lightbox: no paws crawling over
+	   an opened photograph. */
+	z-index: 600;
+}
+
+/* The prints press into the page rather than sitting on it, which needs two
+   passes: ink multiplied, for the cream and sage pages, and a pale lift
+   screened, for the slate screens where dark ink would be invisible. Each
+   pass is arithmetically almost nothing on the background the other one
+   serves, so both can simply always be on.
+
+   Nothing may go between these and <body>, and nothing here may set an
+   opacity, a filter or a transform on them: any of those isolates the group
+   and the blend stops reaching the page underneath. */
+.paw-trail--ink {
+	mix-blend-mode: multiply;
+}
+
+.paw-trail--lift {
+	mix-blend-mode: screen;
+}
+
+/* An empty trail is taken out of the picture altogether. Blending a pair of
+   viewport-sized layers costs something on every paint, including the paints
+   that scrolling causes, and there is no reason to pay it while the cat is
+   not walking. */
+.paw-trail.is-quiet {
+	display: none;
+}
+
+/* JS never starts a trail under reduced motion, and tears a running one down
    if the preference is switched on mid-visit. This is the backstop for the
    moment in between, and for the trail outliving a change JS somehow missed:
    a cat chasing the cursor is precisely the kind of movement the preference
    is asking not to see. */
 @media (prefers-reduced-motion: reduce) {
-	#cat-paw-prints-container {
+	.paw-trail {
 		display: none;
 	}
 }
@@ -590,7 +627,7 @@ p {
    -------------------------------------------------------------------------- */
 
 @media print {
-	#cat-paw-prints-container,
+	.paw-trail,
 	.nav,
 	.footer__top,
 	.board__toss,
