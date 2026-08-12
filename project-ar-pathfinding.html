@@ -89,6 +89,9 @@
       <a class="rail__link" href="#survey"
         ><span class="rail__dot"></span>The survey</a
       >
+      <a class="rail__link" href="#triggers"
+        ><span class="rail__dot"></span>Where it happens</a
+      >
       <a class="rail__link" href="#words"
         ><span class="rail__dot"></span>In their words</a
       >
@@ -297,7 +300,7 @@
           <div class="screen__head" data-reveal>
             <p class="eyebrow">01 — The problem</p>
             <h2 class="screen__title--lg">Parkinson's affects gait.</h2>
-            <p class="screen__kicker">And then it stops it.</p>
+            <p class="screen__kicker">And sometimes it stops it completely.</p>
           </div>
 
           <!-- Two trails of footprints, seen from above, drawn to one scale:
@@ -657,7 +660,7 @@
             <div class="split__text" data-reveal style="--in-delay: 80ms">
               <p class="screen__body">
                 The basal ganglia are responsible for coordinating movement.
-                they recieve signals from the brain about what movement is
+                They receive signals from the brain about what movement is
                 intended, and then send signals to the muscles to execute that
                 movement.
               </p>
@@ -734,7 +737,7 @@
               <p>
                 An adaptive system that allows patients to choose their own
                 destinations and generates a safe route in real time. In their
-                own home and environement.
+                own home and environment.
               </p>
             </div>
           </div>
@@ -748,13 +751,13 @@
       <!-- ==========================================================
 			     The survey
 			     ========================================================== -->
-      <section class="screen" id="survey" data-screen>
+      <section class="screen screen--tight" id="survey" data-screen>
         <div class="screen__inner">
           <div class="split split--intro">
             <div class="split__text">
               <div class="screen__head" data-reveal>
                 <p class="eyebrow">04 — Research</p>
-                <h2>Getting to know my users</h2>
+                <h2 class="screen__title--lg">Getting to know my users</h2>
                 <p class="screen__body">
                   I sent a short French survey about walking and freezing to
                   France Parkinson. The manager I reached there has Parkinson's
@@ -762,39 +765,6 @@
                   network. Twelve people replied.
                 </p>
               </div>
-
-              <!-- The one number the screen is about, next to the sentence it
-			         belongs to rather than in a band of its own. A rate, so it is
-			         drawn as area — the same ring the headset questions use on
-			         screen 05. -->
-              <figure
-                class="stat stat--lead stat--inline"
-                data-reveal
-                style="--in-delay: 120ms"
-              >
-                <svg
-                  viewBox="0 0 120 120"
-                  role="img"
-                  aria-label="Fifty-eight per cent — seven of twelve."
-                >
-                  <circle class="stat__track" cx="60" cy="60" r="46" />
-                  <circle
-                    class="stat__arc"
-                    cx="60"
-                    cy="60"
-                    r="46"
-                    stroke="var(--moss-deep)"
-                    stroke-dasharray="167.6 289"
-                    transform="rotate(-90 60 60)"
-                  />
-                  <text class="stat__num" x="60" y="60">58%</text>
-                  <text class="stat__den" x="60" y="79">7 of 12</text>
-                </svg>
-                <figcaption>
-                  <b>freeze while walking</b> — trouble starting, or trouble
-                  continuing. Not the edge case on this list. The middle of it.
-                </figcaption>
-              </figure>
 
               <p class="screen__note" data-reveal style="--in-delay: 180ms">
                 12 responses · France Parkinson network · May–June 2025
@@ -821,27 +791,89 @@
             </figure>
           </div>
 
-          <!-- Where it happens — the same screen, one seam down. The triggers
-			     are what the twelve were answering about, so they read as the
-			     second half of the survey rather than as a section with a title
-			     of its own. -->
-          <div class="subscreen">
-            <div class="screen__head" data-reveal>
-              <p class="eyebrow">Where it happens</p>
-              <p class="screen__body screen__body--lead">
-                Participants were asked to list the triggers that cause
-                freezing. They fell into three categories: terrain, body and
-                mind.
-              </p>
-            </div>
+          <!-- The one number the screen is about, drawn as the twelve people
+			     it actually came from rather than as a rate: at n = 12 the
+			     denominator is the finding as much as the share is, and a ring
+			     hides it. One figure, drawn twelve times — the row is a count,
+			     and a second pose would read as a second kind of person. -->
+          <figure class="finding" data-reveal style="--in-delay: 220ms">
+            <p class="finding__num">58%<span>7 of 12</span></p>
 
-            <div class="triggers">
-              <div
-                class="trigger trigger--terrain"
-                data-reveal
-                style="--in-delay: 80ms"
+            <div class="finding__mark">
+              <svg
+                class="tally"
+                viewBox="0 0 376 48"
+                role="img"
+                aria-label="Twelve figures in a row; the first seven are inked, the last five are pale."
               >
-                <span class="eyebrow">Terrain</span>
+                <defs>
+                  <g id="fig-person" fill="currentColor">
+                    <circle cx="12" cy="6.4" r="5.2" />
+                    <rect x="7.4" y="13.4" width="9.2" height="16.4" rx="4.4" />
+                    <rect x="4.2" y="14.6" width="2.8" height="13" rx="1.4" />
+                    <rect x="17" y="14.6" width="2.8" height="13" rx="1.4" />
+                    <rect x="8.2" y="28.8" width="3.3" height="17.4" rx="1.65" />
+                    <rect
+                      x="12.5"
+                      y="28.8"
+                      width="3.3"
+                      height="17.4"
+                      rx="1.65"
+                    />
+                  </g>
+                </defs>
+
+                <use class="tally__mark is-freeze" href="#fig-person" x="0" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="32" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="64" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="96" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="128" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="160" />
+                <use class="tally__mark is-freeze" href="#fig-person" x="192" />
+                <use class="tally__mark" href="#fig-person" x="224" />
+                <use class="tally__mark" href="#fig-person" x="256" />
+                <use class="tally__mark" href="#fig-person" x="288" />
+                <use class="tally__mark" href="#fig-person" x="320" />
+                <use class="tally__mark" href="#fig-person" x="352" />
+              </svg>
+
+              <figcaption>
+                <b>freeze while walking</b> — trouble starting, or trouble
+                continuing. More than half of the twelve.
+              </figcaption>
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     Where it happens — the triggers
+			     A screen of its own, but deliberately not a numbered one: it is
+			     still the survey talking, so it carries the survey's voice and
+			     no 05. The numbers that follow it keep their old numbers.
+			     ========================================================== -->
+      <section class="screen screen--tight" id="triggers" data-screen>
+        <div class="screen__inner">
+          <div class="triggers__head" data-reveal>
+            <div class="screen__head">
+              <p class="eyebrow">Where it happens</p>
+              <h2>Thirteen triggers, three families</h2>
+            </div>
+            <p class="screen__body screen__body--lead">
+              Participants were asked to list the triggers that cause freezing.
+              They fell into three categories: terrain, body and mind.
+            </p>
+          </div>
+
+          <div class="triggers">
+            <div
+              class="trigger trigger--terrain paper stitch"
+              data-reveal
+              style="--in-delay: 80ms"
+            >
+              <p class="trigger__count">6<span>of 13</span></p>
+              <div class="trigger__body">
+                <p class="eyebrow">Terrain</p>
                 <ul class="chips">
                   <li class="chip">doorways</li>
                   <li class="chip">stairs</li>
@@ -850,39 +882,67 @@
                   <li class="chip">uneven stone</li>
                   <li class="chip">narrow passages</li>
                 </ul>
+                <p class="trigger__note">
+                  <b>The headset can see all six.</b> They are geometry, and
+                  geometry is the one thing a depth map has before the wearer
+                  does.
+                </p>
               </div>
-              <div
-                class="trigger trigger--body"
-                data-reveal
-                style="--in-delay: 140ms"
-              >
-                <span class="eyebrow">Body</span>
+            </div>
+            <div
+              class="trigger trigger--body paper stitch"
+              data-reveal
+              style="--in-delay: 140ms"
+            >
+              <p class="trigger__count">4<span>of 13</span></p>
+              <div class="trigger__body">
+                <p class="eyebrow">Body</p>
                 <ul class="chips">
                   <li class="chip">standing still too long</li>
                   <li class="chip">cold</li>
                   <li class="chip">fatigue</li>
                   <li class="chip">the OFF hours between doses</li>
                 </ul>
+                <p class="trigger__note">
+                  <b>It can see one of the four.</b> Standing still is a pose a
+                  camera can read. Cold, fatigue and a dose wearing off are not
+                  — those it would have to be told.
+                </p>
               </div>
-              <div
-                class="trigger trigger--mind"
-                data-reveal
-                style="--in-delay: 200ms"
-              >
-                <span class="eyebrow">Mind</span>
+            </div>
+            <div
+              class="trigger trigger--mind paper stitch"
+              data-reveal
+              style="--in-delay: 200ms"
+            >
+              <p class="trigger__count">3<span>of 13</span></p>
+              <div class="trigger__body">
+                <p class="eyebrow">Mind</p>
                 <ul class="chips">
                   <li class="chip">stress</li>
                   <li class="chip">being rushed</li>
                   <li class="chip">being watched</li>
                 </ul>
+                <p class="trigger__note">
+                  <b>It can see none of the three.</b> The headset cannot detect
+                  being rushed or being watched. All it can do is not add to
+                  them.
+                </p>
               </div>
             </div>
 
-            <p class="screen__pull" data-reveal style="--in-delay: 250ms">
-              Anxiety and terrain are the most common triggers, we can reduce
-              anxiety by giving the user a clear path to follow and avoid
-              terrain that is difficult to navigate.
-            </p>
+            <div
+              class="trigger trigger--verdict paper"
+              data-reveal
+              style="--in-delay: 260ms"
+            >
+              <p class="eyebrow">What it means for the design</p>
+              <p class="screen__pull">
+                Anxiety and terrain are the most common triggers, we can reduce
+                anxiety by giving the user a clear path to follow and avoid
+                terrain that is difficult to navigate.
+              </p>
+            </div>
           </div>
         </div>
       </section>
@@ -905,21 +965,6 @@
             <!-- <details>, not a scripted toggle. The French is the answer; the
 						     English is a gloss the reader can ask for. With scripting off
 						     it still opens, which a button would not. -->
-            <blockquote
-              class="verbatim paper stitch"
-              data-reveal
-              style="--in-delay: 70ms"
-            >
-              <p lang="fr">« Je ne supporte pas quelque chose sur mon nez. »</p>
-              <details class="gloss">
-                <summary>
-                  <span class="gloss__closed">Show translation</span>
-                  <span class="gloss__open">Hide translation</span>
-                </summary>
-                <p>I can't stand having something on my nose.</p>
-              </details>
-              <cite>Twelve years since diagnosis</cite>
-            </blockquote>
             <blockquote
               class="verbatim paper stitch"
               data-reveal
@@ -985,7 +1030,7 @@
           <div class="screen__head" data-reveal>
             <p class="eyebrow">05 — The real requirement</p>
             <h2 class="screen__title--xl">
-              Nobody was worried it wouldn't work.
+              Patients' opinion on wearing AR glasses
             </h2>
           </div>
 
@@ -1003,20 +1048,19 @@
               <span class="count__split">
                 <span class="count__pair"
                   ><b class="count__num is-yes">0</b
-                  ><span class="count__unit" lang="fr">oui</span></span
+                  ><span class="count__unit" lang="en">yes</span></span
                 >
                 <span class="count__pair"
                   ><b class="count__num is-maybe">5</b
-                  ><span class="count__unit" lang="fr">peut-être</span></span
+                  ><span class="count__unit" lang="en">maybe</span></span
                 >
                 <span class="count__pair"
                   ><b class="count__num is-no">7</b
-                  ><span class="count__unit" lang="fr">non</span></span
+                  ><span class="count__unit" lang="en">no</span></span
                 >
               </span>
               <span class="count__label"
-                >would wear AR glasses — answering on looks, not on
-                function</span
+                >would wear AR glasses</span
               >
             </p>
           </div>
@@ -1024,9 +1068,9 @@
           <!-- Each word carries the colour of its own share of the bar below:
 			     the sentence and the figure have to be saying the same thing. -->
           <p class="bigwords" data-reveal style="--in-delay: 140ms" lang="fr">
-            <span style="--tint: var(--butter-deep)">facilité d'utilisation</span>
-            <span style="--tint: var(--moss-deep)">discrétion</span>
-            <span style="--tint: var(--tan-deep)">légèreté</span>
+            <span style="--tint: var(--butter-deep)">ease of use</span>
+            <span style="--tint: var(--moss-deep)">discretion</span>
+            <span style="--tint: var(--tan-deep)">lightness</span>
           </p>
 
           <figure class="wants" data-reveal style="--in-delay: 180ms">
@@ -1038,13 +1082,13 @@
             </div>
             <figcaption class="wants__legend">
               <span style="--fill: var(--butter-deep)"
-                >37.5% <span lang="fr">facilité d'utilisation</span></span
+                >37.5% </span
               >
               <span style="--fill: var(--moss-deep)"
-                >25% <span lang="fr">discrétion</span></span
+                >25% </span
               >
               <span style="--fill: var(--tan-deep)"
-                >25% <span lang="fr">légèreté</span></span
+                >25% </span
               >
               <span style="--fill: var(--peach-deep)"
                 >12.5% “not on my nose”</span
@@ -1053,9 +1097,9 @@
           </figure>
 
           <p class="screen__pull screen__pull--wide" data-reveal style="--in-delay: 240ms">
-            Nobody asked for accuracy or range. They were afraid of looking ill
-            in public, not of the cues failing them — the hard constraint is not
-            the pathfinding, it is the thing on your face.
+            Nobody asked about accuracy or range. What worried them was looking
+            ill in public. The hard part of this project turned out to be the
+            thing on your face.
           </p>
         </div>
       </section>
@@ -1129,134 +1173,362 @@
           </div>
 
           <p class="screen__pull" data-reveal style="--in-delay: 220ms">
-			It was indeed a difficult short path to walk, 
-			I could empathize with the people who have to live with it every day. 
-          </p>so 
+			It was indeed a difficult short path to walk,
+			and parkison's patients have to live with this difficulty every day.
+          </p>
         </div>
       </section>
 
       <!-- ==========================================================
 			     The system
 			     ========================================================== -->
-      <section class="screen screen--sage" id="system" data-screen>
+      <section class="screen screen--dark screen--tight" id="system" data-screen>
         <div class="screen__inner">
           <div class="screen__head" data-reveal>
             <p class="eyebrow">07 — The build</p>
-            <h2>Point at where you want to go.</h2>
+            <h2 class="screen__title--lg">Point at where you want to go.</h2>
+            <p class="screen__body">
+              It runs on a Quest 3. You point at where you want to go, and
+              the headset lays a path for you avoiding obstacles.
+            </p>
           </div>
 
-          <div class="split">
-            <ol class="steps" data-reveal style="--in-delay: 80ms">
-              <li class="step">
-                <span class="step__n">1</span>
-                <div>
-                  <strong>The headset already knows the room</strong>
-                  <p>
-                    Meta's Mixed Reality Utility Kit gives a live mesh of walls,
-                    floor and furniture, captured once in the room the person
-                    actually walks in.
-                  </p>
-                </div>
-              </li>
-              <li class="step">
-                <span class="step__n">2</span>
-                <div>
-                  <strong>You point</strong>
-                  <p>
-                    A ray from the controller lands on a spot on the floor. That
-                    is the destination. It is yours, and you can change it at
-                    any moment — re-targeting redraws the route without erasing
-                    the cue under your feet.
-                  </p>
-                </div>
-              </li>
-              <li class="step">
-                <span class="step__n">3</span>
-                <div>
-                  <strong>The floor answers</strong>
-                  <p>
-                    Unity's NavMesh solves a route around the furniture, spline
-                    interpolation takes the jerk out of the corners — a right
-                    angle is precisely where freezing happens — and the path is
-                    drawn as 15 cm cues at 75 cm spacing, the stride length the
-                    cueing literature converges on.
-                  </p>
-                </div>
-              </li>
-            </ol>
+          <!-- The room in plan, with the three routes the drawing cycles
+				     through already solved and laid out in the markup. Only one is
+				     lit at a time: the target moves, its bars wipe in from the
+				     person's feet outwards, hold, and wipe out again before the
+				     next target lands. Nothing here travels — a cue that slides
+				     along the floor is the one thing this system must never look
+				     like, since the whole point is a mark you step on.
 
-            <figure
-              class="plate paper stitch"
-              data-reveal
-              style="--in-delay: 140ms"
+				     The bars sit at equal arc length along a Catmull-Rom through
+				     the waypoints and are turned to face across the walk, so the
+				     spacing stays honest around a corner. Every route clears the
+				     furniture by more than half a bar's length: the drawing has to
+				     survive the claim it is making.
+
+				     It is drawn twice and the stylesheet picks one. The same room
+				     at page width is three and a half times as wide as it is tall,
+				     which on a phone is a 90px strip of specks; the portrait
+				     framing is the same room, the same three targets and the same
+				     argument, laid out for a column taller than it is wide. Two
+				     drawings beat one drawing and a sideways scrollbar. -->
+          <figure
+            class="plate plate--plan paper stitch"
+            data-reveal
+            style="--in-delay: 80ms"
+          >
+            <!-- One pattern for both plans, since an id is document-wide. -->
+            <svg class="plan__defs" aria-hidden="true" focusable="false">
+              <defs>
+                <pattern
+                  id="plan-mesh"
+                  width="48"
+                  height="48"
+                  patternUnits="userSpaceOnUse"
+                >
+                  <path
+                    d="M48 0 H0 V48"
+                    fill="none"
+                    stroke="color-mix(in srgb, var(--tan-deep) 28%, transparent)"
+                    stroke-width="1"
+                  />
+                </pattern>
+              </defs>
+            </svg>
+
+            <svg
+              class="plan plan--wide"
+              viewBox="0 0 960 280"
+              role="img"
+              aria-label="A room seen from above, with three pieces of furniture in the middle of it. A line of short bars runs across the floor from the person to the spot they are pointing at. When that spot moves, the bars are laid again along a new route. Every route goes around the furniture, never through it."
             >
-              <svg
-                viewBox="0 0 340 240"
-                role="img"
-                aria-label="Perspective view of a room floor with a cue path of evenly spaced blocks curving around two pieces of furniture to a chosen target."
-              >
+              <g class="plan__room">
                 <rect
-                  x="0"
-                  y="0"
-                  width="340"
-                  height="240"
-                  rx="6"
-                  fill="var(--paper-warm)"
-                />
-                <path
-                  d="M0 96 L340 96 L340 240 L0 240 Z"
-                  fill="color-mix(in srgb, var(--tan) 45%, var(--paper-warm))"
+                  x="6"
+                  y="6"
+                  width="948"
+                  height="268"
+                  rx="8"
+                  fill="color-mix(in srgb, var(--tan) 34%, var(--paper-warm))"
+                  stroke="color-mix(in srgb, var(--tan-deep) 50%, transparent)"
+                  stroke-width="3"
                 />
                 <rect
-                  x="24"
-                  y="66"
-                  width="86"
-                  height="40"
+                  x="6"
+                  y="6"
+                  width="948"
+                  height="268"
+                  rx="8"
+                  fill="url(#plan-mesh)"
+                />
+              </g>
+
+              <g class="plan__furniture">
+                <rect
+                  x="300"
+                  y="22"
+                  width="150"
+                  height="90"
                   rx="4"
                   fill="var(--tan)"
                 />
                 <rect
-                  x="236"
-                  y="118"
-                  width="82"
-                  height="46"
+                  x="300"
+                  y="176"
+                  width="150"
+                  height="82"
                   rx="4"
                   fill="var(--tan-deep)"
-                  opacity="0.7"
+                  opacity="0.55"
                 />
-                <path
-                  class="plan__flow"
-                  d="M52 222 C 118 214, 132 176, 168 158 S 226 116, 250 96"
+                <rect
+                  x="560"
+                  y="88"
+                  width="120"
+                  height="120"
+                  rx="4"
+                  fill="var(--tan-deep)"
+                  opacity="0.78"
+                />
+              </g>
+
+              <g class="plan__route plan__route--a">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(115.5 194.0) rotate(-9.6)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(161.1 185.9) rotate(-10.7)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(206.3 175.7) rotate(-16.7)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(250.3 161.1) rotate(-16.9)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(295.6 151.4) rotate(-8.7)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(341.6 145.4) rotate(-6.8)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(387.7 140.3) rotate(-4.3)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(433.9 137.2) rotate(-5.7)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(478.1 124.5) rotate(-32.1)" />
+                <rect class="cue" style="--i: 9" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(514.4 95.8) rotate(-32.8)" />
+                <rect class="cue" style="--i: 10" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(552.5 69.4) rotate(-30.4)" />
+                <rect class="cue" style="--i: 11" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(595.8 53.7) rotate(-10.9)" />
+                <rect class="cue" style="--i: 12" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(641.8 48.3) rotate(-4.2)" />
+                <rect class="cue" style="--i: 13" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(688.1 45.6) rotate(-2.7)" />
+                <rect class="cue" style="--i: 14" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(734.5 44.5) rotate(-0.1)" />
+                <rect class="cue" style="--i: 15" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(780.8 45.5) rotate(2.9)" />
+                <rect class="cue" style="--i: 16" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(826.8 51.3) rotate(11.9)" />
+              </g>
+
+              <g class="plan__route plan__route--b">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(115.5 194.0) rotate(-9.6)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(161.2 185.9) rotate(-10.7)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(206.5 175.5) rotate(-17.2)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(250.5 160.6) rotate(-16.5)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(296.1 152.1) rotate(-7.0)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(342.3 148.3) rotate(-2.3)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(388.8 148.5) rotate(2.1)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(435.0 152.8) rotate(9.8)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(478.0 169.1) rotate(37.3)" />
+                <rect class="cue" style="--i: 9" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(511.9 200.8) rotate(39.5)" />
+                <rect class="cue" style="--i: 10" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(551.6 224.8) rotate(26.9)" />
+                <rect class="cue" style="--i: 11" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(594.9 241.3) rotate(13.9)" />
+                <rect class="cue" style="--i: 12" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(640.9 247.0) rotate(2.5)" />
+                <rect class="cue" style="--i: 13" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(687.3 247.8) rotate(0.5)" />
+                <rect class="cue" style="--i: 14" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(733.8 248.2) rotate(-0.5)" />
+                <rect class="cue" style="--i: 15" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(780.2 247.0) rotate(-2.4)" />
+                <rect class="cue" style="--i: 16" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(826.4 243.1) rotate(-8.6)" />
+              </g>
+
+              <g class="plan__route plan__route--c">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(115.5 194.0) rotate(-9.6)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(162.2 185.7) rotate(-10.7)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(208.3 175.1) rotate(-16.8)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(253.3 160.3) rotate(-16.2)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(299.6 150.5) rotate(-9.2)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(346.5 143.7) rotate(-7.9)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(393.5 137.5) rotate(-5.2)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(440.7 132.9) rotate(-8.8)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(484.8 116.9) rotate(-34.9)" />
+                <rect class="cue" style="--i: 9" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(520.8 86.2) rotate(-38.3)" />
+                <rect class="cue" style="--i: 10" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(561.9 62.9) rotate(-25.0)" />
+                <rect class="cue" style="--i: 11" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(606.3 46.6) rotate(-13.4)" />
+                <rect class="cue" style="--i: 12" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(653.4 43.3) rotate(4.1)" />
+                <rect class="cue" style="--i: 13" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(699.8 52.4) rotate(19.4)" />
+                <rect class="cue" style="--i: 14" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(738.8 78.4) rotate(47.6)" />
+                <rect class="cue" style="--i: 15" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(759.3 120.1) rotate(81.9)" />
+              </g>
+
+              <g class="plan__target">
+                <circle
+                  class="plan__ring"
+                  r="15"
                   fill="none"
-                  stroke="var(--moss-deep)"
-                  stroke-width="16"
-                  stroke-dasharray="12 24"
+                  stroke="var(--peach-deep)"
+                  stroke-width="2.5"
                 />
-                <g transform="translate(250 96)">
-                  <circle
-                    class="plan__ping"
-                    r="13"
-                    fill="none"
-                    stroke="var(--peach-deep)"
-                    stroke-width="2.5"
-                  />
-                  <circle r="4.5" fill="var(--peach-deep)" />
-                </g>
-                <circle cx="52" cy="222" r="10" fill="var(--slate)" />
-                <g class="plan__label">
-                  <text x="70" y="228">you</text>
-                  <text x="266" y="90">target</text>
-                  <text x="120" y="150" transform="rotate(-24 120 150)">
-                    75 cm apart
+                <circle class="plan__pip" r="5" fill="var(--peach-deep)" />
+                <g class="plan__tag">
+                  <text class="plan__label" y="-26" text-anchor="middle">
+                    your target
                   </text>
                 </g>
-              </svg>
-              <figcaption>
-                The path is regenerated live: move, or point somewhere else, and
-                the cues re-lay themselves around the furniture.
-              </figcaption>
-            </figure>
-          </div>
+              </g>
+
+              <g class="plan__you">
+                <circle cx="80" cy="200" r="11" fill="var(--slate)" />
+                <text class="plan__label" x="80" y="228" text-anchor="middle">
+                  you
+                </text>
+              </g>
+
+              <text class="plan__label" transform="translate(196 232) rotate(-11)">
+                75 cm apart
+              </text>
+            </svg>
+
+            <svg
+              class="plan plan--tall"
+              viewBox="0 0 380 520"
+              role="img"
+              aria-label="A room seen from above, with three pieces of furniture in the middle of it. A line of short bars runs across the floor from the person to the spot they are pointing at. When that spot moves, the bars are laid again along a new route. Every route goes around the furniture, never through it."
+            >
+              <g class="plan__room">
+                <rect
+                  x="6"
+                  y="6"
+                  width="368"
+                  height="508"
+                  rx="8"
+                  fill="color-mix(in srgb, var(--tan) 34%, var(--paper-warm))"
+                  stroke="color-mix(in srgb, var(--tan-deep) 50%, transparent)"
+                  stroke-width="3"
+                />
+                <rect
+                  x="6"
+                  y="6"
+                  width="368"
+                  height="508"
+                  rx="8"
+                  fill="url(#plan-mesh)"
+                />
+              </g>
+
+              <g class="plan__furniture">
+                <rect
+                  x="48"
+                  y="150"
+                  width="118"
+                  height="95"
+                  rx="4"
+                  fill="var(--tan)"
+                />
+                <rect
+                  x="232"
+                  y="120"
+                  width="120"
+                  height="110"
+                  rx="4"
+                  fill="var(--tan-deep)"
+                  opacity="0.78"
+                />
+                <rect
+                  x="110"
+                  y="330"
+                  width="180"
+                  height="75"
+                  rx="4"
+                  fill="var(--tan-deep)"
+                  opacity="0.55"
+                />
+              </g>
+
+              <g class="plan__route plan__route--a">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(56.5 429.2) rotate(-94.0)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(57.5 385.0) rotate(-84.6)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(63.7 341.2) rotate(-75.1)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(84.0 303.5) rotate(-32.6)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(125.0 287.3) rotate(-11.5)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(168.5 282.4) rotate(-30.7)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(193.7 246.7) rotate(-66.2)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(204.7 204.2) rotate(-90.1)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(202.0 160.1) rotate(-86.0)" />
+                <rect class="cue" style="--i: 9" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(207.2 116.2) rotate(-74.5)" />
+                <rect class="cue" style="--i: 10" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(231.8 80.2) rotate(-40.8)" />
+                <rect class="cue" style="--i: 11" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(270.4 59.7) rotate(-12.2)" />
+              </g>
+
+              <g class="plan__route plan__route--b">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(56.5 429.2) rotate(-94.0)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(57.7 383.3) rotate(-84.5)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(64.5 338.0) rotate(-75.4)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(88.3 301.0) rotate(-28.4)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(131.6 286.5) rotate(-3.3)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(175.0 277.2) rotate(-45.8)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(197.6 237.6) rotate(-69.4)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(205.2 192.6) rotate(-92.7)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(197.5 147.4) rotate(-104.2)" />
+                <rect class="cue" style="--i: 9" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(180.2 105.2) rotate(-125.8)" />
+                <rect class="cue" style="--i: 10" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(143.1 79.1) rotate(-156.7)" />
+                <rect class="cue" style="--i: 11" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(99.6 64.5) rotate(-169.1)" />
+              </g>
+
+              <g class="plan__route plan__route--c">
+                <rect class="cue" style="--i: 0" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(56.5 429.2) rotate(-94.0)" />
+                <rect class="cue" style="--i: 1" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(57.5 384.9) rotate(-84.6)" />
+                <rect class="cue" style="--i: 2" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(63.7 341.0) rotate(-75.1)" />
+                <rect class="cue" style="--i: 3" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(84.1 303.1) rotate(-35.1)" />
+                <rect class="cue" style="--i: 4" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(125.1 287.0) rotate(-9.0)" />
+                <rect class="cue" style="--i: 5" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(169.3 285.3) rotate(-0.7)" />
+                <rect class="cue" style="--i: 6" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(213.6 283.2) rotate(-2.9)" />
+                <rect class="cue" style="--i: 7" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(257.9 281.4) rotate(-1.5)" />
+                <rect class="cue" style="--i: 8" x="-4" y="-13" width="8" height="26" rx="2" transform="translate(302.3 279.8) rotate(-4.2)" />
+              </g>
+
+              <g class="plan__target">
+                <circle
+                  class="plan__ring"
+                  r="15"
+                  fill="none"
+                  stroke="var(--peach-deep)"
+                  stroke-width="2.5"
+                />
+                <circle class="plan__pip" r="5" fill="var(--peach-deep)" />
+                <g class="plan__tag">
+                  <text class="plan__label" y="-26" text-anchor="middle">
+                    your target
+                  </text>
+                </g>
+              </g>
+
+              <g class="plan__you">
+                <circle cx="60" cy="465" r="11" fill="var(--slate)" />
+                <text class="plan__label" x="60" y="495" text-anchor="middle">
+                  you
+                </text>
+              </g>
+
+              <text class="plan__label" transform="translate(120 452)">
+                75 cm apart
+              </text>
+            </svg>
+          </figure>
+
+          <ol class="steps steps--row" data-reveal style="--in-delay: 140ms">
+            <li class="step">
+              <strong>The room mesh</strong>
+              <p>
+                Meta's Mixed Reality Utility Kit scans the room once, and the headset builds a mesh of the floor and furniture. 
+
+              </p>
+            </li>
+            <li class="step">
+              <strong>Your point</strong>
+              <p>
+                You aim the controller anywhere in space. That spot becomes the
+                destination, and you can move it whenever you want.
+              </p>
+            </li>
+            <li class="step">
+              <strong>The floor answers</strong>
+              <p>
+                Unity's NavMesh finds a way around the furniture. The headset draws a line of bars along the path. Those are the visual cues that helps patients walk without freezing.
+              </p>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -1269,10 +1541,12 @@
             <p class="eyebrow">08 — Pilot</p>
             <h2>Five people, in a room with real furniture in it.</h2>
             <p class="screen__body">
-              A 5 × 5 m physiotherapy room, furniture as obstacles, one
-              destination chair. Three conditions in order — unassisted, a
-              pre-computed AR path, then the interactive one — so baseline,
-              guidance and adaptivity could be told apart.
+              A 5 × 5 m physiotherapy room, a chair at the far end, and
+              furniture placed to get in the way. Everyone walked it three
+              times: with no help, then with a path fixed in advance, then with
+              the interactive one. Same order every time, so I could separate
+              what the walk costs alone, what a path adds, and what choosing
+              your own destination adds on top.
             </p>
           </div>
 
@@ -1367,8 +1641,8 @@
               <strong class="person__id">P5</strong>
               <span class="eyebrow">Uses a walker daily</span>
               <p>
-                Gained almost nothing. Her limits were motor, not informational
-                — there was nothing for a cue to unlock.
+                Gained almost nothing. Her difficulty was in producing the
+                movement at all, so there was nothing for a cue to unlock.
               </p>
             </li>
           </ul>
@@ -1393,9 +1667,8 @@
             >
               <span class="eyebrow">Autonomy</span>
               <p>
-                Participants walked to destinations they picked, not ones
-                assigned to them. That was the point of the study, and it held
-                for every one of the five.
+                Every participant picked their own destination and walked to it.
+                That was the point of the study, and it held for all five.
               </p>
             </div>
             <div
@@ -1416,24 +1689,24 @@
             >
               <span class="eyebrow">The cues</span>
               <p>
-                Walking improved with the path on. What the survey had already
-                predicted was confirmed in the room: the headset, not the
-                cueing, is what people would refuse.
+                Walking improved with the path on. The room confirmed what the
+                survey had already suggested: the headset, not the cueing, is
+                what people would refuse.
               </p>
             </div>
           </div>
 
           <p class="screen__pull" data-reveal style="--in-delay: 220ms">
-            Two of the five getting little from it isn't a footnote, it's the
-            finding: adaptive cueing is for people whose problem is starting
+            Two of the five got very little from it, and that is part of the
+            result. Adaptive cueing helps people whose problem is starting
             movement rather than producing it, and who can hold a destination in
             mind while walking to it.
           </p>
 
           <p class="screen__note" data-reveal style="--in-delay: 250ms">
-            Five participants is a pilot, not a trial. Step counts and
-            observation, not step length, velocity or cadence — the measured
-            gait outcomes are in the ISMAR poster.
+            Five participants makes this a pilot rather than a trial. I recorded
+            step counts and observations; the measured gait outcomes — step
+            length, velocity, cadence — are in the ISMAR poster.
           </p>
         </div>
       </section>
@@ -1455,8 +1728,8 @@
                 A Quest 3 weighs about half a kilo and sits on the face of
                 someone who told me, in writing, that they can't stand anything
                 on their nose. Every result here is measured through that. The
-                next version belongs on light see-through glasses, or it doesn't
-                leave the lab.
+                next version needs to run on light see-through glasses before it
+                is worth testing anywhere outside a lab.
               </p>
             </div>
             <div class="admit admit--2" data-reveal style="--in-delay: 120ms">
@@ -1470,12 +1743,12 @@
               <strong>Stress is an input the system can't see.</strong>
               <p>
                 The mesh knows where the doorway is. It doesn't know that
-                someone is watching, or that the person is in an OFF hour. That
-                is the next thing worth reading, and it isn't geometry.
+                someone is watching, or that the person is in an OFF hour.
+                Sensing that is the harder problem, and the mesh can't solve it.
               </p>
             </div>
             <div class="admit admit--4" data-reveal style="--in-delay: 220ms">
-              <strong>Test it in the hallway, not the study room.</strong>
+              <strong>Test it in someone's own hallway.</strong>
               <p>
                 The system was built to work in a person's own home, around
                 their own furniture. So far it has only ever been asked to work

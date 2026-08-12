@@ -241,16 +241,6 @@ body {
 	max-width: 62ch;
 }
 
-/* A second block under the same screen heading, cut off by the same dashed
-   thread the page uses everywhere else. A seam, not a new page: the triggers
-   are what the twelve people were answering about. */
-.subscreen {
-	display: grid;
-	gap: var(--sp-6);
-	padding-block-start: var(--sp-6);
-	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
-}
-
 /* A conclusion, not a paragraph. Display face, short measure, no more than a
    couple of lines — it is meant to be read as one gesture. */
 .screen__pull {
@@ -584,7 +574,7 @@ body {
 
 .plate figcaption,
 .snap figcaption,
-.stat figcaption {
+.finding figcaption {
 	font-family: var(--ff-display);
 	font-size: var(--fs-200);
 	line-height: 1.5;
@@ -617,10 +607,19 @@ body {
 	object-fit: cover;
 }
 
+/* Narrower than the column it is given. A portrait crop at the full column
+   width is 470px tall on its own, which is the whole screen's height budget
+   spent on the one thing on it that is not the finding. */
 .split--intro .snap {
+	/* A moss sheet with the page's white thread on it, the same stock the
+	   trigger cards are cut from. The research screen is the one place a
+	   photograph and a figure make the same point, so the card is the colour
+	   of the twelve below it rather than plain paper. */
+	--card-bg: var(--moss);
+	--stitch-color: var(--paper);
 	rotate: 1.6deg;
 	justify-self: center;
-	max-width: 22rem;
+	max-width: 20rem;
 }
 
 .split--intro .snap img {
@@ -666,41 +665,206 @@ body {
 	font-size: 12px;
 }
 
-/* The cue path, flowing the way the cues do: the dashes travel toward the
-   destination. The dash pattern is 11 + 22 in the room plans and 12 + 24 in
-   the perspective view, so one full cycle is 33 and 36 — four cycles each,
-   which is why the two offsets differ. */
-.plan__flow {
-	animation: dashflow 4.4s linear infinite;
+/* The pattern the two plans share. It is only in the page to hold a <defs>,
+   so it must not take a line box of its own. */
+.plate .plan__defs {
+	position: absolute;
+	width: 0;
+	height: 0;
 }
 
-.plate .plan__flow {
-	animation-duration: 5s;
-	animation-name: dashflow-wide;
+/* Which framing of the room is on. Wide by default; the portrait one takes
+   over where the column is too narrow for the wide plan to survive — under
+   about 52rem the wide room is already down to nine-pixel labels.
+
+   The portrait plan is capped rather than fluid: it is half a page tall at its
+   own width, and a tablet handed the full column would make it taller than the
+   window. */
+.plan--tall {
+	display: none;
 }
 
-@keyframes dashflow {
-	to {
-		stroke-dashoffset: -132;
+@media (max-width: 52rem) {
+	.plan--wide {
+		display: none;
+	}
+
+	.plan--tall {
+		display: block;
+	}
+
+	/* The plate comes in with it. The portrait room is half a page tall at its
+	   own width, and a tablet handed the full column would make it taller than
+	   the window — so the sheet stops at the width the drawing wants and sits
+	   in the middle, rather than framing it in a field of empty paper. */
+	.plate--plan {
+		justify-self: center;
+		max-width: 26rem;
 	}
 }
 
-@keyframes dashflow-wide {
-	to {
-		stroke-dashoffset: -144;
+/* The room plan, re-targeted three times.
+
+   The whole drawing runs on one clock. Every bar and the target ring share a
+   single --cycle-long animation and take their place in it with a delay, so
+   they cannot drift apart however long the page has been open — a second
+   shorter animation for the ring would be out of step with the bars within a
+   minute. The cycle is cut in three, one slot per route, and a route's bars
+   are 90ms apart inside its slot: that stagger is what makes the trail lay
+   itself from the person's feet outwards instead of appearing all at once.
+
+   What is deliberately absent is travel. The bars only fade — no drift, no
+   dash offset, no slide toward the target. A cue you cannot step on because
+   it has moved is the failure this whole system is trying to avoid, and a
+   drawing that shows one is lying about the build. */
+.plan {
+	--cycle: 13.5s;
+}
+
+.plan__route--a {
+	--slot: 0s;
+}
+
+.plan__route--b {
+	--slot: calc(var(--cycle) / 3);
+}
+
+.plan__route--c {
+	--slot: calc(var(--cycle) / 3 * 2);
+}
+
+.cue {
+	fill: var(--moss-deep);
+	opacity: 0;
+	animation: cue-lay var(--cycle) var(--ease-out) infinite;
+	animation-delay: calc(var(--slot) + var(--i) * 90ms);
+}
+
+/* Percentages of 13.5s: down in 0.3s, lit for 2.3s, gone by 3s. The last bar
+   of a route starts 1.44s into its slot, so it has cleared the floor with
+   0.06s to spare before the next route's first bar lands. */
+@keyframes cue-lay {
+	0% {
+		opacity: 0;
 	}
-}
-
-.plan__ping {
-	animation: softpulse 2.4s var(--ease-out) infinite;
-}
-
-@keyframes softpulse {
-	0%,
+	2.4%,
+	19.3% {
+		opacity: 1;
+	}
+	22.2%,
 	100% {
-		opacity: 0.3;
+		opacity: 0;
 	}
-	50% {
+}
+
+/* The ring moves in the gap between two routes — after one trail has wiped
+   out and before the next starts laying — so the drawing never shows a path
+   pointing at a target that has already left. One set of stops per framing,
+   because the same three spots sit at different coordinates in each. */
+.plan__target {
+	animation: point-wide var(--cycle) var(--ease-out) infinite;
+}
+
+.plan--wide .plan__target {
+	translate: 856px 58px;
+}
+
+.plan--tall .plan__target {
+	translate: 300px 55px;
+	animation-name: point-tall;
+}
+
+@keyframes point-wide {
+	0%,
+	24.4% {
+		translate: 856px 58px;
+	}
+	29.6%,
+	57.8% {
+		translate: 856px 238px;
+	}
+	63%,
+	91.1% {
+		translate: 762px 150px;
+	}
+	96.3%,
+	100% {
+		translate: 856px 58px;
+	}
+}
+
+@keyframes point-tall {
+	0%,
+	24.4% {
+		translate: 300px 55px;
+	}
+	29.6%,
+	57.8% {
+		translate: 70px 60px;
+	}
+	63%,
+	91.1% {
+		translate: 332px 276px;
+	}
+	96.3%,
+	100% {
+		translate: 300px 55px;
+	}
+}
+
+/* The label takes whichever side of the ring the trail is not arriving from:
+   above at the first two spots, below at the third, where in both framings the
+   route comes in over the top of it. Its own animation, but on the same clock,
+   so it can never be caught on the wrong side. */
+.plan__tag {
+	animation: tag-side var(--cycle) var(--ease-out) infinite;
+}
+
+@keyframes tag-side {
+	0%,
+	57.8% {
+		translate: 0 0;
+	}
+	63%,
+	91.1% {
+		translate: 0 56px;
+	}
+	96.3%,
+	100% {
+		translate: 0 0;
+	}
+}
+
+/* Held at the first frame until the screen is reached, the same way every
+   other entrance on the page waits: arriving halfway through a re-target
+   reads as a glitch rather than as a system answering you. */
+.js .cue,
+.js .plan__target,
+.js .plan__tag {
+	animation-play-state: paused;
+}
+
+.js .screen.is-in .cue,
+.js .screen.is-in .plan__target,
+.js .screen.is-in .plan__tag {
+	animation-play-state: running;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	/* One route, laid, and nothing moving. The drawing's claim — a path that
+	   goes around the furniture to a spot you chose — is fully made by a
+	   single still frame; the cycling only adds that you can change your
+	   mind, which the caption says in words. */
+	.js .cue,
+	.cue,
+	.js .plan__target,
+	.plan__target,
+	.js .plan__tag,
+	.plan__tag {
+		animation: none;
+	}
+
+	.plan__route--a .cue {
 		opacity: 1;
 	}
 }
@@ -1008,85 +1172,89 @@ body {
 
 /* --------------------------------------------------------------------------
    13. Survey figures
-   How many freeze is a rate, so it is drawn as area — a ring, the same shape
-   the headset questions take on screen 05. On the research screen the ring
-   sits inside the intro column, beside the sentence it belongs to, rather
-   than in a band of its own below the fold.
+   Twelve people answered, so the figure on the research screen is twelve
+   people. It ran as a ring for a while and the ring was the wrong instrument:
+   at this n the denominator is half the finding, and a rate drawn as area
+   quietly throws it away. A row of twelve is countable, which is the honest
+   claim — you can check the number by looking at it.
    -------------------------------------------------------------------------- */
 
-/* 13a. The ring ----------------------------------------------------------- */
+/* 13a. The twelve ---------------------------------------------------------- */
 
-.stat {
+/* The number, the row and the sentence, in that reading order: the eye lands
+   on 58%, counts the marks, then finds out what they mean. */
+.finding {
 	display: grid;
-	justify-items: start;
-	align-content: start;
-	gap: var(--sp-3);
-}
-
-.stat figcaption {
-	max-width: 30ch;
-}
-
-/* Ring and caption side by side: one reads the number, then finishes its
-   sentence to the right of it. They share a centre line, because a caption
-   hung off the top of the ring would read as a label for it instead. */
-.stat--inline {
-	grid-template-columns: auto minmax(11rem, 1fr);
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: var(--sp-4) clamp(var(--sp-5), 4vw, var(--sp-8));
 	align-items: center;
-	gap: var(--sp-5);
+	padding-block-start: var(--sp-5);
+	border-block-start: 2px dashed
+		color-mix(in srgb, var(--tan-deep) 55%, transparent);
 }
 
-.stat--inline.stat--lead svg {
-	width: clamp(7rem, 11vw, 9.5rem);
+.finding__num {
+	display: grid;
+	gap: 0.15em;
+	font-family: var(--ff-display);
+	font-size: clamp(3rem, 2rem + 4vw, 5.5rem);
+	font-weight: 700;
+	line-height: 0.85;
+	letter-spacing: -0.04em;
+	color: var(--accent-ink);
 }
 
-/* On a phone the ring and its sentence are each about as narrow as they can
-   be already — side by side they would leave the caption three words wide. */
-@media (max-width: 26rem) {
-	.stat--inline {
-		grid-template-columns: minmax(0, 1fr);
-		justify-items: start;
-		gap: var(--sp-3);
-	}
+.finding__num span {
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: var(--ink-faint);
+}
+
+.finding__mark {
+	display: grid;
+	gap: var(--sp-4);
+	justify-items: start;
+}
+
+.finding figcaption {
+	max-width: 52ch;
 }
 
 /* The caption finishes the number's sentence, so the part that finishes it
    carries the number's weight and its colour. */
-.stat figcaption b {
+.finding figcaption b {
 	color: var(--ink);
 }
 
-.stat--lead svg {
-	width: clamp(9rem, 16vw, 12.5rem);
+/* Sized so a figure stays about a thumbnail tall — big enough to read the
+   pose, small enough that twelve of them are one object rather than a crowd. */
+.tally {
+	width: 100%;
+	max-width: 34rem;
 	height: auto;
 }
 
-.stat__track {
-	fill: none;
-	stroke: var(--tan);
-	stroke-width: 16;
+/* One figure twelve times, so the only difference along the row is ink: the
+   seven are the page's moss and the five are held back to a tint of it — far
+   enough apart that the split reads as position, not as two hues to tell
+   apart, and the caption says the number in words either way. */
+.tally__mark {
+	color: color-mix(in srgb, var(--moss-deep) 42%, transparent);
 }
 
-.stat__arc {
-	fill: none;
-	stroke-width: 16;
+.tally__mark.is-freeze {
+	color: var(--moss-deep);
 }
 
-.stat text {
-	text-anchor: middle;
-	font-family: var(--ff-display);
-	fill: var(--ink);
-}
-
-.stat__num {
-	font-size: 27px;
-	font-weight: 700;
-}
-
-.stat__den {
-	font-size: 12px;
-	letter-spacing: 0.04em;
-	fill: var(--ink-soft);
+/* On a phone the number cannot sit beside a row of twelve and leave either of
+   them a usable width. */
+@media (max-width: 40rem) {
+	.finding {
+		grid-template-columns: minmax(0, 1fr);
+		gap: var(--sp-4);
+	}
 }
 
 /* 13b. The two headline counts -------------------------------------------- */
@@ -1168,42 +1336,140 @@ body {
 
 /* --------------------------------------------------------------------------
    14. Triggers
-   The rule above each column is the column's colour, and the colours are the
-   argument: two of the three are things the headset can see.
+   Thirteen answers sorted into three tinted sheets and a verdict, on a 2×2
+   that fills one screen. The count is what the family is worth out of the
+   thirteen; the note under it says whether the headset can see that family at
+   all, which is what decides whether the design can do anything about it —
+   and is the reason the fourth card says what it says.
+
+   Each sheet is `.paper.stitch` with two custom properties swapped: --tone is
+   the ink the family is drawn in, --tone-bg the paper it is printed on. No
+   new material, only a different fill and the page's own white thread.
    -------------------------------------------------------------------------- */
+
+/* Title left, the sentence it needs right — set on the title's last line
+   rather than centred, so the two read as one line of type. */
+.triggers__head {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+	gap: var(--sp-4) clamp(1.5rem, 4vw, 3rem);
+	align-items: end;
+}
+
+.triggers__head h2 {
+	max-width: 13ch;
+}
+
+.triggers__head .screen__body--lead {
+	max-width: 38ch;
+	font-size: var(--fs-400);
+}
 
 .triggers {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-	gap: var(--sp-6);
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: clamp(var(--sp-4), 2.5vh, var(--sp-6));
 }
 
 .trigger {
+	--card-bg: var(--tone-bg, var(--moss));
+	--stitch-color: var(--paper);
+	/* Cut slips of paper on a coloured sheet: the chip keeps its own pale
+	   stock and only picks up a breath of the family's hue. Saturated chips on
+	   a tint of the same hue turn the card into stripes. */
+	--chip-bg: color-mix(in srgb, var(--paper) 82%, var(--tone, var(--moss-deep)));
 	display: grid;
-	gap: var(--sp-4);
+	grid-template-columns: auto minmax(0, 1fr);
+	gap: var(--sp-3) var(--sp-5);
 	align-content: start;
-	padding-block-start: var(--sp-4);
-	border-block-start: 4px solid var(--tone, var(--moss-deep));
 }
 
-.trigger .chip {
-	background: var(--tone, var(--moss-deep));
+.trigger__body {
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
 }
 
-.trigger p {
+/* The family's hue walked most of the way to the ink, the same way --accent-ink
+   is built at the top of this file: a count is information, and moss-deep on
+   moss is a decoration. */
+.trigger__count {
+	display: grid;
+	align-content: start;
+	gap: 0.2em;
+	font-family: var(--ff-display);
+	font-size: clamp(2.2rem, 1.5rem + 2vw, 3.25rem);
+	font-weight: 700;
+	line-height: 0.85;
+	letter-spacing: -0.03em;
+	color: color-mix(in oklab, var(--tone, var(--moss-deep)) 45%, var(--ink));
+}
+
+.trigger__count span {
+	font-size: var(--fs-100);
+	font-weight: 600;
+	letter-spacing: 0.12em;
+	text-transform: uppercase;
+	color: color-mix(in oklab, var(--tone, var(--moss-deep)) 30%, var(--ink-faint));
+}
+
+.trigger .eyebrow {
+	color: color-mix(in oklab, var(--tone, var(--moss-deep)) 35%, var(--ink-soft));
+}
+
+.trigger__note {
+	max-width: 36ch;
 	font-size: var(--fs-200);
 	line-height: 1.55;
 	color: var(--ink-soft);
 }
 
+.trigger__note b {
+	font-family: var(--ff-display);
+	color: var(--ink);
+}
+
 .trigger--terrain {
 	--tone: var(--moss-deep);
+	--tone-bg: var(--moss);
 }
 .trigger--body {
 	--tone: var(--tan-deep);
+	--tone-bg: var(--butter);
 }
 .trigger--mind {
 	--tone: var(--peach-deep);
+	--tone-bg: var(--peach);
+}
+
+/* The fourth card is the conclusion, not a fourth family — slate, no thread,
+   no count, and the only thing on the screen that is not a colour of paper. */
+.trigger--verdict {
+	--card-bg: var(--slate);
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--sp-4);
+	align-content: center;
+	color: var(--cream);
+}
+
+.trigger--verdict .eyebrow {
+	color: color-mix(in srgb, var(--cream) 60%, transparent);
+}
+
+/* Wider measure than a pull normally gets: the card is already the measure,
+   and the short one breaks these four clauses into five ragged lines — which
+   is exactly the 25px that pushed the screen past one viewport. */
+.trigger--verdict .screen__pull {
+	max-width: none;
+	font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.5rem);
+}
+
+/* One column, and the verdict last — at this width the 2×2 is two ribbons of
+   text too narrow to hold a chip line. */
+@media (max-width: 52rem) {
+	.triggers {
+		grid-template-columns: minmax(0, 1fr);
+	}
 }
 
 /* --------------------------------------------------------------------------
@@ -1379,6 +1645,31 @@ body {
 	margin-block-start: 0.25rem;
 	font-size: var(--fs-300);
 	line-height: 1.55;
+}
+
+/* The same three steps read across instead of down, under the drawing they
+   describe. The numbers come off with the turn: side by side they are told by
+   reading order, and three numbered badges in a row compete with the plan for
+   the eye. The thread above is the seam the cohort strip uses, in whatever ink
+   the screen is already set in. */
+.steps--row {
+	grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+	gap: clamp(var(--sp-6), 4vw, var(--sp-10));
+	padding-block-start: var(--sp-6);
+	border-block-start: 2px dashed color-mix(in srgb, currentColor 22%, transparent);
+}
+
+/* `align-content: start` matters: the columns are stretched to the tallest of
+   the three, and without it the two auto rows share that slack and the short
+   column's paragraph floats away from its heading. */
+.steps--row .step {
+	grid-template-columns: 1fr;
+	align-content: start;
+	gap: 0;
+}
+
+.screen--dark .step strong {
+	color: var(--butter-deep);
 }
 
 /* --------------------------------------------------------------------------
