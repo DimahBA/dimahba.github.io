@@ -28,6 +28,13 @@
 	   instead — the same hue, walked most of the way to the ink. */
 	--accent-ink: color-mix(in oklab, var(--moss-deep) 40%, var(--ink));
 
+	/* Grey and white hair for the five drawn participants. Mixed off the
+	   faintest ink rather than picked as new greys, so they sit in the same
+	   warm family as the rest of the page — and so white hair on a paper card
+	   stays a shape instead of a hole. */
+	--hair-grey: color-mix(in srgb, var(--ink-faint) 80%, var(--paper));
+	--hair-white: color-mix(in srgb, var(--ink-faint) 40%, var(--paper));
+
 	/* One number, written by js/case-scroll.js and read only here. */
 	--progress: 0;
 }
@@ -1336,15 +1343,19 @@ body {
 
 /* --------------------------------------------------------------------------
    14. Triggers
-   Thirteen answers sorted into three tinted sheets and a verdict, on a 2×2
-   that fills one screen. The count is what the family is worth out of the
-   thirteen; the note under it says whether the headset can see that family at
-   all, which is what decides whether the design can do anything about it —
-   and is the reason the fourth card says what it says.
+   Thirteen answers sorted into three tinted sheets, side by side, with the
+   verdict as a band under all three. Three abreast rather than a 2×2: the
+   families are one comparison and want to be read across, and the conclusion
+   is not a fourth family — it is what the row adds up to, so it sits after it.
 
    Each sheet is `.paper.stitch` with two custom properties swapped: --tone is
    the ink the family is drawn in, --tone-bg the paper it is printed on. No
    new material, only a different fill and the page's own white thread.
+
+   The tints are the raw palette walked most of the way to `--paper`. At full
+   strength, moss beside butter beside peach on a cream page is three loud
+   sheets competing with the ground they sit on; diluted, they land at the same
+   value as each other and read as one deck in three inks.
    -------------------------------------------------------------------------- */
 
 /* Title left, the sentence it needs right — set on the title's last line
@@ -1367,20 +1378,21 @@ body {
 
 .triggers {
 	display: grid;
-	grid-template-columns: repeat(2, minmax(0, 1fr));
+	grid-template-columns: repeat(3, minmax(0, 1fr));
 	gap: clamp(var(--sp-4), 2.5vh, var(--sp-6));
+	align-items: stretch;
 }
 
 .trigger {
 	--card-bg: var(--tone-bg, var(--moss));
 	--stitch-color: var(--paper);
-	/* Cut slips of paper on a coloured sheet: the chip keeps its own pale
-	   stock and only picks up a breath of the family's hue. Saturated chips on
-	   a tint of the same hue turn the card into stripes. */
-	--chip-bg: color-mix(in srgb, var(--paper) 82%, var(--tone, var(--moss-deep)));
+	/* Cut slips of paper on a coloured sheet — the page's own stock, unmixed.
+	   Once the sheet is a dilute tint, a chip carrying a breath of the same hue
+	   has nothing left to separate it from the card it lies on. */
+	--chip-bg: var(--paper);
 	display: grid;
-	grid-template-columns: auto minmax(0, 1fr);
-	gap: var(--sp-3) var(--sp-5);
+	grid-template-rows: auto minmax(0, 1fr);
+	gap: var(--sp-4);
 	align-content: start;
 }
 
@@ -1393,12 +1405,14 @@ body {
 /* The family's hue walked most of the way to the ink, the same way --accent-ink
    is built at the top of this file: a count is information, and moss-deep on
    moss is a decoration. */
+/* Number and denominator on one baseline rather than stacked. Three narrow
+   columns cannot spare the second line, and "6 of 13" is one fact anyway. */
 .trigger__count {
-	display: grid;
-	align-content: start;
-	gap: 0.2em;
+	display: flex;
+	align-items: baseline;
+	gap: 0.4em;
 	font-family: var(--ff-display);
-	font-size: clamp(2.2rem, 1.5rem + 2vw, 3.25rem);
+	font-size: clamp(2.2rem, 1.5rem + 2vw, 3rem);
 	font-weight: 700;
 	line-height: 0.85;
 	letter-spacing: -0.03em;
@@ -1417,38 +1431,32 @@ body {
 	color: color-mix(in oklab, var(--tone, var(--moss-deep)) 35%, var(--ink-soft));
 }
 
-.trigger__note {
-	max-width: 36ch;
-	font-size: var(--fs-200);
-	line-height: 1.55;
-	color: var(--ink-soft);
-}
-
-.trigger__note b {
-	font-family: var(--ff-display);
-	color: var(--ink);
-}
-
+/* Not the same percentage three times: peach is the darkest of the three raw
+   tints and butter the palest against a cream ground, so each is diluted to
+   the point where the three sheets weigh the same. */
 .trigger--terrain {
 	--tone: var(--moss-deep);
-	--tone-bg: var(--moss);
+	--tone-bg: color-mix(in oklab, var(--moss) 68%, var(--paper));
 }
 .trigger--body {
 	--tone: var(--tan-deep);
-	--tone-bg: var(--butter);
+	--tone-bg: color-mix(in oklab, var(--butter) 60%, var(--paper));
 }
 .trigger--mind {
 	--tone: var(--peach-deep);
-	--tone-bg: var(--peach);
+	--tone-bg: color-mix(in oklab, var(--peach) 46%, var(--paper));
 }
 
-/* The fourth card is the conclusion, not a fourth family — slate, no thread,
-   no count, and the only thing on the screen that is not a colour of paper. */
+/* The conclusion, not a fourth family — it spans the row it is drawn from,
+   and it is slate: no thread, no count, and the only thing on the screen that
+   is not a colour of paper. One sentence, one column: the band carries nothing
+   else, so it has no reason to be divided. */
 .trigger--verdict {
 	--card-bg: var(--slate);
+	grid-column: 1 / -1;
 	grid-template-columns: minmax(0, 1fr);
-	gap: var(--sp-4);
-	align-content: center;
+	grid-template-rows: auto;
+	gap: var(--sp-3);
 	color: var(--cream);
 }
 
@@ -1456,16 +1464,18 @@ body {
 	color: color-mix(in srgb, var(--cream) 60%, transparent);
 }
 
-/* Wider measure than a pull normally gets: the card is already the measure,
-   and the short one breaks these four clauses into five ragged lines — which
-   is exactly the 25px that pushed the screen past one viewport. */
+/* Ranged left off the band's edge, on the same line as everything else on the
+   screen, and given the whole box: the band is already the measure, and a cap
+   inside it only leaves a hole on the right. Balanced so the short last line
+   is shared out rather than left hanging. */
 .trigger--verdict .screen__pull {
 	max-width: none;
-	font-size: clamp(1.1rem, 0.95rem + 0.6vw, 1.5rem);
+	font-size: clamp(1.05rem, 0.9rem + 0.55vw, 1.35rem);
+	text-wrap: balance;
 }
 
-/* One column, and the verdict last — at this width the 2×2 is two ribbons of
-   text too narrow to hold a chip line. */
+/* One column — at this width three families side by side are three ribbons of
+   text too narrow to hold a chip line. The verdict keeps its place last. */
 @media (max-width: 52rem) {
 	.triggers {
 		grid-template-columns: minmax(0, 1fr);
@@ -1674,25 +1684,247 @@ body {
 
 /* --------------------------------------------------------------------------
    18. The pilot
+   The study design is a comparison, so the screen is one: the photograph of
+   the room, then the same room three times with only its floor redrawn.
+
+   Everything here is sized to arrive in a single view. A method read half now
+   and half after a scroll is not read as a comparison at all — the reader has
+   to hold three conditions in their head at once to see that they differ in
+   one thing each. So the heading sits beside its paragraph instead of above
+   it, and the drawings are capped in viewport units rather than given a fixed
+   height: on a short window they hand their height back to the writing.
    -------------------------------------------------------------------------- */
 
-.setup {
+.pilot__head {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(16rem, 1fr));
-	gap: var(--sp-5);
-	align-items: start;
+	grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+	gap: var(--sp-4) clamp(1.5rem, 4vw, 3rem);
+	align-items: end;
 }
 
-.setup .plate img {
-	aspect-ratio: 303 / 338;
-	object-fit: contain;
-	background: var(--paper-warm);
+.pilot__head h2 {
+	max-width: 15ch;
+}
+
+.pilot__head .screen__body--lead {
+	max-width: 52ch;
+	font-size: var(--fs-400);
+}
+
+/* The photograph and the three panels it introduces, on one line. The photo
+   is given a shade under a panel's width: it is the evidence the drawings are
+   abstracted from, not a fourth condition. */
+.setup {
+	display: grid;
+	grid-template-columns: minmax(0, 1.25fr) minmax(0, 3.2fr);
+	gap: var(--sp-5);
+}
+
+/* Only in the page to hold a <defs>, so it must not take a line box of its
+   own — the same reasoning as the plan's defs above. */
+.floor__defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.setup__room,
+.condition {
+	--stitch-color: color-mix(in srgb, var(--tan-deep) 45%, transparent);
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
+	border-radius: var(--r-card);
+}
+
+/* Label and caption take what they need and the photograph takes the rest, so
+   the card ends flush with the panels beside it however tall the tallest of
+   them turns out to be. */
+.setup__room {
+	grid-template-rows: auto minmax(6rem, 1fr) auto;
+	align-content: stretch;
+}
+
+/* The lightbox wraps every figure's image in its own button, so the thing the
+   grid is actually sizing is the button. Both need the row's height, and both
+   need their automatic minimum taken off — left on, a grid item's minimum is
+   its content, and the photograph's intrinsic height would push this card
+   taller than the panels it is supposed to end level with. */
+.setup__room .zoom,
+.setup__room img {
+	display: block;
+	inline-size: 100%;
+	block-size: 100%;
+	min-block-size: 0;
+	border-radius: var(--r-sm);
+}
+
+.setup__room img {
+	object-fit: cover;
+	/* A portrait frame in a taller box loses its sides, and what it must not
+	   lose is the far half of the room: the cues on the floor and the label on
+	   the obstacles they are avoiding. So the crop is taken off the near left
+	   corner rather than evenly off both edges. */
+	object-position: 82% 64%;
+}
+
+.setup__room figcaption {
+	font-family: var(--ff-display);
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+.conditions {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	grid-template-rows: repeat(5, auto);
+	gap: var(--sp-3) var(--sp-5);
+}
+
+/* The five parts of a panel line up across all three of them, so the drawings
+   sit on one line, the titles sit on one line, and the rule under the writing
+   is a single rule crossing the row. Three panels that agree about where their
+   parts go read as one instrument; three that each pack from the top read as
+   three cards that happen to be adjacent. */
+@supports (grid-template-rows: subgrid) {
+	.condition {
+		grid-row: span 5;
+		grid-template-rows: subgrid;
+	}
+}
+
+.condition strong {
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	letter-spacing: -0.02em;
+}
+
+.condition p {
+	font-size: var(--fs-300);
+	line-height: 1.55;
+}
+
+/* What the condition was *for*, ruled off from what it was. It is the line
+   that makes each panel a method rather than a description, and run on from
+   the sentence above it at this measure the two read as one block. */
+.condition__goal {
+	padding-block-start: var(--sp-3);
+	border-block-start: 2px dashed
+		color-mix(in srgb, var(--tan-deep) 40%, transparent);
+	font-size: var(--fs-200);
+	line-height: 1.5;
+	color: var(--ink-soft);
+}
+
+/* Narrowed rather than letterboxed when the cap bites: an SVG held to a height
+   inside a wider box centres itself and leaves a band of empty paper down each
+   side, which on a card this size reads as a mistake. */
+.floor {
+	--floor-h: min(20vh, 10rem);
+	display: block;
+	inline-size: min(100%, calc(var(--floor-h) * 328 / 210));
+	aspect-ratio: 328 / 210;
+	margin-inline: auto;
+	border-radius: var(--r-sm);
+}
+
+/* Moss for a cue you step on, peach for where you are headed — the two inks
+   the plan on the build screen already uses for the same two things. */
+.floor__cues rect {
+	fill: var(--moss-deep);
+}
+
+/* The destination the first two conditions were handed, drawn the way it is
+   drawn on the study's own room plan: a diamond, filled. */
+.floor__goal {
+	fill: var(--peach-deep);
+}
+
+/* And the destination the third condition asks the patient to pick, drawn as
+   the ring the build screen labels "your target". Two markers rather than one
+   because the difference between the second condition and the third is only
+   who chose the spot, and a drawing that shows the same marker twice is not
+   showing that. */
+.floor__goal--chosen circle {
+	fill: none;
+	stroke: var(--peach-deep);
+	stroke-width: 2.5;
+}
+
+.floor__goal--chosen circle + circle {
+	fill: var(--peach-deep);
+	stroke: none;
+}
+
+/* Dotted, not dashed: a line of round dots reads as a direction being
+   indicated rather than as one more thing lying on the floor. */
+.floor__aim {
+	fill: none;
+	stroke: var(--peach-deep);
+	stroke-width: 2.2;
+	stroke-linecap: round;
+	stroke-dasharray: 0.1 8;
+}
+
+/* Four columns become four ribbons before the writing in them gives out, so
+   the photograph leaves the row first and takes the full measure on its own.
+   It is cropped wide there — a portrait frame at the whole width is half the
+   screen's height spent on the picture rather than on the comparison. */
+@media (max-width: 64rem) {
+	.setup {
+		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.setup__room {
+		grid-template-rows: auto auto auto;
+	}
+
+	.setup__room img {
+		aspect-ratio: 3 / 1;
+		block-size: auto;
+	}
+}
+
+/* One panel at a time. Three columns of writing this narrow break up before
+   they run out of width, and stacked there is nothing left for the subgrid to
+   line up — each panel is simply as tall as it needs to be. */
+@media (max-width: 44rem) {
+	.conditions {
+		grid-template-columns: minmax(0, 1fr);
+		grid-template-rows: none;
+		gap: var(--sp-5);
+	}
+
+	.condition {
+		grid-row: auto;
+		grid-template-rows: none;
+	}
 }
 
 .facts {
 	display: grid;
 	gap: var(--sp-4);
 	align-content: start;
+}
+
+/* The three cohort facts read across, above the participants they describe.
+   They are the things true of all five, so they sit outside the carousel
+   rather than repeating on every card. */
+.facts--row {
+	grid-auto-flow: column;
+	grid-auto-columns: 1fr;
+	gap: var(--sp-5);
+	max-width: 54rem;
+	padding-block-start: var(--sp-6);
+	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
+}
+
+@media (max-width: 34rem) {
+	.facts--row {
+		grid-auto-flow: row;
+		gap: var(--sp-4);
+	}
 }
 
 .fact dt {
@@ -1707,52 +1939,215 @@ body {
 	margin-block-start: 0.15rem;
 }
 
-/* Five paper slips, one per participant. The notes are shown, not hidden behind a
-   hover: two of the five getting little out of the system is the study's
-   finding, and a finding does not live in a tooltip. */
+/* One participant at a time, on a scroll-snap strip.
+
+   The strip is the mechanism, not a fallback for one: with scripting off it
+   is still a horizontal scroller you can drag, and on a touchscreen it is a
+   swipe without a line of code. The buttons below only call scrollBy and
+   scrollIntoView — which card is current is read back off scroll position by
+   an observer, never stored, so a drag and a chevron press cannot disagree
+   about where the strip is.
+
+   The notes are shown, not hidden behind a hover: two of the five getting
+   little out of the system is the study's finding, and a finding does not
+   live in a tooltip. */
 .cohort {
 	display: grid;
-	grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));
 	gap: var(--sp-4);
-	padding-block-start: var(--sp-5);
-	border-block-start: 2px dashed color-mix(in srgb, var(--tan-deep) 55%, transparent);
+	max-width: 54rem;
 }
 
-.person {
-	display: grid;
+/* Only in the page to hold a <defs>, so it must not take a line box. */
+.cohort__defs {
+	position: absolute;
+	width: 0;
+	height: 0;
+}
+
+.cohort__bar {
+	display: flex;
+	flex-wrap: wrap;
+	gap: var(--sp-3) var(--sp-4);
+	align-items: center;
+	justify-content: space-between;
+}
+
+.cohort__nav {
+	display: flex;
 	gap: var(--sp-2);
-	align-content: start;
-	border-radius: var(--r-card);
-	transition: translate var(--dur) var(--ease-spring),
-		box-shadow var(--dur) var(--ease-out);
+	align-items: center;
 }
 
-.person:hover {
-	translate: 0 -6px;
-	box-shadow: var(--shadow-lift);
+.cohort__arrow {
+	display: grid;
+	place-items: center;
+	width: 2.25rem;
+	height: 2.25rem;
+	border: 0;
+	border-radius: var(--r-pill);
+	background: var(--paper);
+	box-shadow: var(--sh-contact);
+	color: var(--ink-soft);
+	cursor: pointer;
+	transition: background var(--dur) var(--ease-out),
+		color var(--dur) var(--ease-out), translate var(--dur) var(--ease-spring);
 }
 
-.person__id {
+.cohort__arrow svg {
+	width: 1.125rem;
+	height: 1.125rem;
+}
+
+.cohort__arrow:hover:not(:disabled) {
+	background: var(--accent);
+	color: var(--paper);
+}
+
+/* Kept in place rather than removed at the ends of the strip: five dots that
+   reflow when you reach P5 is a worse answer than a button that says it has
+   nothing left to do. */
+.cohort__arrow:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.cohort__dots {
+	display: flex;
+	gap: var(--sp-1);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+}
+
+.cohort__dots button {
+	padding: 0.25rem var(--sp-2);
+	border: 0;
+	border-radius: var(--r-sm);
+	background: none;
 	font-family: var(--ff-display);
-	font-size: var(--fs-600);
+	font-size: var(--fs-200);
+	font-weight: 600;
+	letter-spacing: 0.04em;
+	color: var(--ink-faint);
+	cursor: pointer;
+	transition: background var(--dur) var(--ease-out),
+		color var(--dur) var(--ease-out);
+}
+
+.cohort__dots button:hover {
+	color: var(--accent-ink);
+}
+
+.cohort__dots button[aria-current="true"] {
+	background: var(--accent);
+	color: var(--paper);
+}
+
+.cohort__track {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 100%;
+	gap: var(--sp-4);
+	list-style: none;
+	margin: 0;
+	padding: 0;
+	overflow-x: auto;
+	scroll-snap-type: x mandatory;
+	overscroll-behavior-inline: contain;
+	scrollbar-width: none;
+	/* The glide between two participants lives here, so the buttons can stay
+	   a plain scrollBy and the reduced-motion rule below can switch it off in
+	   one place. */
+	scroll-behavior: smooth;
+}
+
+.cohort__track::-webkit-scrollbar {
+	display: none;
+}
+
+.patient {
+	display: grid;
+	grid-template-columns: minmax(6rem, 9rem) 1fr;
+	gap: clamp(var(--sp-4), 3vw, var(--sp-8));
+	align-items: center;
+	scroll-snap-align: center;
+	border-radius: var(--r-card);
+}
+
+.patient__fig {
+	display: grid;
+	place-items: center;
+}
+
+.patient__art {
+	width: 100%;
+	max-width: 8rem;
+	height: auto;
+}
+
+.patient__body {
+	display: grid;
+	gap: var(--sp-3);
+	align-content: start;
+}
+
+.patient__id {
+	font-family: var(--ff-display);
+	font-size: var(--fs-700);
 	font-weight: 700;
 	letter-spacing: -0.03em;
 	line-height: 1;
 }
 
-.person p {
-	font-size: var(--fs-200);
-	line-height: 1.5;
+.patient__result {
+	font-size: var(--fs-300);
+	line-height: 1.6;
 	color: var(--ink-soft);
+	max-width: 46ch;
 }
 
-.person--key {
+/* The outcome, said once in the display face. Underlined rather than boxed:
+   a badge would rank the five against each other, and "no measurable gain" is
+   as much a result as "26 → 10". */
+.patient__out {
+	justify-self: start;
+	padding-block-end: 0.15rem;
+	border-block-end: 2px solid var(--accent);
+	font-family: var(--ff-display);
+	font-size: var(--fs-400);
+	letter-spacing: -0.01em;
+	color: var(--accent-ink);
+}
+
+.patient__out b {
+	font-weight: 700;
+}
+
+.patient--key {
 	outline: 2px solid var(--accent);
 	outline-offset: -2px;
 }
 
-.person--key .eyebrow {
-	color: var(--accent-ink);
+@media (max-width: 38rem) {
+	.patient {
+		grid-template-columns: 1fr;
+		justify-items: center;
+		text-align: center;
+	}
+
+	.patient__body {
+		justify-items: center;
+	}
+
+	.patient .chips {
+		justify-content: center;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.cohort__track {
+		scroll-behavior: auto;
+	}
 }
 
 /* --------------------------------------------------------------------------

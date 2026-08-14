@@ -107,11 +107,17 @@
       <a class="rail__link" href="#pilot"
         ><span class="rail__dot"></span>The pilot</a
       >
+      <a class="rail__link" href="#people"
+        ><span class="rail__dot"></span>Who walked it</a
+      >
       <a class="rail__link" href="#results"
         ><span class="rail__dot"></span>What happened</a
       >
       <a class="rail__link" href="#next"
         ><span class="rail__dot"></span>What I'd change</a
+      >
+      <a class="rail__link" href="#vision"
+        ><span class="rail__dot"></span>The path forward</a
       >
     </nav>
 
@@ -857,7 +863,7 @@
           <div class="triggers__head" data-reveal>
             <div class="screen__head">
               <p class="eyebrow">Where it happens</p>
-              <h2>Thirteen triggers, three families</h2>
+              <h2>What causes freezing?</h2>
             </div>
             <p class="screen__body screen__body--lead">
               Participants were asked to list the triggers that cause freezing.
@@ -882,11 +888,6 @@
                   <li class="chip">uneven stone</li>
                   <li class="chip">narrow passages</li>
                 </ul>
-                <p class="trigger__note">
-                  <b>The headset can see all six.</b> They are geometry, and
-                  geometry is the one thing a depth map has before the wearer
-                  does.
-                </p>
               </div>
             </div>
             <div
@@ -903,11 +904,6 @@
                   <li class="chip">fatigue</li>
                   <li class="chip">the OFF hours between doses</li>
                 </ul>
-                <p class="trigger__note">
-                  <b>It can see one of the four.</b> Standing still is a pose a
-                  camera can read. Cold, fatigue and a dose wearing off are not
-                  — those it would have to be told.
-                </p>
               </div>
             </div>
             <div
@@ -923,11 +919,6 @@
                   <li class="chip">being rushed</li>
                   <li class="chip">being watched</li>
                 </ul>
-                <p class="trigger__note">
-                  <b>It can see none of the three.</b> The headset cannot detect
-                  being rushed or being watched. All it can do is not add to
-                  them.
-                </p>
               </div>
             </div>
 
@@ -936,7 +927,6 @@
               data-reveal
               style="--in-delay: 260ms"
             >
-              <p class="eyebrow">What it means for the design</p>
               <p class="screen__pull">
                 Anxiety and terrain are the most common triggers, we can reduce
                 anxiety by giving the user a clear path to follow and avoid
@@ -954,11 +944,7 @@
         <div class="screen__inner">
           <div class="screen__head" data-reveal>
             <p class="eyebrow">In their words</p>
-            <h2>Everyone had already invented their own cue.</h2>
-            <p class="screen__body">
-              Counting steps. Exaggerating stride. Breathing to a cadence. And
-              the one I keep thinking about: not looking at the obstacle.
-            </p>
+            <h2> 3 out of 12 patients found ways to overcome freezing.</h2>
           </div>
 
           <div class="deck">
@@ -1015,10 +1001,6 @@
             </blockquote>
           </div>
 
-          <p class="screen__note" data-reveal style="--in-delay: 260ms">
-            Verbatim responses, translated by me. Only two of twelve said music
-            helped at all.
-          </p>
         </div>
       </section>
 
@@ -1096,11 +1078,6 @@
             </figcaption>
           </figure>
 
-          <p class="screen__pull screen__pull--wide" data-reveal style="--in-delay: 240ms">
-            Nobody asked about accuracy or range. What worried them was looking
-            ill in public. The hard part of this project turned out to be the
-            thing on your face.
-          </p>
         </div>
       </section>
 
@@ -1534,28 +1511,50 @@
 
       <!-- ==========================================================
 			     The pilot
+			     The study is a comparison, so the screen is drawn as one:
+			     the room they walked, then the same room three times over
+			     with whatever was on its floor that time. Nothing, a path
+			     laid for them, a path they aimed themselves. The panels
+			     differ only where the conditions did, which is the claim
+			     the whole study rests on — three paragraphs side by side
+			     make the reader take that on trust.
+
+			     The three plans share one <symbol>, so the room, the
+			     furniture and the patient are authored once and cannot
+			     drift out of agreement; only the floor is drawn per panel.
+			     They are printed on the mesh the build screen defines
+			     above, since an id is document-wide.
+
+			     Still, unlike the plan on the build screen. That one is
+			     alone on its screen and re-targets to make its point;
+			     three of them beside the text they explain would be three
+			     things moving in the corner of the eye that is reading.
 			     ========================================================== -->
-      <section class="screen" id="pilot" data-screen>
+      <section class="screen screen--tight" id="pilot" data-screen>
         <div class="screen__inner">
-          <div class="screen__head" data-reveal>
-            <p class="eyebrow">08 — Pilot</p>
-            <h2>Five people, in a room with real furniture in it.</h2>
-            <p class="screen__body">
-              A 5 × 5 m physiotherapy room, a chair at the far end, and
-              furniture placed to get in the way. Everyone walked it three
-              times: with no help, then with a path fixed in advance, then with
-              the interactive one. Same order every time, so I could separate
-              what the walk costs alone, what a path adds, and what choosing
-              your own destination adds on top.
+          <!-- Title left, the sentence it needs right, both sat on the same
+					     baseline — the arrangement the triggers screen uses. Stacked,
+					     the heading and a four-line paragraph cost the strip below
+					     them the height its drawings need. -->
+          <div class="pilot__head" data-reveal>
+            <div class="screen__head">
+              <p class="eyebrow">08 — Pilot</p>
+              <h2>Testing the concept with patients</h2>
+            </div>
+            <p class="screen__body screen__body--lead">
+              The user study was a pilot with 5 participants, all of whom had
+              Parkinson's disease and experienced freezing of gait. The study
+              was conducted in a controlled environment, where participants
+              were asked to navigate the same path in 3 different conditions.
             </p>
           </div>
 
-          <div class="setup">
-            <figure
-              class="plate paper stitch"
-              data-reveal
-              style="--in-delay: 60ms"
-            >
+          <div class="setup" data-reveal style="--in-delay: 100ms">
+            <!-- The one photograph of the study, and the thing the three
+						     drawings are drawings of. It reads first and holds the
+						     column's height, so the plans beside it can be small. -->
+            <figure class="setup__room paper stitch">
+              <p class="eyebrow">The room</p>
               <img
                 src="static/projects/roomsetup-A.png"
                 width="303"
@@ -1565,28 +1564,161 @@
                 decoding="async"
               />
               <figcaption>
-                The room as the participant sees it, cues overlaid.
+                As the participant sees it, cues overlaid.
               </figcaption>
             </figure>
-            <figure
-              class="plate paper stitch"
-              data-reveal
-              style="--in-delay: 110ms"
-            >
-              <img
-                src="static/projects/roomsetup-B.png"
-                width="216"
-                height="338"
-                alt="Plan of the pilot study room showing the walking area and the furniture placed as obstacles."
-                loading="lazy"
-                decoding="async"
-              />
-              <figcaption>
-                The same room in plan — furniture placed as real obstacles, not
-                markers.
-              </figcaption>
-            </figure>
-            <dl class="facts" data-reveal style="--in-delay: 160ms">
+
+            <!-- Authored once: the room, its three obstacles, and the patient
+						     at the start of the walk. Everything a condition changes is
+						     drawn over the top of it. -->
+            <svg class="floor__defs" aria-hidden="true" focusable="false">
+              <defs>
+                <symbol id="pilot-room" viewBox="0 0 328 210">
+                  <rect
+                    x="3"
+                    y="3"
+                    width="322"
+                    height="204"
+                    rx="6"
+                    fill="color-mix(in srgb, var(--tan) 34%, var(--paper-warm))"
+                    stroke="color-mix(in srgb, var(--tan-deep) 50%, transparent)"
+                    stroke-width="2.5"
+                  />
+                  <rect
+                    x="3"
+                    y="3"
+                    width="322"
+                    height="204"
+                    rx="6"
+                    fill="url(#plan-mesh)"
+                  />
+                  <g class="floor__obstacles">
+                    <rect x="80" y="48" width="57" height="19" rx="3" fill="var(--tan)" />
+                    <rect x="151" y="104" width="18" height="58" rx="3" fill="var(--tan-deep)" opacity="0.55" />
+                    <rect x="206" y="63" width="58" height="19" rx="3" fill="var(--tan-deep)" opacity="0.78" />
+                  </g>
+                  <circle cx="35" cy="88" r="7.5" fill="var(--slate)" />
+                </symbol>
+              </defs>
+            </svg>
+
+            <ol class="conditions">
+              <li class="condition paper stitch">
+                <p class="eyebrow">Condition 01</p>
+                <svg
+                  class="floor"
+                  viewBox="0 0 328 210"
+                  role="img"
+                  aria-label="The room from above: three obstacles, the patient at the left, the destination marked at the right. The floor between them is bare."
+                >
+                  <use href="#pilot-room" width="328" height="210" />
+                  <path class="floor__goal" d="M301 37 L311 47 L301 57 L291 47 Z" />
+                </svg>
+                <strong>Natural walking</strong>
+                <p>The baseline. Patients walked the path unassisted.</p>
+                <p class="condition__goal">
+                  Measures where they freeze, how many steps, and how long it
+                  takes to cross the room.
+                </p>
+              </li>
+
+              <li class="condition paper stitch">
+                <p class="eyebrow">Condition 02</p>
+                <svg
+                  class="floor"
+                  viewBox="0 0 328 210"
+                  role="img"
+                  aria-label="The same room, with a line of short bars laid across the floor. The bars run from the patient, around all three obstacles, to the destination."
+                >
+                  <use href="#pilot-room" width="328" height="210" />
+                  <g class="floor__cues">
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(45.0 88.3) rotate(1.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(71.0 88.9) rotate(0.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(97.0 88.7) rotate(-1.6)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(123.0 87.9) rotate(-2.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(148.9 86.4) rotate(-0.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(174.4 90.8) rotate(19.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(199.1 98.6) rotate(11.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(224.8 102.6) rotate(4.9)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(250.7 101.8) rotate(-8.9)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(273.7 90.9) rotate(-49.2)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(287.9 69.2) rotate(-56.5)" />
+                  </g>
+                  <path class="floor__goal" d="M301 37 L311 47 L301 57 L291 47 Z" />
+                </svg>
+                <strong>Fixed path</strong>
+                <p>
+                  Patients walked the path in the headset, following cues laid
+                  on the floor for them.
+                </p>
+                <p class="condition__goal">
+                  Evaluates the effectiveness of virtual visual cues.
+                </p>
+              </li>
+
+              <li class="condition paper stitch">
+                <p class="eyebrow">Condition 03</p>
+                <svg
+                  class="floor"
+                  viewBox="0 0 328 210"
+                  role="img"
+                  aria-label="The same room again. A dashed line runs from the patient to the destination — the patient pointing at it — and the bars are laid along the floor beneath."
+                >
+                  <use href="#pilot-room" width="328" height="210" />
+                  <g class="floor__cues">
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(45.0 88.3) rotate(1.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(71.0 88.9) rotate(0.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(97.0 88.7) rotate(-1.6)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(123.0 87.9) rotate(-2.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(148.9 86.4) rotate(-0.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(174.4 90.8) rotate(19.8)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(199.1 98.6) rotate(11.5)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(224.8 102.6) rotate(4.9)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(250.7 101.8) rotate(-8.9)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(273.7 90.9) rotate(-49.2)" />
+                    <rect x="-2.75" y="-9" width="5.5" height="18" rx="2" transform="translate(287.9 69.2) rotate(-56.5)" />
+                  </g>
+                  <!-- The two things this condition adds. The patient aiming —
+									     drawn to clear the top of the far obstacle, so it is
+									     not claiming you can point through furniture — and the
+									     build screen's own "your target" ring in place of the
+									     diamond, which is the marker that means you picked it. -->
+                  <path class="floor__aim" d="M44 83 L291 49" />
+                  <g class="floor__goal floor__goal--chosen">
+                    <circle cx="301" cy="47" r="9" />
+                    <circle cx="301" cy="47" r="3" />
+                  </g>
+                </svg>
+                <strong>Interactive path</strong>
+                <p>
+                  Patients pointed at the destination themselves, then followed
+                  the cues laid on the floor.
+                </p>
+                <p class="condition__goal">
+                  Tests whether the controls and interactivity constitute a
+                  cognitive load that makes the cues less effective.
+                </p>
+              </li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+			     The five participants
+			     A screen of its own, but deliberately not a numbered one — the
+			     same call the triggers screen makes above. It is still the pilot
+			     talking, so it keeps the pilot's number and its background, and
+			     the screens that follow keep theirs.
+			     ========================================================== -->
+      <section class="screen" id="people" data-screen>
+        <div class="screen__inner">
+            <div class="screen__head" data-reveal>
+              <p class="eyebrow">Who walked it</p>
+              <h2>Five patients, five different results.</h2>
+            </div>
+
+            <dl class="facts facts--row" data-reveal style="--in-delay: 80ms">
               <div class="fact">
                 <dt>66 – 84</dt>
                 <dd class="eyebrow">age range</dd>
@@ -1600,52 +1732,260 @@
                 <dd class="eyebrow">had used AR before</dd>
               </div>
             </dl>
-          </div>
 
-          <ul class="cohort" data-reveal style="--in-delay: 200ms">
-            <li class="person paper stitch">
-              <strong class="person__id">P1</strong>
-              <span class="eyebrow">Did not complete</span>
-              <p>
-                Recently diagnosed with cognitive impairment. Couldn't complete
-                the interactive condition — choosing a destination is itself a
-                cognitive load.
-              </p>
-            </li>
-            <li class="person paper stitch">
-              <strong class="person__id">P2</strong>
-              <span class="eyebrow">Dystonia</span>
-              <p>
-                One of the three who gained most. The cue gave the first step
-                somewhere to land.
-              </p>
-            </li>
-            <li class="person paper stitch">
-              <strong class="person__id">P3</strong>
-              <span class="eyebrow">Freezing</span>
-              <p>
-                Freezes at doorways unassisted. Walked the same route with the
-                path on and stopped less.
-              </p>
-            </li>
-            <li class="person person--key paper stitch">
-              <strong class="person__id">P4</strong>
-              <span class="eyebrow">Bradykinetic gait</span>
-              <p>
-                Crossed the room in 10 steps with guidance where he'd taken 26
-                without — shuffle to full stride. Said knowing where the path
-                went reduced his anxiety about the obstacles, and he froze less.
-              </p>
-            </li>
-            <li class="person paper stitch">
-              <strong class="person__id">P5</strong>
-              <span class="eyebrow">Uses a walker daily</span>
-              <p>
-                Gained almost nothing. Her difficulty was in producing the
-                movement at all, so there was nothing for a cue to unlock.
-              </p>
-            </li>
-          </ul>
+            <!-- One participant at a time. Five slips side by side made every
+				     note a caption — three lines each, and the two who got nothing
+				     out of the system read as footnotes to the three who did. Given
+				     the whole width, each of them gets a face and a result.
+
+				     The track is a scroll-snap strip, so it is a working carousel
+				     with the script off and swipes on a phone for free. The buttons
+				     only scroll it; which card you are on is read back off the
+				     scroll position rather than held in a variable, so dragging the
+				     strip and pressing a chevron cannot disagree. -->
+            <div class="cohort" data-cohort data-reveal style="--in-delay: 140ms">
+              <!-- One set of parts for all five. The body is shared and the
+					     figures differ by four custom properties and a hairstyle,
+					     which is what keeps five characters down to five lines of
+					     markup each. -->
+              <svg class="cohort__defs" aria-hidden="true" focusable="false">
+                <defs>
+                  <symbol id="pt-hair-short" viewBox="0 0 120 168">
+                    <circle cx="60" cy="37" r="26" fill="var(--hair)" />
+                  </symbol>
+                  <symbol id="pt-hair-bob" viewBox="0 0 120 168">
+                    <g fill="var(--hair)">
+                      <circle cx="60" cy="37" r="26" />
+                      <ellipse cx="37" cy="52" rx="9" ry="19" />
+                      <ellipse cx="83" cy="52" rx="9" ry="19" />
+                    </g>
+                  </symbol>
+                  <symbol id="pt-hair-bun" viewBox="0 0 120 168">
+                    <g fill="var(--hair)">
+                      <circle cx="60" cy="37" r="26" />
+                      <circle cx="60" cy="13" r="10" />
+                    </g>
+                  </symbol>
+                  <!-- Side hair only. Nothing is being said by it beyond
+							     "these were people in their seventies". -->
+                  <symbol id="pt-hair-thin" viewBox="0 0 120 168">
+                    <g fill="var(--hair)">
+                      <ellipse cx="38" cy="45" rx="8" ry="13" />
+                      <ellipse cx="82" cy="45" rx="8" ry="13" />
+                    </g>
+                  </symbol>
+
+                  <symbol id="pt-body" viewBox="0 0 120 168">
+                    <g fill="var(--wear)">
+                      <rect x="26" y="74" width="12" height="42" rx="6" />
+                      <rect x="82" y="74" width="12" height="42" rx="6" />
+                    </g>
+                    <g fill="var(--slate)">
+                      <rect x="45" y="114" width="13" height="40" rx="6.5" />
+                      <rect x="62" y="114" width="13" height="40" rx="6.5" />
+                    </g>
+                    <g fill="var(--ink-soft)">
+                      <ellipse cx="51.5" cy="157" rx="10" ry="6" />
+                      <ellipse cx="68.5" cy="157" rx="10" ry="6" />
+                    </g>
+                    <rect x="36" y="66" width="48" height="54" rx="18" fill="var(--wear)" />
+                    <circle cx="32" cy="118" r="6.5" fill="var(--skin)" />
+                    <circle cx="88" cy="118" r="6.5" fill="var(--skin)" />
+                    <rect x="53" y="58" width="14" height="14" rx="5" fill="var(--skin)" />
+                    <circle cx="60" cy="42" r="24.5" fill="var(--skin)" />
+                    <g fill="var(--peach-deep)" opacity="0.45">
+                      <ellipse cx="42" cy="50" rx="5" ry="3.4" />
+                      <ellipse cx="78" cy="50" rx="5" ry="3.4" />
+                    </g>
+                    <g fill="var(--ink)">
+                      <circle cx="51" cy="43" r="2.6" />
+                      <circle cx="69" cy="43" r="2.6" />
+                    </g>
+                    <path
+                      d="M53 52q7 6 14 0"
+                      fill="none"
+                      stroke="var(--ink)"
+                      stroke-width="2.4"
+                      stroke-linecap="round"
+                    />
+                  </symbol>
+
+                  <symbol id="pt-specs" viewBox="0 0 120 168">
+                    <g fill="none" stroke="var(--ink-soft)" stroke-width="2.2" stroke-linecap="round">
+                      <circle cx="51" cy="43" r="8" />
+                      <circle cx="69" cy="43" r="8" />
+                      <path d="M59 43h2M43 40l-7-2M77 40l7-2" />
+                    </g>
+                  </symbol>
+
+                  <!-- Drawn over the hands rather than behind them: at this size
+							     a bar crossing the fingers reads as a grip, and a bar
+							     hidden behind the body reads as a table. -->
+                  <symbol id="pt-walker" viewBox="0 0 120 168">
+                    <g fill="var(--tan-deep)">
+                      <rect x="20" y="112" width="80" height="5.5" rx="2.75" />
+                      <rect x="22" y="112" width="5.5" height="40" rx="2.75" />
+                      <rect x="94.5" y="112" width="5.5" height="40" rx="2.75" />
+                      <rect x="22" y="130" width="78" height="4.5" rx="2.25" />
+                    </g>
+                    <g fill="var(--slate)">
+                      <circle cx="24.75" cy="153" r="6" />
+                      <circle cx="97.25" cy="153" r="6" />
+                    </g>
+                  </symbol>
+                </defs>
+              </svg>
+
+              <div class="cohort__bar">
+                <p class="eyebrow">The five participants</p>
+                <div class="cohort__nav">
+                  <button
+                    class="cohort__arrow"
+                    type="button"
+                    data-cohort-step="-1"
+                    aria-label="Previous participant"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M15 19l-7-7 7-7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                  <ol class="cohort__dots" data-cohort-dots>
+                    <li><button type="button" data-cohort-go="0">P1</button></li>
+                    <li><button type="button" data-cohort-go="1">P2</button></li>
+                    <li><button type="button" data-cohort-go="2">P3</button></li>
+                    <li><button type="button" data-cohort-go="3">P4</button></li>
+                    <li><button type="button" data-cohort-go="4">P5</button></li>
+                  </ol>
+                  <button
+                    class="cohort__arrow"
+                    type="button"
+                    data-cohort-step="1"
+                    aria-label="Next participant"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <path d="M9 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+
+              <ul class="cohort__track" data-cohort-track>
+                <li class="patient paper stitch" data-patient>
+                  <figure class="patient__fig">
+                    <svg class="patient__art" viewBox="0 0 120 168" role="img" aria-label="Drawing of an older woman with white hair in a bun and glasses."
+                         style="--skin: var(--peach); --hair: var(--hair-white); --wear: var(--sage)">
+                      <use href="#pt-hair-bun" />
+                      <use href="#pt-body" />
+                      <use href="#pt-specs" />
+                    </svg>
+                  </figure>
+                  <div class="patient__body">
+                    <p class="patient__id">P1</p>
+                    <ul class="chips">
+                      <li class="chip">Hoehn &amp; Yahr 3</li>
+                      <li class="chip">cognitive impairment</li>
+                    </ul>
+                    <p class="patient__result">
+                      Recently diagnosed with cognitive impairment. Couldn't
+                      complete the interactive condition — choosing a destination
+                      is itself a cognitive load.
+                    </p>
+                    <p class="patient__out">Did not complete</p>
+                  </div>
+                </li>
+
+                <li class="patient paper stitch" data-patient>
+                  <figure class="patient__fig">
+                    <svg class="patient__art" viewBox="0 0 120 168" role="img" aria-label="Drawing of an older man with grey side hair."
+                         style="--skin: var(--tan); --hair: var(--hair-grey); --wear: var(--butter-deep)">
+                      <use href="#pt-hair-thin" />
+                      <use href="#pt-body" />
+                    </svg>
+                  </figure>
+                  <div class="patient__body">
+                    <p class="patient__id">P2</p>
+                    <ul class="chips">
+                      <li class="chip">Hoehn &amp; Yahr 3</li>
+                      <li class="chip">dystonia</li>
+                    </ul>
+                    <p class="patient__result">
+                      One of the three who gained most. The cue gave the first
+                      step somewhere to land.
+                    </p>
+                    <p class="patient__out">Gained most</p>
+                  </div>
+                </li>
+
+                <li class="patient paper stitch" data-patient>
+                  <figure class="patient__fig">
+                    <svg class="patient__art" viewBox="0 0 120 168" role="img" aria-label="Drawing of an older woman with a grey bob."
+                         style="--skin: var(--peach); --hair: var(--hair-grey); --wear: var(--peach-deep)">
+                      <use href="#pt-hair-bob" />
+                      <use href="#pt-body" />
+                    </svg>
+                  </figure>
+                  <div class="patient__body">
+                    <p class="patient__id">P3</p>
+                    <ul class="chips">
+                      <li class="chip">Hoehn &amp; Yahr 3</li>
+                      <li class="chip">freezes at doorways</li>
+                    </ul>
+                    <p class="patient__result">
+                      Freezes at doorways unassisted. Walked the same route with
+                      the path on and stopped less.
+                    </p>
+                    <p class="patient__out">Froze less</p>
+                  </div>
+                </li>
+
+                <li class="patient patient--key paper stitch" data-patient>
+                  <figure class="patient__fig">
+                    <svg class="patient__art" viewBox="0 0 120 168" role="img" aria-label="Drawing of an older man with short grey hair."
+                         style="--skin: var(--tan); --hair: var(--hair-grey); --wear: var(--moss-deep)">
+                      <use href="#pt-hair-short" />
+                      <use href="#pt-body" />
+                    </svg>
+                  </figure>
+                  <div class="patient__body">
+                    <p class="patient__id">P4</p>
+                    <ul class="chips">
+                      <li class="chip">Hoehn &amp; Yahr 3</li>
+                      <li class="chip">bradykinetic gait</li>
+                    </ul>
+                    <p class="patient__result">
+                      Crossed the room in 10 steps with guidance where he'd taken
+                      26 without — shuffle to full stride. Said knowing where the
+                      path went reduced his anxiety about the obstacles, and he
+                      froze less.
+                    </p>
+                    <p class="patient__out"><b>26 → 10</b> steps across the room</p>
+                  </div>
+                </li>
+
+                <li class="patient paper stitch" data-patient>
+                  <figure class="patient__fig">
+                    <svg class="patient__art" viewBox="0 0 120 168" role="img" aria-label="Drawing of an older woman with short white hair, holding a wheeled walking frame."
+                         style="--skin: var(--peach); --hair: var(--hair-white); --wear: var(--moss)">
+                      <use href="#pt-hair-short" />
+                      <use href="#pt-body" />
+                      <use href="#pt-walker" />
+                    </svg>
+                  </figure>
+                  <div class="patient__body">
+                    <p class="patient__id">P5</p>
+                    <ul class="chips">
+                      <li class="chip">Hoehn &amp; Yahr 3</li>
+                      <li class="chip">uses a walker daily</li>
+                    </ul>
+                    <p class="patient__result">
+                      Gained almost nothing. Her difficulty was in producing the
+                      movement at all, so there was nothing for a cue to unlock.
+                    </p>
+                    <p class="patient__out">No measurable gain</p>
+                  </div>
+                </li>
+              </ul>
+            </div>
         </div>
       </section>
 
@@ -1756,6 +2096,38 @@
               </p>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+				     The path forward
+				     ========================================================== -->
+      <section class="screen screen--sage" id="vision" data-screen>
+        <div class="screen__inner">
+          <div class="screen__head" data-reveal>
+            <p class="eyebrow">11 — The path forward</p>
+            <h2 class="screen__title--lg">The same cues. Without the headset.</h2>
+          </div>
+
+          <p class="screen__body" data-reveal style="--in-delay: 80ms">
+            The pilot showed that cueing works, and that patients can choose
+            their own destinations and walk to them. What it couldn't test is
+            whether they would use this daily — not when the device on their
+            face is the thing they object to most.
+          </p>
+
+          <p class="screen__body" data-reveal style="--in-delay: 120ms">
+            Light AR glasses are a different proposition. Wearable through a
+            morning, discrete enough not to attract attention, light enough not
+            to add to the fatigue of a condition that already costs everything.
+            The pathfinding logic doesn't change — only the form factor does.
+          </p>
+
+          <p class="screen__pull" data-reveal style="--in-delay: 160ms">
+            For someone with Parkinson's, being able to walk to the kitchen,
+            the front door, or anywhere they choose — without calling for help,
+            without a bad freeze, without fear — is not a feature. It is autonomy.
+          </p>
         </div>
       </section>
     </main>
