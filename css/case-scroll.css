@@ -2231,8 +2231,7 @@ body {
 @media print {
 	.progress,
 	.rail,
-	.readon,
-	.paw-trail {
+	.readon {
 		display: none;
 	}
 

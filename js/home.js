@@ -4,7 +4,6 @@ import { createIntro } from "./modules/intro.js";
 import { initCards } from "./modules/cards.js";
 import { initJar } from "./modules/jar.js";
 import { initNav } from "./modules/nav.js";
-import { initPawTrail } from "./modules/paws.js";
 import { revealOnce, watch } from "./modules/reveal.js";
 import { initClock } from "./modules/shelf.js";
 
@@ -16,10 +15,6 @@ const TYPE_AFTER = 700;
 
 const yearSlot = $("[data-year]");
 if (yearSlot) yearSlot.textContent = String(new Date().getFullYear());
-
-/* --------------------------------------------------------------------- cat */
-
-initPawTrail();
 
 /* --------------------------------------------------------------------- nav */
 
@@ -70,26 +65,21 @@ const qaSection = $("[data-qa-section]");
 const qaPieces = [$('[data-chibi="qa"]'), $("[data-qa-bubble]")];
 
 /* Nothing types in the jar. Her voice is in the speech bubble, and the paper
-   just has writing on it — a note you unfold is already written, and watching
-   ink appear on it a character at a time would make the fold wait for the
-   sentence instead of the other way round.
-
-   `pulls` and `sheets` are in DOM order, which is fold order: index 0 is the
-   cover, 1 the answer, 2 the drawing. js/modules/jar.js indexes them by fold
-   depth on that basis. */
+   just has writing on it — a letter you unfold is already written, and
+   watching ink appear on it a character at a time would make the fold wait
+   for the sentence instead of the other way round. */
 const jar = initJar({
 	stage: $("[data-qa-stage]"),
 	slips: $("[data-jar-slips]"),
 	note: $("[data-qa-note]"),
 	bubble: $("[data-qa-bubble]"),
 	ui: {
+		from: $("[data-qa-from]"),
 		question: $("[data-qa-question]"),
+		cover: $("[data-qa-cover]"),
 		answer: $("[data-qa-answer]"),
+		ps: $("[data-qa-ps]"),
 		art: $("[data-qa-art]"),
-		caption: $("[data-qa-caption]"),
-		away: $("[data-qa-away]"),
-		pulls: $$("[data-qa-unfold]"),
-		sheets: $$("[data-qa-note] .note__sheet"),
 	},
 });
 

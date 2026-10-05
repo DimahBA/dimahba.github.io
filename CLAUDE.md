@@ -70,8 +70,6 @@ The look is flat, drawn and still — a picture-book café, not a UI kit.
 - **The project cards are one deck.** Per-project ornaments (a foil frame, an
   award seal, a theme colour) may sit *on* a card; they never change its box —
   same size, same padding, same radius, same alignment as every sibling.
-- **The paw trail is small, faint and sparse**, and switches off over anything
-  clickable. If a change makes it busier, it's wrong.
 - Motion is short and eased, respects `prefers-reduced-motion`, and never
   loops in the reader's peripheral vision.
 

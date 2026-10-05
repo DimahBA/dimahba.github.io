@@ -19,7 +19,6 @@
 import { $, $$ } from "./lib/dom.js";
 import { revealOnce } from "./modules/reveal.js";
 import { mountLightbox, makeZoomable } from "./modules/lightbox.js";
-import { initPawTrail } from "./modules/paws.js";
 
 /* Where in the viewport a screen counts as the one you are reading. Above the
    middle, because a screen you have scrolled past the top of is the one you
@@ -170,5 +169,3 @@ if (scroller) {
 		eyebrow: "Adaptive AR pathfinding for Parkinson's disease",
 	});
 }
-
-initPawTrail();

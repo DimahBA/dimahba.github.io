@@ -252,11 +252,12 @@
                 loading="lazy"
               />
 
-              <!-- The jar itself is a drawing; only what is *inside* the
-							     glass is drawn in CSS. The cavity comes first so the art
-							     lies over it — the lid overlapping the topmost slip and
-							     the walls cutting off the widest one is what puts the
-							     paper inside the jar rather than in front of it. -->
+              <!-- The jar is a drawing in two layers with the paper between
+							     them: the far side of the glass is painted behind the
+							     slips (components.css §10), and this image — the near
+							     wall, its reflections, the cloth and the shadow — lies
+							     over them. The reflections falling across the paper is
+							     what puts it inside the jar rather than in front of it. -->
               <div class="jar">
                 <div class="jar__cavity">
                   <!-- `role="list"` is not redundant: `list-style: none`
@@ -269,93 +270,86 @@
                     data-jar-slips
                     aria-label="Folded questions in the jar"
                   ></ul>
-                  <div class="jar__shine" role="presentation"></div>
                 </div>
                 <img
                   class="jar__art"
-                  src="static/PixelArt/Jar.png"
+                  src="static/PixelArt/jar-front.png"
                   alt=""
                   role="presentation"
-                  width="549"
-                  height="454"
+                  width="84"
+                  height="84"
                 />
               </div>
 
-              <!-- The note is one square sheet folded in half twice, so
-							     it opens into four quadrants around a cross of creases.
-							     The top-left quadrant is the cover — the question, and the
-							     only thing you can read through the glass.
+              <!-- The note is a letter folded in three: the bottom third
+							     folded up, the top third folded down over it. It opens in
+							     the reverse order, top flap first, because that is the
+							     only order paper comes apart in.
 
-							     Fold 1 swings the right half out on the vertical crease.
-							     Fold 2 swings the bottom half down on the horizontal one.
-							     That is the reverse of the order it was folded in, which is
-							     the only order paper can be opened in.
+							     Three panels, three beats. The top flap is the letterhead
+							     and the question; the middle panel, which never moves, is
+							     the answer; the bottom flap is the drawing, as a stamp,
+							     and a P.S.
 
-							     The right half spans both rows and the bottom half spans
-							     both columns, so the two halves cross — and no element can
-							     be a child of both. The bottom-right quadrant is therefore
-							     nested inside the top-right one, where it rides the first
-							     fold, and shares the second fold's class with the
-							     bottom-left one so that the pair always swings at the same
-							     angle and reads as one unbroken band of paper.
+							     The markup is in reading order, top to bottom. Which flap
+							     lies over which when it is shut is a z-index in
+							     components.css §9b, not the DOM's business.
 
-							     Each flap carries two faces: `.note__sheet` is the printed
-							     side and `.note__lining` is the blank back, turned away with
-							     rotateY. Both hide their own backface, so which of the two
-							     you are looking at falls out of the geometry rather than
-							     being timed — a flap shows its underside through the first
-							     half of its swing and its printed side through the second,
-							     in both directions, with nothing to keep in sync.
+							     Each flap carries two faces: `.note__face` is the printed
+							     side and `.note__back` the outside, turned over about the
+							     crease. The top flap's outside is the cover — the same
+							     picture as the slip in the jar, written with the slip's own
+							     class, so the letter that comes out is visibly the slip
+							     that went in. It repeats the title, so it is hidden from
+							     assistive technology; the heading is the real one.
 
-							     The cover has no lining because it never turns over. -->
-              <article class="note" data-qa-note>
-                <div class="note__quad note__quad--q">
-                  <div class="note__sheet">
-                    <h3 class="note__q" data-qa-question></h3>
-                    <button class="note__pull" type="button" data-qa-unfold>
-                      unfold<span class="note__pull-arrow">▶</span>
-                    </button>
-                    <button
-                      class="note__away"
-                      type="button"
-                      data-qa-away
-                      aria-label="Fold it up and put it back in the jar"
-                    >
-                      ×
-                    </button>
+							     Everything here is an empty shell: js/modules/jar.js fills
+							     it from js/data/qa.js when a slip is taken. -->
+              <article
+                class="note"
+                data-qa-note
+                tabindex="-1"
+                aria-labelledby="qa-note-title"
+              >
+                <div class="note__flap note__flap--top">
+                  <div class="note__face">
+                    <p class="note__from" data-qa-from></p>
+                    <h3
+                      class="note__q"
+                      id="qa-note-title"
+                      data-qa-question
+                    ></h3>
+                    <!-- There is no close button: clicking the letter again
+										     folds it back. A sighted reader finds that by trying it;
+										     this says it to everyone else, who cannot. -->
+                    <p class="visually-hidden">
+                      Press Enter or Escape to fold it back into the jar.
+                    </p>
                   </div>
-
-                  <!-- top right, across the vertical crease -->
-                  <div class="note__quad note__quad--a">
-                    <div class="note__lining note__lining--v"></div>
-                    <div class="note__sheet">
-                      <p class="note__text" data-qa-answer></p>
-                      <button class="note__pull" type="button" data-qa-unfold>
-                        there's a doodle<span class="note__pull-arrow">▼</span>
-                      </button>
-                    </div>
-
-                    <!-- bottom right: nested here so it rides the fold
-										     above, and classed with the fold below -->
-                    <div class="note__quad note__quad--caption">
-                      <div class="note__lining note__lining--h"></div>
-                      <div class="note__sheet">
-                        <p class="note__caption" data-qa-caption></p>
-                      </div>
-                    </div>
+                  <div class="note__back note__cover" aria-hidden="true">
+                    <span class="slip__q" data-qa-cover></span>
                   </div>
+                </div>
 
-                  <!-- bottom left, across the horizontal crease -->
-                  <div class="note__quad note__quad--art">
-                    <div class="note__lining note__lining--h"></div>
-                    <div class="note__sheet">
-                      <div
-                        class="note__art"
-                        data-qa-art
-                        role="presentation"
-                      ></div>
-                    </div>
+                <div class="note__panel">
+                  <div class="note__face">
+                    <p class="note__text" data-qa-answer></p>
                   </div>
+                </div>
+
+                <div class="note__flap note__flap--bottom">
+                  <div class="note__face">
+                    <div
+                      class="note__stamp"
+                      data-qa-art
+                      role="presentation"
+                    ></div>
+                    <p class="note__ps">
+                      <span class="note__ps-mark">P.S.</span>
+                      <span data-qa-ps></span>
+                    </p>
+                  </div>
+                  <div class="note__back" aria-hidden="true"></div>
                 </div>
               </article>
             </div>
@@ -401,73 +395,52 @@
             <details class="qa-note">
               <summary>Education</summary>
               <p>
-                I'm a Master's student in IT with a focus on Computer Graphics
-                and Human-Computer interactions. I love exploring how technology
-                can create beautiful experiences, especially in AR settings.
+                I completed a bachelor's degree in computer science, then
+                followed a master's program at
+                <a href="https://www.ip-paris.fr/en" rel="noopener">IP Paris</a>
+                to pursue my passion: interaction design and XR.
               </p>
-              <details class="qa-note qa-note--sub">
-                <summary>Which university?</summary>
-                <p>I'm studying at Institut Polytechnique de Paris!</p>
-              </details>
-              <details class="qa-note qa-note--sub">
-                <summary>Key skills?</summary>
-                <p>
-                  I've developed skills in Unity 3D, C++, and JavaScript. And I
-                  learned a lot about usability and design throughout my
-                  studies.
-                </p>
-              </details>
+              <p class="qa-note__ps">P.S. fuelled by a lot of coffee ~</p>
+            </details>
+            <details class="qa-note">
+              <summary>Experience</summary>
+              <p>
+                For my end-of-studies internship, I joined a cybersecurity
+                startup as a UI/UX engineer. I designed new features from
+                scratch and improved the platform's overall UX.
+              </p>
+              <p class="qa-note__ps">
+                P.S. I also designed its complex data visualizations ✦
+              </p>
             </details>
             <details class="qa-note">
               <summary>Projects</summary>
-              <p>I have lots of projects .. Check them out below !</p>
-              <details class="qa-note qa-note--sub">
-                <summary>Favorite project?</summary>
-                <p>
-                  My favorite project is the AR Pathfinding system for
-                  Parkinson's patients. It was my personal research project
-                  where I got to see a real impact on patients who suffered from
-                  mobility issues. It was an example of how technology can make
-                  people's lives a bit better and it's what I would love to work
-                  on in the future.
-                </p>
-              </details>
-              <details class="qa-note qa-note--sub">
-                <summary>Future plans?</summary>
-                <p>
-                  I want to explore more AR/VR applications in healthcare and
-                  education. The potential to create accessible, helpful
-                  technology really motivates me!
-                </p>
-              </details>
+              <p>
+                My biggest one is an
+                <a href="project-ar-pathfinding.html"
+                  >AR guidance system for people with Parkinson's</a
+                >: it lays a walking path across their own floor. For more
+                projects, <a href="#work">check out the table below</a> ↓
+              </p>
+              <p class="qa-note__ps">
+                P.S. it won Best Poster at IEEE ISMAR 2025 !
+              </p>
             </details>
             <details class="qa-note">
               <summary>Music</summary>
-              <p>I love music .. what would you like to know ?</p>
-              <details class="qa-note qa-note--sub">
-                <summary>What instruments?</summary>
-                <p>I play piano, guitar, and violin!</p>
-              </details>
-              <details class="qa-note qa-note--sub">
-                <summary>Favorite genres?</summary>
-                <p>I love Heavy Metal and Electro.</p>
-              </details>
+              <p>
+                I love music! I play piano and guitar, and my playlists swing
+                between heavy metal, hard rock and techno.
+              </p>
+              <p class="qa-note__ps">P.S. the louder, the better ♪</p>
             </details>
             <details class="qa-note">
               <summary>Cats or dogs?</summary>
-              <p>Definitely cats! 🐱</p>
-              <details class="qa-note qa-note--sub">
-                <summary>Do you have a cat?</summary>
-                <p>Sadly not, I've never had one .. But I can't wait !</p>
-              </details>
-              <details class="qa-note qa-note--sub">
-                <summary>Why cats?</summary>
-                <p>
-                  Cats are like elegant code - efficient, independent, and
-                  sometimes unpredictable! They respect your space but show
-                  affection on their own terms.
-                </p>
-              </details>
+              <p>
+                Definitely cats! They make you work for their affection, and
+                that's exactly what makes it worth it.
+              </p>
+              <p class="qa-note__ps">P.S. still waiting for mine ~</p>
             </details>
           </div>
         </div>

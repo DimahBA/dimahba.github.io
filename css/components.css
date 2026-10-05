@@ -795,56 +795,78 @@ html.is-dragging * {
 /* --------------------------------------------------------------------------
    10. The jar of folded questions
 
-   A glass jar with four folded slips fanned inside it, and the note that
+   A glass jar with five folded slips fanned inside it, and the letter that
    comes out of it. Only the look of those two objects lives here — where they
    sit, and the poses the note moves between, are layout and belong to
    home.css §2.
 
-   The jar itself is a drawing — static/PixelArt/Jar.png, the same hand as the
-   café and the chibi. What a drawing cannot supply is the *inside*: its
-   cavity is transparent, so everything between the walls is still built here,
-   in three layers stacked back to front.
+   The jar is pixel art on the snake plant's grid — 54 art pixels across, so
+   one of its pixels is one of the plant's at every size the room is drawn,
+   and the two read as the same hand. It is drawn in two layers, because glass
+   is the one material you see both sides of at once, and the paper has to go
+   between them:
 
-     `.jar__cavity`  the tint the glass lays over whatever is behind it, and
-                     the clip that keeps the slips inside the silhouette
+     `.jar::before`  jar-back.png — the far side: the tint of the glass, and
+                     the back rim of the floor seen through the front
+     `.jar__cavity`  the clip that keeps the slips inside the silhouette
      `.jar__slips`   the paper, in the belly of that cavity
-     `.jar__shine`   the reflections, over the paper
-     `.jar__art`     the drawing, over all of it
+     `.jar__art`     jar-front.png — the near wall, its reflections, the
+                     cloth and twine, and the shadow on the floor
 
-   The order is the whole trick. Painting the shine into the same element as
-   the tint would either hide the slips behind it or put the slips in front of
-   it, and neither looks like glass; putting the drawing under the slips would
-   leave the paper lying in front of a jar rather than sitting in one. Every
-   tint is `--sage` or white — the jar belongs to the café, so its glass is
-   warm-green rather than the blue every stock jar is drawn in.
+   The order is the whole trick. Reflections drawn under the slips would put
+   the paper in front of the glass; a tint drawn over them would fog the
+   questions. Front and back on either side of the paper is what makes it
+   *in* the jar.
+
+   The light comes from the upper left, as it does on the plant: the long
+   window-light runs down the left wall, the cloth is pale on its left and
+   shaded on its right, and the shadow falls away to the lower right in the
+   plant's own flat grey, so the two stand on one floor. The glass is
+   `--sage`-green rather than the blue every stock jar is drawn in, because
+   the jar belongs to the café.
    -------------------------------------------------------------------------- */
 
-/* --- the four papers ------------------------------------------------------ */
+/* --- the five papers ------------------------------------------------------ */
 
-/* A tint is four decisions at once — the paper, and the three colours its
-   drawing is inked in — so it is set in one place and inherited down.
-   js/data/qa.js names the tint; nothing in the data knows a colour.
+/* A tint is several decisions at once — the paper, the rules printed on it,
+   the stamp, and the colours its drawing is inked in — so it is set in one
+   place and inherited down. js/data/qa.js names the tint; nothing in the
+   data knows a colour.
 
-   The crease is deliberately *not* tinted. A fold drawn in each paper's own
-   deeper tone disappears on butter, where --butter and --butter-deep are a
-   few percent apart in lightness. A single warm brown at low alpha reads as
-   what it actually is — a shadow lying in a fold — and it reads that way on
-   all four papers.
+   The crease and the rules are deliberately *not* tinted. A fold drawn in
+   each paper's own deeper tone disappears on butter, where --butter and
+   --butter-deep are a few percent apart in lightness. A single warm brown at
+   low alpha reads as what it actually is — a shadow lying in a fold, ink on
+   a page — and it reads that way on all five papers.
 
-   Both creases are declared here rather than on the note, because the packet
-   in the jar is a folded note: its right and bottom edges are the very same
-   two folds, and they have to be shaded by the same values or the slip you
-   pick up is not the note that comes out. */
+   Declared on the slot as well as the note, because the slip in the jar *is*
+   the folded note: its edges are the very same two folds, and they have to
+   be shaded by the same values or the slip you pick up is not the letter
+   that comes out. */
 .jar__slot,
 .note {
 	--sheet: var(--paper);
+	/* The same paper in the shadow of a flap — the strip under the cover. */
+	--sheet-under: color-mix(in srgb, var(--sheet) 84%, rgb(120 96 66));
 	--crease: rgb(120 96 66 / 0.5);
 	--crease-wash: rgb(120 96 66 / 0.22);
+	--rule: rgb(120 96 66 / 0.16);
 
 	--art-ink: var(--ink);
+	--art-ink-soft: var(--ink-soft);
+	--art-glint: var(--ink-faint);
 	--art-paper: var(--paper);
+	--art-shade: color-mix(in srgb, var(--paper) 78%, var(--ink-faint));
+	--art-glass: var(--sage);
+	--art-glass-shade: var(--moss-deep);
 	--art-accent: var(--peach-deep);
 	--art-warm: var(--butter-deep);
+
+	/* The stamp is white paper round a picture printed on a paler copy of
+	   the letter's own colour — related to the sheet it is stuck on, but
+	   never the same, or the picture sinks into the page. */
+	--stamp-paper: var(--paper);
+	--stamp-ground: color-mix(in srgb, var(--sheet) 45%, var(--paper));
 }
 
 [data-tint="moss"] {
@@ -853,14 +875,18 @@ html.is-dragging * {
 
 [data-tint="peach"] {
 	--sheet: var(--peach);
-	/* The rocket is the one sprite whose accent would otherwise sit on its
-	   own tint — peach fins on peach paper. Moss is the palette's other
-	   warm neutral and is the only swap the four drawings need. */
+	/* The one paper whose accent would otherwise sit on its own tint —
+	   peach bars on a peach stamp. Moss is the palette's other warm neutral
+	   and is the only swap the five drawings need. */
 	--art-accent: var(--moss-deep);
 }
 
 [data-tint="butter"] {
 	--sheet: var(--butter);
+}
+
+[data-tint="sage"] {
+	--sheet: var(--sage);
 }
 
 [data-tint="tan"] {
@@ -877,360 +903,332 @@ html.is-dragging * {
 	position: relative;
 	isolation: isolate;
 	width: 100%;
-	/* The drawing is 251×369 — the alpha bounding box of Jar.png, not the
-	   549×454 canvas it is painted on. The file is *not* cropped to the art, so
-	   this box and the image box are two different rectangles and `.jar__art`
-	   below has to do the arithmetic that lines them up.
+	/* The glass and its cloth, 54×80 art pixels — the shadow is not counted,
+	   so the box is the jar and the jar is what gets centred in the room.
 
 	   Taller than it is wide, which is what a jar is: wider than tall is a
 	   lunchbox however well the glass is drawn, and four slips fanned down the
 	   inside need the height to read as a stack. */
-	aspect-ratio: 251 / 369;
+	aspect-ratio: 54 / 80;
 }
 
-/* The drawing, cropped to `.jar` exactly.
-
-   Jar.png carries a lot of transparent canvas around the jar — the art sits at
-   x 150…401, y 57…426 of 549×454 — and every percentage in this section is
-   measured against the *jar*, so the padding has to be taken back out here
-   rather than left for each of them to compensate for. Blowing the image up to
-   549/251 of the box and pulling it back by 150/251 of a width and 57/369 of a
-   height puts the art's bounding box on the box's bounding box, which is the
-   one thing the rest of §9 depends on. Overflow is not clipped and does not
-   need to be: what hangs outside is transparent.
-
-   `pixelated` because this is a bitmap being scaled up past 1:1 — the default
-   smooth resample turns hard pixel edges into a soft blur, which is exactly
-   the look pixel art is not.
-
-   Above the cavity, so the lid overlaps the topmost slip and the walls crop
-   the widest one. That overlap is the whole illusion: paper that is merely
-   *behind* a jar is paper on the table. */
+/* Both layers are bitmaps scaled up five-fold and more, so both are
+   `pixelated` — the default smooth resample turns hard pixel edges into a
+   soft blur, which is exactly the look pixel art is not. */
+.jar::before,
 .jar__art {
 	position: absolute;
-	inset-block-start: -15.447%;
-	inset-inline-start: -59.761%;
-	z-index: 2;
-	/* `max-width: none` is load-bearing, not tidying. base.css resets every
-	   image to `max-width: 100%`, and this one is deliberately wider than its
-	   own box — so the reset clamps the width while the explicit `height` sails
-	   past unclamped, and the jar arrives squashed to 46% of its width at full
-	   height. It cost an afternoon once; it is spelled out here so it does not
-	   cost a second one. */
-	width: 218.725%;
-	max-width: none;
-	height: 123.035%;
+	inset-block-start: 0;
+	inset-inline-start: 0;
 	image-rendering: pixelated;
 	pointer-events: none;
 }
 
-/* The inside of the glass: the only part of the jar still drawn in CSS,
-   because the drawing has no inside. Its box is the cavity the walls enclose
-   — x 166…380, y 150…395 of the canvas — and the radii are the shoulder and
-   the base curve, elliptical because the shoulder falls further than it
-   narrows. Everything that is meant to be *in* the jar goes in here and is
-   clipped to that silhouette, so a slip can never be seen standing outside
-   the glass it is supposed to be behind.
-
-   The wash is deliberately fainter than the one the CSS-drawn jar used: the
-   walls, rim and base now come from the drawing, so all this layer still has
-   to do is tint what is seen through them. Left at the old strength it read
-   as fog in the jar rather than as glass in front of the paper. */
-.jar__cavity {
-	position: absolute;
-	/* x 166…380 of 150…401 and y 150…395 of 57…426, as percentages of the
-	   251×369 art box: 93/369 top, 21/251 right, 31/369 bottom, 16/251 left. */
-	inset: 25.2% 8.37% 8.4% 6.37%;
-	z-index: 1;
-	overflow: hidden;
-	border-radius: 19% 19% 15% 15% / 40% 40% 20% 20%;
-	/* The dark bands down each side are the sides of the cylinder turning
-	   away from you. Without them the glass is a flat pane however bright the
-	   highlights are. */
-	background: linear-gradient(
-			100deg,
-			rgb(150 168 118 / 0.2) 0 5%,
-			rgb(205 216 183 / 0.19) 5% 14%,
-			rgb(205 216 183 / 0.07) 33% 67%,
-			rgb(205 216 183 / 0.2) 86% 96%,
-			rgb(150 168 118 / 0.22) 96% 100%
-		),
-		linear-gradient(
-			180deg,
-			rgb(255 255 255 / 0.28) 0 14%,
-			rgb(255 255 255 / 0.03) 100%
-		);
-	box-shadow: inset 0 -18px 26px -20px rgb(88 70 52 / 0.28);
+/* The far side of the glass, behind the paper. It is 54×80 on the nose, so
+   it simply fills the box. */
+.jar::before {
+	content: "";
+	inset: 0;
+	z-index: 0;
+	background: url("../static/PixelArt/jar-back.png") 0 0 / 100% 100% no-repeat;
 }
 
-/* Hard-stopped stripes, not a gradient wash: a soft blur reads as a smudge
-   on the page, where a hard edge reads as a reflection on a curved surface.
-   Over the slips and under the drawing — a reflection is on the near face of
-   the glass, so it falls across the paper, but it cannot fall across the
-   painted wall without fighting the highlights already drawn there. */
-.jar__shine {
+/* The near side, over the paper. The canvas shares the box's top-left corner
+   and is 84 pixels square: the jar is the first 54 of them across, and the
+   rest is floor for the shadow to fall on, out to the right and a few rows
+   below the base. So the width is 84/54 of the box and the height follows
+   from the file. Overflow is not clipped and does not need to be: what hangs
+   outside the jar is shadow or nothing.
+
+   Above the cavity, so the cloth overlaps the topmost slip and the base
+   crops the bottom one. That overlap is the whole illusion: paper that is
+   merely *behind* a jar is paper on the table. */
+.jar__art {
+	z-index: 2;
+	/* `max-width: none` is load-bearing, not tidying. base.css resets every
+	   image to `max-width: 100%`, and this one is deliberately wider than its
+	   own box — so the reset clamps it back to the jar, and the shadow is
+	   squeezed in under the glass. */
+	width: 155.556%;
+	max-width: none;
+	height: auto;
+}
+
+/* The inside of the glass. Everything that is meant to be *in* the jar goes
+   in here and is clipped to the walls, so a slip can never be seen standing
+   outside the glass it is supposed to be behind. Its box is the inside of the
+   wall in the drawing — x 2…52 of 54, y 17…75 of 80 — and the radii are the
+   shoulder and the floor. */
+.jar__cavity {
 	position: absolute;
-	inset: 0;
+	inset: 21.25% 3.704% 6.25%;
 	z-index: 1;
-	pointer-events: none;
-	background: linear-gradient(
-		101deg,
-		transparent 0 5%,
-		rgb(255 255 255 / 0.5) 5% 9.5%,
-		transparent 9.5% 13%,
-		rgb(255 255 255 / 0.28) 13% 15.5%,
-		transparent 15.5% 84%,
-		rgb(255 255 255 / 0.22) 84% 93%,
-		transparent 93%
-	);
+	overflow: hidden;
+	border-radius: 18% 18% 10% 10% / 15% 15% 7% 7%;
 }
 
 /* --- the slips ------------------------------------------------------------ */
 
-/* The slips get the belly, not the whole cavity. The drawing's shoulders
-   taper for the top third of the inside, and a slip fanned up there is half
-   behind the painted wall with its question in the hidden half — which fails
-   the one thing the jar has to do, which is be readable at rest. Paper
-   settles at the bottom of a jar anyway. */
+/* The slips get the belly, not the whole cavity. A slip fanned up under the
+   shoulder is half behind the cloth's shadow with its question in the hidden
+   half — which fails the one thing the jar has to do, which is be readable at
+   rest. Paper settles at the bottom of a jar anyway, and the bottom of this
+   box is the middle of the jar's floor, so the last slip rests on it.
+
+   In jar terms the belly is 76.73% of the jar wide, centred, and runs from
+   39.25% to 90% of its height; the insets are that, said against the cavity.
+   It is the belly the fan below was solved for — change it, and re-solve. */
 .jar__slips {
 	position: absolute;
-	inset: 20% 5% 3% 5%;
+	inset: 24.83% 8.566% 5.172%;
 	list-style: none;
 }
 
-/* The fan is hand-tuned per slip rather than solved. With four of them a
+/* The pile is hand-placed per slip rather than solved. With five of them a
    solver would be more machinery than the problem deserves, and hand values
-   let each slip sit at an angle that looks *thrown in* rather than dealt. The
-   four overlap, because four folded notes dropped in a jar do.
+   let each slip lie at an angle that looks *dropped in* rather than dealt.
 
-   The slot owns the fan pose and the button inside it owns the hover lift.
-   That split is the whole reason hovering a fanned slip does not have to
-   restate its own place in the fan — one owner per property, per element.
+   They lie in two loose columns, left and right in turn, so each one
+   overlaps its neighbours only at a corner. That is the point of the
+   arrangement: a slip only reads as folded paper if you can see the whole
+   of it — the fold along the top, the flap, the strip of paper showing under
+   the flap's edge. A neat stack shows five top edges and no paper.
+
+   The slot owns the pose and the button inside it owns the hover lift. That
+   split is the whole reason hovering a slip does not have to restate its own
+   place in the pile — one owner per property, per element. The tilt is a
+   custom property rather than a bare `rotate` only so the button can read
+   it and straighten up a little as it is lifted.
 
    Height comes from `top` and only the sideways nudge from `translate`,
    which is not a stylistic choice: a percentage in `translate` resolves
-   against the element's *own* box, not its parent's. Written as
-   `translate: -52% 22%` the whole fan collapses into a heap at the top of the
-   jar, because 22% of a slip is a fraction of the distance meant. `top` is
-   the one that means "a fifth of the way down the jar". */
+   against the element's *own* box, not its parent's. `top` is the one that
+   means "a fifth of the way down the jar". */
 .jar__slot {
 	position: absolute;
 	left: 50%;
-	/* Four slips have to stack inside the belly and each still show its own
-	   question, which fixes this number rather than leaving it to taste: at
-	   13/10 a slip is `w × 0.77`, three steps of 55% of that plus one whole
-	   slip is 2.7 slip-heights, and 46% of the belly is the widest slip whose
-	   stack still comes to less than the belly is tall. Widen it and the
-	   bottom slip sinks into the base of the jar; tighten the steps instead
-	   and each question disappears under the next one. */
-	width: 46%;
-	transition: scale var(--dur) var(--ease-spring),
-		opacity var(--dur) var(--ease-out);
+	/* A slip is the folded letter, so it has the letter's proportion: 70% of
+	   the belly wide is 26% of it tall at `--note-ratio` 2.75. Rows 18.5%
+	   apart in alternate columns meet only at a corner, and the last row ends
+	   on the floor of the jar. The columns sit a fifth of a slip either side
+	   of the middle, which keeps the outer ends inside the glass even at
+	   their tilt. 70% and not less because the question is written in
+	   proportion to the slip, and narrower than this it is too small to read
+	   on a phone. Change the width or the ratio in css/home.css
+	   §2 and the pile has to be laid out again. */
+	width: 70%;
+	translate: var(--nudge);
+	rotate: var(--tilt);
 }
 
 .jar__slot:nth-child(1) {
+	--nudge: -70%;
+	--tilt: 5deg;
 	top: 0%;
-	translate: -55%;
-	rotate: -7deg;
 }
 .jar__slot:nth-child(2) {
-	top: 21%;
-	translate: -43%;
-	rotate: 5deg;
+	--nudge: -30%;
+	--tilt: -6deg;
+	top: 18.5%;
 }
 .jar__slot:nth-child(3) {
-	top: 42%;
-	translate: -57%;
-	rotate: -3.5deg;
+	--nudge: -68%;
+	--tilt: 4deg;
+	top: 37%;
 }
 .jar__slot:nth-child(4) {
-	top: 63%;
-	translate: -45%;
-	rotate: 6.5deg;
+	--nudge: -32%;
+	--tilt: -5deg;
+	top: 55.5%;
+}
+.jar__slot:nth-child(5) {
+	--nudge: -50%;
+	--tilt: 2deg;
+	top: 74%;
 }
 
-/* The same fan, re-run for the phone's quadrant.
-
-   Below 48rem the note's cover is portrait (css/home.css §2, the phone
-   block), and a slip is the cover — so the slip turns with it or it stops
-   being the paper that flies out. Turning it is what forces the other two
-   numbers: the arithmetic in `.jar__slot` above is `three steps + one slip
-   height ≤ the belly`, and a portrait slip is a third taller than a landscape
-   one of the same width, so the same 46% at the same 21% steps stands a stack
-   two thirds again as tall as the jar can hold. Tighter steps buy most of it
-   back, and the slip is then made as wide as what is left allows: three steps
-   of 17% leave 49% of the belly, and a slip 44% of the belly wide stands 1.39
-   times that in height, which is 49% of it. The stack ends where the jar's
-   base begins.
-
-   The sideways nudges and the angles are untouched: those are the "thrown in
-   rather than dealt" of the fan, and they are as true of a portrait slip. */
-@media (max-width: 48rem) {
-	.slip {
-		/* 18/25 is the phone quadrant at a typical handset width — `--quad-w`
-		   there is 47vw against a fixed `--quad-h`, so like the 13/10 above
-		   this is one representative ratio and not an exact division. */
-		aspect-ratio: 18 / 25;
-		padding: var(--sp-1) var(--sp-2);
-	}
-
-	.jar__slot {
-		width: 44%;
-	}
-
-	.jar__slot:nth-child(1) {
-		top: 0%;
-	}
-	.jar__slot:nth-child(2) {
-		top: 17%;
-	}
-	.jar__slot:nth-child(3) {
-		top: 34%;
-	}
-	.jar__slot:nth-child(4) {
-		top: 51%;
-	}
-}
-
-/* Its note is out in front of the jar, so the slip is not in the jar. Left in
-   the DOM rather than removed so the gap it leaves is exactly its own, and so
-   there is something to fly back into. */
+/* Its letter is out of the jar, so the slip is not in it. Snapped rather
+   than faded: the letter appears in exactly this spot on the same frame, so
+   the two are one object changing hands, not one fading out as another
+   fades in. Left in the DOM so the gap it leaves is exactly its own, and so
+   there is somewhere to land on the way back. */
 .jar__slot.is-out {
 	opacity: 0;
-	scale: 0.72;
 }
 
-/* A slip is the note's cover quadrant and nothing else — same proportion,
-   same two crease edges, same rounded corner in the one place the paper was
-   cut rather than folded. That is what makes the note that flies out read as
-   *this* slip opened, rather than as a second object that replaced it.
+/* A slip is a letter folded in three, seen from outside, and it is drawn as
+   one: what makes paper read as *folded* rather than as a coloured card is
+   that you can see the layers.
 
-   13/10 is `--quad-w` over `--quad-h` from css/home.css §2, rounded. It is
-   restated as a literal because `aspect-ratio` cannot divide two clamps. */
-/* The question rides at the top of the slip, not in the middle of it, for two
-   reasons that agree: the note's cover carries its question at the top too,
-   so the slip and the note it opens into are the same object — and in a fan
-   the only part of a slip you can see is the band above the next one, which
-   is exactly where the top of it is. Centred, every question but the last
-   was cut in half by the slip in front of it. */
+   The top flap is a little shorter than the panels under it — letters are
+   rarely folded into exact thirds — so its cut edge stops short of the
+   bottom and a strip of the fold underneath shows below it, in the flap's
+   shadow. The flap's top edge is the fold itself, and a fold is a bend, not
+   a cut: it catches the light as a bright line, and the paper curves away
+   from it and darkens slightly towards the loose edge.
+
+   That is exactly what the letter on the stage looks like folded shut — the
+   cover and the strip are its top flap and its bottom flap, really there —
+   so the letter that leaves the jar is visibly *this* slip, at this size,
+   and not a second object that replaced it.
+
+   The shadow falls right as well as down — the jar is lit from the left, and
+   paper that casts its shadow straight down is lit from somewhere else. */
 .slip {
-	display: grid;
-	place-items: start center;
+	position: relative;
 	width: 100%;
-	aspect-ratio: 13 / 10;
-	padding: var(--sp-2);
-	border-radius: var(--r-sm) 0 0 0;
-	background: var(--sheet);
-	font-family: var(--ff-display);
-	font-size: var(--fs-200);
-	font-weight: 600;
-	line-height: 1.2;
-	text-align: center;
-	text-wrap: balance;
-	color: var(--ink);
+	aspect-ratio: var(--note-ratio);
+	border-radius: 0 0 2px 2px;
+	background: var(--sheet-under);
 	cursor: pointer;
-	box-shadow: 0 2px 5px rgb(88 70 52 / 0.28),
-		inset -9px 0 11px -9px var(--crease),
-		inset 0 -9px 11px -9px var(--crease);
+	box-shadow: 2px 3px 4px -1px rgb(88 70 52 / 0.32);
 	transition: translate var(--dur) var(--ease-out),
+		rotate var(--dur) var(--ease-out),
 		scale var(--dur) var(--ease-spring),
 		box-shadow var(--dur) var(--ease-out);
 }
 
+/* Picked up rather than highlighted: it rises, comes a little nearer, and
+   straightens by half its tilt, the way a slip does between two fingers. */
 .slip:hover,
 .slip:focus-visible {
 	translate: 0 -0.35rem;
-	scale: 1.04;
-	box-shadow: 0 7px 13px -3px rgb(88 70 52 / 0.34),
-		inset -9px 0 11px -9px var(--crease),
-		inset 0 -9px 11px -9px var(--crease);
+	rotate: calc(var(--tilt) * -0.5);
+	scale: 1.05;
+	box-shadow: 4px 8px 12px -4px rgb(88 70 52 / 0.36);
+}
+
+.slip__flap {
+	position: absolute;
+	inset: 0 0 auto;
+	height: calc(var(--flap) * 100%);
+}
+
+/* The outside of the top flap — the slip's face in the jar, and the cover of
+   the letter on the stage. One rule for both, and in proportional units only
+   (percentages, `cqi`), because the letter leaves the jar at exactly the
+   slip's size and grows from there: for the hand-off to be invisible, the
+   same picture has to be laid out in proportion to its own width, not in
+   rem. The question is the only thing written on it. */
+.slip__flap,
+.note__back.note__cover {
+	container-type: inline-size;
+	display: grid;
+	place-items: center;
+	padding-inline: 6%;
+	border-radius: 0 0 4% 4% / 0 0 12% 12%;
+	background: linear-gradient(
+		180deg,
+		color-mix(in srgb, var(--sheet) 40%, var(--paper)) 0 3%,
+		var(--sheet) 16% 60%,
+		color-mix(in srgb, var(--sheet) 92%, rgb(120 96 66)) 100%
+	);
+}
+
+/* The flap's own shadow, cast on the strip of fold below its edge. */
+.slip__flap {
+	box-shadow: 0 1px 2px rgb(88 70 52 / 0.38);
+}
+
+.note__back.note__cover {
+	box-shadow: 0 2px 4px rgb(88 70 52 / 0.38);
+}
+
+.slip__q {
+	font-family: var(--ff-display);
+	/* Floored, for the smallest jar on the smallest phone. The floor only ever
+	   applies at slip size, never on the cover, so it cannot show up in the
+	   hand-off as anything more than a fraction of a pixel. */
+	font-size: max(0.6875rem, 10.5cqi);
+	font-weight: 600;
+	line-height: 1.1;
+	color: var(--ink);
+	white-space: nowrap;
 }
 
 /* --------------------------------------------------------------------------
-   9b. The note, and the fold
+   9b. The letter, and the fold
 
-   One square-ish sheet folded in half twice, which is why it opens into four
-   quadrants around a cross of creases rather than into a stack of panels. The
-   top-left quadrant is the cover; the other three are folded in behind it.
+   A sheet folded in three, like a letter: the bottom third folded up first,
+   the top third — a little short of a third — folded down over it. Three
+   panels, and they are the three beats of the answer — the question on the top flap, the answer
+   in the middle, the drawing and a P.S. on the bottom flap.
+
+   ---- why three and not four
+
+   The sheet used to be folded in quarters, and the quarters crossed: the
+   right half spanned both rows and the bottom half both columns, so one
+   quadrant had to be nested inside another and the cover had to slide
+   sideways to stay centred as the sheet grew out of one corner. A letter
+   folds about two parallel creases on either side of a middle panel that
+   never moves, so it opens *symmetrically* — up and down from the panel in
+   the middle of the room — and none of that machinery is needed. The note's
+   box is the middle panel, and it does not move at all.
 
    ---- the order, and why it cannot be the other one
 
-   It was folded bottom-up first and right-over-left second, so it opens
-   right-half first and bottom-half second. Paper only comes apart in the
-   reverse of the order it went together, and that constraint is the whole
-   shape of this file: fold 1 is a rotateY about a vertical crease, fold 2 is
-   a rotateX about a horizontal one, and they are not interchangeable.
-
-   ---- the crossing, and the one place the model cheats
-
-   The right half spans both rows; the bottom half spans both columns. They
-   cross, and no element can be the child of two parents — so the bottom-right
-   quadrant is nested inside the top-right one, where it rides fold 1 for
-   free, and is given fold 2's class alongside the bottom-left one. Two
-   elements, one class, therefore always the same angle: the bottom band never
-   comes apart at the seam because there is nothing there that could disagree.
+   Paper only comes apart in the reverse of the order it went together. The
+   top flap is the outermost, so it opens first and closes last, and the
+   bottom flap follows it out and leads it back in. The gap between the two is
+   `--ripple`, a fraction of a fold rather than a whole one: the second flap
+   starts while the first is still moving, which is the order your hands do it
+   in. Much more than half and the two beats separate and the letter reads as
+   being opened by committee.
 
    ---- the swing
 
    What animates is the *angle*, not the rotation. `--fold-a` is registered
-   below as an `<angle>` and is the single thing this fold transitions;
-   `rotate` reads it, and so does the light on the face. That is the reason
-   nothing in here has to be kept in step with anything else — there is only
-   one moving number, and everything visible is a function of it.
+   below as an `<angle>` and is the single thing a flap transitions; `rotate`
+   reads it, and so does the light on each face. There is only one moving
+   number per flap, and everything visible is a function of it.
 
    One continuous rotation on `--ease-out`, which starts quick and settles.
    That is the shape of a flap let go: it comes over fast and the last few
-   degrees are the paper laying itself down, not decelerating into a mark.
+   degrees are the paper laying itself down. Deliberately not the spring — a
+   flap that overshoots flat and comes back has something still acting on it
+   after it has come to rest, and there is nothing on a letter that could.
 
-   Deliberately not the spring. A flap that overshoots flat and comes back has
-   something still acting on it after it has come to rest, and there is
-   nothing on a folded note that could — the same reason the flight in
-   home.css §2 keeps the spring on `scale` and off `translate`.
+   ---- the memory
 
-   Halfway through, the flap passes exactly through -90°, where a plane has no
-   thickness and disappears for one frame. That is correct rather than a
-   glitch: paper seen edge-on is invisible, and at this duration it is a
-   single frame at the moment the sheet is turning over.
+   An opened letter does not lie flat. Paper keeps a little of every fold it
+   has been given, so both flaps come to rest a few degrees short of flat,
+   tilted back towards each other across the middle panel. That is the whole
+   of the effect, and it is most of why this reads as paper rather than as
+   three cards: the perspective shortens the two outer panels very slightly,
+   and the creases between them stay where you can see them.
 
    ---- why nothing has to be kept in sync
 
-   Each flap carries both of its faces. `.note__sheet` is the printed side and
-   `.note__lining` is the blank back, pre-turned with rotateY(180deg); both
-   hide their own backface. Which of the two you are looking at is therefore
-   decided by the geometry on every frame rather than by a timer — the flap
-   shows its underside through the first half of its swing and its printed
-   side through the second, correctly, in both directions, with nothing to
-   keep in step and nothing to re-derive if the timing changes.
+   Each flap carries both of its faces. `.note__face` is the printed side and
+   `.note__back` is the outside, pre-turned with `rotate: x 180deg`; both hide
+   their own backface. Which of the two you are looking at is therefore
+   decided by the geometry on every frame rather than by a timer — a flap
+   shows its outside through the first half of its swing and its printed side
+   through the second, correctly, in both directions.
 
-   ---- the trap
+   rotateX and not rotateY on the backs, because these flaps turn about a
+   horizontal crease: a back turned about the vertical axis would come round
+   upside down, and the top flap's back is the cover, which has writing on it.
 
-   A flap folded shut is rotated 180°, and a flap folded shut *inside* another
-   folded flap is rotated 360° — which is face-up, in front of the cover, and
-   perfectly readable. `backface-visibility` is no help there, because the
-   face pointing at you really is the front one. So a closed flap is
-   `visibility: hidden` outright.
+   ---- the stacking
 
-   The two delays on that `visibility` are asymmetric on purpose, and that is
-   the whole reason the fold can be watched in both directions: opening flips
-   it visible at 0s, closing holds it visible for the full duration. The flap
-   is on screen for the whole of both swings, and only ever winks out once it
-   is already lying flat behind the cover, where there was nothing to see
-   anyway.
+   The note carries a `filter` (its shadow), and a filter flattens: its
+   children are painted in z-index order rather than sorted by depth. That is
+   exactly what a folded letter wants. The top flap is outermost, so it is
+   painted last and lies over everything when shut; the bottom flap is under
+   it and over the middle panel. Neither ever has to pass *through* the other,
+   because the ripple keeps them apart — so order is all the depth there is,
+   and the DOM can stay in reading order. Each flap keeps `preserve-3d` for
+   its own two faces, which is the only place depth is still needed.
    -------------------------------------------------------------------------- */
 
-/* How far this quadrant is from lying flat, and the only number in the fold.
+/* How far this flap is from lying open, and the only number in the fold.
 
    Registering it is what makes it animatable — an unregistered custom property
    has no type, so the browser can only swap it at the halfway point instead of
    interpolating it. Given `<angle>`, it tweens, and everything downstream of
-   it tweens with it: the rotation is `rotate: y var(--fold-a)`, and the light
-   on the face is a `cos()` of the same value. One owner, one transition, and a
-   face that cannot be lit for an angle it is not actually at.
-
-   It has to inherit, because the thing that reads it for shading is a pseudo
-   two levels below the element that sets it. Every quadrant declares its own,
-   so the nested bottom-right one is shaded by its own fold and not by the one
-   it happens to be riding. */
+   it tweens with it: the rotation, and the light on both faces. It inherits so
+   that the faces, which do the shading, read their own flap's angle. */
 @property --fold-a {
 	syntax: "<angle>";
 	inherits: true;
@@ -1238,341 +1236,286 @@ html.is-dragging * {
 }
 
 .note {
-	/* Mirrored in js/modules/jar.js as FOLD. Change both.
+	/* Mirrored in js/modules/jar.js as UNFOLD, which is the fold plus the
+	   ripple: the time from the first flap starting to the second flap
+	   landing. Change one, change its twin.
 
 	   The fold's duration lives here rather than with the flight in home.css
-	   §2, because it belongs to the paper: the note folds the same way
-	   wherever on the stage it happens to be. `--quad-w` and `--quad-h` are
-	   the other way round — they are how big the room can afford the note to
+	   §2, because it belongs to the paper: the letter folds the same way
+	   wherever on the stage it happens to be. `--note-w` and `--panel-h` are
+	   the other way round — they are how big the room can afford the letter to
 	   be, so they are declared on the stage. */
 	--dur-fold: var(--dur-slow);
 	--fold-ease: var(--ease-out);
+	--ripple: calc(var(--dur-fold) * 0.4);
 
-	/* Two sheets of paper thick. Small, and the only reason the crease is not
-	   infinitely sharp — see `.note__lining`. */
-	--paper-thick: 1.5px;
+	/* The rest angles: a few degrees of the fold the paper remembers. */
+	--memory: 7deg;
 
 	position: relative;
-	width: var(--quad-w);
-	height: var(--quad-h);
-	perspective: 1500px;
+	width: var(--note-w);
+	height: var(--panel-h);
+	perspective: 1400px;
+	/* One shadow for the whole sheet, so it grows and shrinks with the
+	   silhouette as the flaps swing rather than being three shadows that
+	   overlap at the creases. Down and to the right, like everything else
+	   lit from the left on this page. */
+	filter: drop-shadow(3px 6px 7px rgb(88 70 52 / 0.24));
 }
 
-.note__quad {
+/* The whole letter is what you press to fold it back — there is no close
+   button on it, by design — so the pointer says so over every bit of paper.
+
+   Focus is handed to the letter when it opens, so a screen reader starts
+   reading at its title, and Enter or Escape folds it back from there. No
+   ring: the note's box is only its middle panel, and an outline round one
+   third of an open letter reads as a mistake, not as focus. */
+.note {
+	cursor: pointer;
+}
+
+.note:focus {
+	outline: none;
+}
+
+.note__flap,
+.note__panel {
 	position: absolute;
-	width: var(--quad-w);
-	height: var(--quad-h);
-	/* No `overflow`, no `opacity`, no `filter` on a quadrant, ever. Each of
-	   the three silently forces `transform-style: flat`, which collapses the
-	   nesting and drops the bottom-right quadrant out of the fold it is
-	   supposed to be riding. Anything that needs clipping or fading is done to
-	   the `.note__sheet` inside it instead. */
+	inset-inline: 0;
+	height: var(--panel-h);
+	/* No `overflow`, no `opacity`, no `filter` on a flap, ever. Each of the
+	   three silently forces `transform-style: flat`, which collapses the flap
+	   onto its own plane and its back face starts showing through the front.
+	   Anything that needs clipping or fading is done to a face instead. */
 	transform-style: preserve-3d;
 }
 
-/* The cover is the note's own box; the packet in the jar is this one quadrant
-   and nothing else. */
-.note__quad--q {
-	position: relative;
-}
-
-/* Fold 1 — the right half, on the vertical crease. Hinged on its left edge
-   and laid out one full quadrant to the right of the cover, so at 0° it is
-   simply beside it and at -180° it is folded back over it. */
-.note__quad--a {
-	--fold-a: -180deg;
-
+.note__panel {
 	inset-block-start: 0;
-	inset-inline-start: 100%;
-	transform-origin: 0 50%;
-	rotate: y var(--fold-a);
-	visibility: hidden;
-	transition: --fold-a var(--dur-fold) var(--fold-ease),
-		visibility 0s linear var(--dur-fold);
+	z-index: 1;
 }
 
-.note.is-fold-1 .note__quad--a {
-	--fold-a: 0deg;
-	visibility: visible;
-	transition: --fold-a var(--dur-fold) var(--fold-ease),
-		visibility 0s linear 0s;
-}
+/* The top flap hangs off the middle panel's top edge. Shut, it has turned
+   -180° about that crease — forwards, towards you, and down over the middle —
+   so its back is what faces the room: the cover.
 
-/* Fold 2 — the bottom half, on the horizontal crease. Two elements in two
-   different parents, one selector, so they cannot drift apart.
-
-   Same angle, different axis. That is the only thing separating the two folds
-   now, which is worth the swap on its own. */
-.note__quad--art,
-.note__quad--caption {
+   It is `--flap` of a panel tall rather than a whole one, so shut it stops
+   short of the bottom fold and a strip of the bottom flap shows under its
+   edge — the strip the slips in the jar are drawn with. */
+.note__flap--top {
 	--fold-a: -180deg;
+
+	height: calc(var(--panel-h) * var(--flap));
+	inset-block-end: 100%;
+	z-index: 3;
+	transform-origin: 50% 100%;
+	rotate: x var(--fold-a);
+	transition: --fold-a var(--dur-fold) var(--fold-ease) var(--ripple);
+}
+
+/* The bottom flap hangs off the bottom edge and turns the other way, +180°,
+   which is also forwards. */
+.note__flap--bottom {
+	--fold-a: 180deg;
 
 	inset-block-start: 100%;
-	inset-inline-start: 0;
+	z-index: 2;
 	transform-origin: 50% 0;
 	rotate: x var(--fold-a);
-	visibility: hidden;
-	transition: --fold-a var(--dur-fold) var(--fold-ease),
-		visibility 0s linear var(--dur-fold);
+	transition: --fold-a var(--dur-fold) var(--fold-ease) 0s;
 }
 
-.note.is-fold-2 .note__quad--art,
-.note.is-fold-2 .note__quad--caption {
-	--fold-a: 0deg;
-	visibility: visible;
-	transition: --fold-a var(--dur-fold) var(--fold-ease),
-		visibility 0s linear 0s;
+/* Open. The delays swap ends: the top flap leads out and the bottom one
+   leads back in, and both are declared on the state being *entered*, which
+   is the one whose transition the browser uses. */
+.note.is-open .note__flap--top {
+	--fold-a: calc(var(--memory) * -1);
+	transition-delay: 0s;
 }
 
-/* --- the two faces of a quadrant ------------------------------------------ */
+.note.is-open .note__flap--bottom {
+	--fold-a: var(--memory);
+	transition-delay: var(--ripple);
+}
 
-.note__sheet {
+/* --- the two faces of a flap ---------------------------------------------- */
+
+.note__face,
+.note__back {
 	position: absolute;
 	inset: 0;
-	display: flex;
-	flex-direction: column;
-	overflow: hidden;
-	padding: var(--sp-3) var(--sp-4);
-	background: var(--sheet);
-	backface-visibility: hidden;
-	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5);
-}
-
-/* Folded edges are crisp and cut edges are not, which is the quiet reason a
-   folded packet looks folded even before it moves: the two rounded corners
-   are always the two furthest from the crease. Unfolded, the four of them
-   land on the four outer corners of the sheet and the middle stays sharp. */
-.note__quad--q > .note__sheet {
-	border-radius: var(--r-md) 0 0 0;
-	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
-		inset -11px 0 13px -11px var(--crease),
-		inset 0 -11px 13px -11px var(--crease);
-}
-
-.note__quad--a > .note__sheet {
-	border-radius: 0 var(--r-md) 0 0;
-	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
-		inset 11px 0 13px -11px var(--crease),
-		inset 0 -11px 13px -11px var(--crease);
-}
-
-.note__quad--art > .note__sheet {
-	border-radius: 0 0 0 var(--r-md);
-	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
-		inset -11px 0 13px -11px var(--crease),
-		inset 0 11px 13px -11px var(--crease);
-}
-
-.note__quad--caption > .note__sheet {
-	border-radius: 0 0 var(--r-md) 0;
-	box-shadow: 0 12px 20px -16px rgb(88 70 52 / 0.5),
-		inset 11px 0 13px -11px var(--crease),
-		inset 0 11px 13px -11px var(--crease);
-}
-
-/* The blank back of a flap — the side you watch swinging towards you before
-   the paper turns over. Turned away with rotateY so its own backface is the
-   one pointing at you while the flap lies open.
-
-   Which edge the wash sits on is worked out, not eyeballed. rotateY mirrors
-   the lining left-to-right and leaves its vertical axis alone, so on a
-   horizontal fold the edge that ends up against the crease is still local
-   top — but on a vertical fold the mirroring swaps the sides, and the hinge
-   ends up at local *right*. Hence two rules and not one. */
-/* The `translate` is the paper's thickness, and it is worth the one line.
-
-   Without it the sheet and its own back are the same plane, so the flap is a
-   surface with no depth: at the crease it tapers to nothing, and the moment it
-   is edge-on it disappears completely. Pushing the back a hair away from the
-   viewer gives the fold two faces with a gap between them, which is what a
-   sheet of paper is — you see it as a thin bright edge along the crease all
-   the way through the swing.
-
-   Z, and not Y or X, because the two folds turn about different axes and only
-   the depth offset is the same answer for both.
-
-   Order matters: individual transform properties resolve translate → rotate →
-   scale, so the offset is applied in the quadrant's frame *after* the 180°
-   turn rather than being spun round by it. Written as one `transform` with the
-   rotate first, the back would be pushed towards the viewer instead. */
-.note__lining {
-	position: absolute;
-	inset: 0;
-	translate: 0 0 calc(var(--paper-thick) * -1);
-	rotate: y 180deg;
 	backface-visibility: hidden;
 	background: var(--sheet);
 }
 
-.note__lining--h {
-	background: linear-gradient(180deg, var(--crease-wash), transparent 60%),
-		var(--sheet);
+.note__back {
+	rotate: x 180deg;
 }
 
-.note__lining--v {
-	background: linear-gradient(270deg, var(--crease-wash), transparent 60%),
-		var(--sheet);
+/* Cut edges are rounded and folded ones are not, which is the quiet reason a
+   folded letter looks folded before it moves: the rounded corners are always
+   the four furthest from any crease. On a back the rounding is mirrored,
+   because the back is turned over about the crease. */
+.note__flap--top > .note__face {
+	border-radius: var(--r-md) var(--r-md) 0 0;
+	box-shadow: inset 0 -8px 10px -9px var(--crease);
 }
 
-/* The face darkens as it turns away from the room and brightens as it comes
-   round to you.
+.note__panel > .note__face {
+	box-shadow: inset 0 8px 10px -9px var(--crease),
+		inset 0 -8px 10px -9px var(--crease);
+}
 
-   And it is the real thing rather than a fade timed to look like it. A flat
-   surface catches light in proportion to the cosine of its angle to it, so
-   the shade is `1 − cos(--fold-a)`: nothing at 0°, where the face is square
-   on to the room, and total at -90°, where it is edge-on and catching none.
-   Between those it is a curve, not a ramp, which is why the face brightens
-   late — most of the light arrives in the last thirty degrees.
+.note__flap--bottom > .note__face {
+	border-radius: 0 0 var(--r-md) var(--r-md);
+	box-shadow: inset 0 8px 10px -9px var(--crease);
+}
 
-   Nothing here is transitioned. The angle is the only thing that animates and
-   this is derived from it, so the light physically cannot disagree with the
-   pose: there is no second timing function to keep in step, and changing the
-   fold's duration or easing needs no edit here at all.
+/* The bottom flap's outside is in the top flap's shadow whenever it can be
+   seen shut, so it is the darker paper the slips show under their flaps. The
+   top flap's outside is the cover, drawn with the slips in §10. */
+.note__flap--bottom > .note__back {
+	border-radius: var(--r-md) var(--r-md) 0 0;
+	background: var(--sheet-under);
+}
 
-   `clamp` because the cosine keeps going past -90° — the face is turned away
-   by then and the lining is what you are looking at, but the value still has
-   to be a legal opacity. */
-.note__sheet::after {
+/* The light on a face, and the real thing rather than a fade timed to look
+   like it. A flat surface catches light in proportion to the cosine of its
+   angle to it, so the printed side's shade is `1 − cos(--fold-a)`: nothing
+   when it lies open, total when it is edge-on. The outside is the same curve
+   turned half a circle — lit when the flap is shut, dark edge-on.
+
+   Nothing here is transitioned. The angle is the only thing that animates
+   and this is derived from it, so the light cannot disagree with the pose.
+   `clamp` because the cosine keeps going past ±90°, where the face is turned
+   away and the value still has to be a legal opacity. */
+.note__face::after,
+.note__back::after {
 	content: "";
 	position: absolute;
 	inset: 0;
 	pointer-events: none;
 	border-radius: inherit;
-	background: rgb(88 70 52 / 0.5);
+	background: rgb(88 70 52 / 0.45);
+}
+
+.note__face::after {
 	opacity: clamp(0, 1 - cos(var(--fold-a)), 1);
+}
+
+.note__back::after {
+	opacity: clamp(0, 1 + cos(var(--fold-a)), 1);
 }
 
 /* --- what is written on it ------------------------------------------------ */
 
-/* Note-sized, not heading-sized. Set any larger and the cover starts
-   competing with the jar for the middle of the room, which is the wrong way
-   round. The inline padding keeps it clear of the ×. */
-.note__q {
-	font-family: var(--ff-display);
-	font-size: var(--fs-500);
-	line-height: var(--lh-tight);
-	color: var(--ink);
-	padding-inline-end: var(--sp-6);
+/* The top flap is a letterhead: who it is from in small capitals up top, and
+   the question set at the bottom of the panel, right against the crease, so
+   it reads straight on into the answer below it. */
+.note__flap--top > .note__face {
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+	padding: var(--sp-3) var(--sp-5);
 }
 
-/* A quadrant has to hold a whole answer — text cannot flow across a crease —
-   and the longest of the four is Education at ~185 characters. That answer,
-   at this size and measure, is what `--quad-w` and `--quad-h` in home.css §2
-   were solved for. Loosening either of these three numbers means re-checking
-   all four answers against the quadrant, not just this one. */
+.note__from {
+	position: absolute;
+	inset-block-start: var(--sp-3);
+	inset-inline-start: var(--sp-5);
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--ink-soft);
+}
+
+/* Sized from the panel rather than from the type scale, because it is the
+   panel's one job: a quarter of its height, so the letterhead is mostly
+   title and not mostly paper, held between two sizes that are still a
+   heading on a phone and still a note on a laptop. */
+.note__q {
+	font-family: var(--ff-display);
+	font-size: clamp(1.5rem, calc(var(--panel-h) / 4), 2.25rem);
+	line-height: var(--lh-tight);
+	color: var(--ink);
+}
+
+/* The middle panel is ruled, like letter paper, and the rules are the lines
+   the answer is written on: one every `1.5em` of the answer's own size,
+   starting at the top of the content box where the first line starts. Drawn
+   as the face's background rather than under the paragraph, so the page is
+   ruled all the way down whether the answer runs to three lines or five.
+
+   The answer has to fit this one panel — text does not run across a crease
+   — and the panel is sized from the room, so the type is sized from the
+   panel: `--panel-h / 10`, held between the two body sizes the section
+   already uses. The longest answer in js/data/qa.js is what that was
+   checked against, at the shortest room and the narrowest phone. */
+.note__panel > .note__face {
+	padding: var(--sp-3) var(--sp-5);
+	font-size: clamp(var(--fs-200), calc(var(--panel-h) / 10), var(--fs-300));
+	background: linear-gradient(transparent calc(100% - 1px), var(--rule) 0)
+			0 0 / 100% 1.5em content-box,
+		var(--sheet);
+}
+
 .note__text {
-	font-size: var(--fs-300);
 	line-height: 1.5;
 	color: var(--ink);
 }
 
-.note__art {
-	width: min(6.5rem, 62%);
-	margin: auto;
-	/* A hard offset drop rather than a blur: a pixel sprite with a soft shadow
-	   under it stops being a pixel sprite. */
-	filter: drop-shadow(2px 3px 0 rgb(120 96 66 / 0.2));
+.note__text a {
+	text-decoration: underline;
+	text-decoration-color: var(--art-accent);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 2px;
+	transition: text-decoration-color var(--dur) var(--ease-out);
 }
 
-.note__art > svg {
+.note__text a:hover,
+.note__text a:focus-visible {
+	text-decoration-color: var(--ink);
+}
+
+/* The bottom flap: the drawing as a stamp stuck in the corner, and a P.S.
+   beside it. The stamp is as tall as the panel allows and square, and goes
+   on a few degrees crooked, because nobody has ever stuck a stamp on
+   straight. */
+.note__flap--bottom > .note__face {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	gap: var(--sp-4);
+	padding: var(--sp-3) var(--sp-5);
+}
+
+.note__stamp {
+	height: calc(var(--panel-h) - var(--sp-8));
+	aspect-ratio: 1;
+	rotate: -4deg;
+	/* A hard offset drop rather than a blur: a pixel stamp with a soft shadow
+	   under it stops being a pixel stamp. */
+	filter: drop-shadow(2px 2px 0 rgb(120 96 66 / 0.25));
+}
+
+.note__stamp > svg {
 	display: block;
 	width: 100%;
-	height: auto;
+	height: 100%;
 }
 
-.note__caption {
-	margin: auto;
-	text-align: center;
+.note__ps {
 	font-family: var(--ff-display);
 	font-size: var(--fs-200);
 	line-height: var(--lh-snug);
 	color: var(--ink-soft);
 }
 
-/* --- the note's two controls ---------------------------------------------- */
-
-/* The tab you pull to open the next fold. A mouse reader can click anywhere
-   on the note — js/modules/jar.js delegates — so this is here to *say* the
-   note opens, and to be the thing a keyboard reader lands on and presses. Its
-   arrow points the way that fold actually swings.
-
-   Exactly one of the two is offered at a time: the cover's while the note is
-   shut, the answer's once the right half is out. `visibility` and not
-   `display`, because the hidden one has to keep its space or the quadrant
-   above it reflows mid-swing — and because visibility takes it out of the tab
-   order, where opacity alone would leave it silently pressable. */
-.note__pull {
-	display: flex;
-	align-items: center;
-	gap: var(--sp-2);
-	width: fit-content;
-	margin: auto auto 0;
-	padding: 0.15rem var(--sp-3);
-	border-radius: var(--r-pill);
-	background: rgb(255 255 255 / 0.45);
-	font-family: var(--ff-display);
-	font-size: var(--fs-100);
-	font-weight: 600;
-	color: var(--ink-soft);
-	cursor: pointer;
-	transition: opacity var(--dur) var(--ease-out),
-		background-color var(--dur) var(--ease-out),
-		color var(--dur) var(--ease-out);
-}
-
-.note__pull:hover,
-.note__pull:focus-visible {
-	background: rgb(255 255 255 / 0.9);
+.note__ps-mark {
+	font-weight: 700;
 	color: var(--ink);
-}
-
-.note__quad--q .note__pull-arrow {
-	font-size: 0.75em;
-	animation: bob-x 1.4s ease-in-out infinite;
-}
-
-.note__quad--a .note__pull-arrow {
-	font-size: 0.75em;
-	animation: next-bob 1.4s ease-in-out infinite;
-}
-
-.note.is-fold-1 .note__quad--q > .note__sheet > .note__pull,
-.note.is-fold-2 .note__quad--a > .note__sheet > .note__pull {
-	opacity: 0;
-	visibility: hidden;
-}
-
-@keyframes bob-x {
-	0%,
-	100% {
-		translate: 0 0;
-	}
-	50% {
-		translate: 4px 0;
-	}
-}
-
-.note__away {
-	position: absolute;
-	inset-block-start: var(--sp-2);
-	inset-inline-end: var(--sp-3);
-	width: 1.6rem;
-	height: 1.6rem;
-	border-radius: var(--r-pill);
-	font-family: var(--ff-display);
-	font-size: 1.1rem;
-	line-height: 1;
-	color: var(--ink-faint);
-	cursor: pointer;
-	transition: background-color var(--dur) var(--ease-out),
-		color var(--dur) var(--ease-out), rotate var(--dur) var(--ease-spring);
-}
-
-.note__away:hover,
-.note__away:focus-visible {
-	background: rgb(255 255 255 / 0.75);
-	color: var(--ink);
-	rotate: 90deg;
 }
 
 /* --------------------------------------------------------------------------
@@ -1610,14 +1553,17 @@ html.is-dragging * {
 	max-width: var(--measure);
 }
 
-.qa-note--sub {
-	margin-block-start: var(--sp-3);
-	background: var(--paper-warm);
-	box-shadow: none;
+/* The same underline the letter gives its links, minus the per-tint accent
+   — the list is plain paper. */
+.qa-note a {
+	text-decoration: underline;
+	text-decoration-color: var(--accent);
+	text-decoration-thickness: 2px;
+	text-underline-offset: 2px;
 }
 
-.qa-note--sub > summary {
-	font-size: var(--fs-400);
+.qa-note__ps {
+	color: var(--ink-soft);
 }
 
 /* --------------------------------------------------------------------------
