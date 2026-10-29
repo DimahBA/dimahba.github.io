@@ -1,0 +1,425 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>Music Geometry — harmony, drawn on a circle</title>
+		<meta
+			name="description"
+			content="Short lessons in music theory, from the twelve notes to the chords of jazz — every idea played on the circle of fifths and a keyboard."
+		/>
+		<!-- A prototype, not yet part of the site: kept out of search until it is. -->
+		<meta name="robots" content="noindex" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="color-scheme" content="dark" />
+
+		<link
+			rel="icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000'/%3E%3Cpolygon points='16,5 25.5,10.5 25.5,21.5 21.5,25.5 10.5,25.5 5,16 10.5,6.5' fill='none' stroke='%2358C4DD' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='5' r='2.6' fill='%23F0AC5F'/%3E%3C/svg%3E"
+		/>
+
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="preload"
+			as="font"
+			type="font/woff2"
+			crossorigin
+			href="https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-roman.woff2"
+		/>
+		<!-- Only the accidentals: sharp, flat, natural, double flat, double sharp. -->
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Noto+Music&amp;display=swap&amp;text=%E2%99%AF%E2%99%AD%E2%99%AE%F0%9D%84%AB%F0%9D%84%AA"
+		/>
+		<link rel="stylesheet" href="css/home.css" />
+
+		<!-- Entrance states only apply when something can play them. -->
+		<script>
+			document.documentElement.classList.add("js");
+		</script>
+		<script type="module" src="js/home.js"></script>
+	</head>
+
+	<body>
+		<div class="home">
+			<main class="course">
+				<header class="masthead">
+					<a class="brand" href="./" aria-label="Music Geometry, home">
+						<svg class="brand__mark" viewBox="0 0 32 32" aria-hidden="true">
+							<polygon points="16,5 25.5,10.5 25.5,21.5 21.5,25.5 10.5,25.5 5,16 10.5,6.5" />
+							<circle cx="16" cy="5" r="2.6" />
+						</svg>
+						<span>Music Geometry</span>
+					</a>
+					<span class="naming" role="group" aria-label="Note names">
+						<button type="button" data-naming="solfege" aria-pressed="true">Do Ré Mi</button>
+						<button type="button" data-naming="letters" aria-pressed="false">C D E</button>
+					</span>
+				</header>
+
+				<section class="hero" aria-labelledby="hero-title">
+					<p class="kicker">Music theory, one picture at a time</p>
+					<h1 class="hero__title" id="hero-title">Harmony, <em>drawn on a circle.</em></h1>
+					<p class="hero__lede">
+						Twenty-nine short lessons, from reading the staff to the chords of jazz. Press any one to hear it: every idea
+						plays on the circle of fifths and the keyboard beside it.
+					</p>
+					<div class="hero__actions">
+						<a class="cta" href="staff.html">Start with the staff <span aria-hidden="true">→</span></a>
+						<p class="hero__note"><span class="pip" aria-hidden="true"></span> Nine full lessons so far. Every tile plays its idea.</p>
+					</div>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-basics">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">I</span>
+						<h2 class="chapter__name" id="ch-basics">Basics</h2>
+						<p class="chapter__blurb">Reading music: where notes sit, and how long they last.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile tile--ready" data-lesson="staff">
+							<button class="tile__play" type="button">
+								<span class="tile__num">01</span>
+								<span class="tile__name">The staff</span>
+								<span class="tile__blurb">Five lines, two clefs, and the white keys they name.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="staff.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="note-duration">
+							<button class="tile__play" type="button">
+								<span class="tile__num">02</span>
+								<span class="tile__name">Note duration</span>
+								<span class="tile__blurb">Whole, half, quarter, eighth, sixteenth — each half the last.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="note-duration.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="time-signatures">
+							<button class="tile__play" type="button">
+								<span class="tile__num">03</span>
+								<span class="tile__name">Measures &amp; time signatures</span>
+								<span class="tile__blurb">How many beats in a measure, and which note gets one.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="time-signatures.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="rests">
+							<button class="tile__play" type="button">
+								<span class="tile__num">04</span>
+								<span class="tile__name">Rests</span>
+								<span class="tile__blurb">Silence that lasts exactly as long as a note.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="rests.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="dots-ties">
+							<button class="tile__play" type="button">
+								<span class="tile__num">05</span>
+								<span class="tile__name">Dots &amp; ties</span>
+								<span class="tile__blurb">Two ways to make a note last longer.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="dots-ties.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="steps">
+							<button class="tile__play" type="button">
+								<span class="tile__num">06</span>
+								<span class="tile__name">Steps &amp; accidentals</span>
+								<span class="tile__blurb">Half steps, whole steps, and the sharps and flats between.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="steps-accidentals.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+					</ol>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-meter">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">II</span>
+						<h2 class="chapter__name" id="ch-meter">Rhythm &amp; meter</h2>
+						<p class="chapter__blurb">Beats that split in two or in three, and the hand that conducts them.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile tile--ready" data-lesson="meter">
+							<button class="tile__play" type="button">
+								<span class="tile__num">07</span>
+								<span class="tile__name">Simple &amp; compound meter</span>
+								<span class="tile__blurb">Duple, triple, quadruple — in twos or in threes.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="meter.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile tile--ready" data-lesson="odd-meter">
+							<button class="tile__play" type="button">
+								<span class="tile__num">08</span>
+								<span class="tile__name">Odd meter</span>
+								<span class="tile__blurb">5/8, 7/8, 11/8: beats of two and three, mixed.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="odd-meter.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+					</ol>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-sound">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">III</span>
+						<h2 class="chapter__name" id="ch-sound">Sound</h2>
+						<p class="chapter__blurb">What a note is, and how far apart two notes can be.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile" data-lesson="notes">
+							<button class="tile__play" type="button">
+								<span class="tile__num">09</span>
+								<span class="tile__name">Notes &amp; octaves</span>
+								<span class="tile__blurb">Twelve notes, then the pattern starts again.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="intervals">
+							<button class="tile__play" type="button">
+								<span class="tile__num">10</span>
+								<span class="tile__name">Intervals</span>
+								<span class="tile__blurb">Every distance has a name, and a place on the circle.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="harmonics">
+							<button class="tile__play" type="button">
+								<span class="tile__num">11</span>
+								<span class="tile__name">The harmonic series</span>
+								<span class="tile__blurb">Why the fifth? One plucked string already sings it.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+					</ol>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-keys">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">IV</span>
+						<h2 class="chapter__name" id="ch-keys">Scales &amp; keys</h2>
+						<p class="chapter__blurb">Seven notes chosen from twelve, and the circle that holds them.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile tile--ready" data-lesson="major-scale">
+							<button class="tile__play" type="button">
+								<span class="tile__num">12</span>
+								<span class="tile__name">The major scale</span>
+								<span class="tile__blurb">Whole, whole, half, whole, whole, whole, half.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+							<a class="tile__lesson" href="major-scale.html">Open the lesson <span aria-hidden="true">→</span></a>
+						</li>
+						<li class="tile" data-lesson="key-signatures">
+							<button class="tile__play" type="button">
+								<span class="tile__num">13</span>
+								<span class="tile__name">Key signatures</span>
+								<span class="tile__blurb">One more sharp for every step clockwise.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="circle">
+							<button class="tile__play" type="button">
+								<span class="tile__num">14</span>
+								<span class="tile__name">The circle of fifths</span>
+								<span class="tile__blurb">All twelve keys, each a fifth from the last.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="minor">
+							<button class="tile__play" type="button">
+								<span class="tile__num">15</span>
+								<span class="tile__name">Minor scales</span>
+								<span class="tile__blurb">The same notes as a major key, with a different home.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="modes">
+							<button class="tile__play" type="button">
+								<span class="tile__num">16</span>
+								<span class="tile__name">Modes</span>
+								<span class="tile__blurb">Seven scales in one, from brightest to darkest.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="pentatonic">
+							<button class="tile__play" type="button">
+								<span class="tile__num">17</span>
+								<span class="tile__name">Pentatonic &amp; blues</span>
+								<span class="tile__blurb">Five fifths in a row — then add the blue note.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+					</ol>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-chords">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">V</span>
+						<h2 class="chapter__name" id="ch-chords">Chords</h2>
+						<p class="chapter__blurb">Notes sounding together, and the shapes they make.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile" data-lesson="triads">
+							<button class="tile__play" type="button">
+								<span class="tile__num">18</span>
+								<span class="tile__name">Triads</span>
+								<span class="tile__blurb">Three notes, one triangle: major, minor, diminished, augmented.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="sevenths">
+							<button class="tile__play" type="button">
+								<span class="tile__num">19</span>
+								<span class="tile__name">Seventh chords</span>
+								<span class="tile__blurb">A fourth note on top: the colours of jazz and soul.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="inversions">
+							<button class="tile__play" type="button">
+								<span class="tile__num">20</span>
+								<span class="tile__name">Inversions</span>
+								<span class="tile__blurb">The same chord with a different note at the bottom.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="diatonic">
+							<button class="tile__play" type="button">
+								<span class="tile__num">21</span>
+								<span class="tile__name">Chords of a key</span>
+								<span class="tile__blurb">Seven chords from seven notes: I ii iii IV V vi vii°.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="extensions">
+							<button class="tile__play" type="button">
+								<span class="tile__num">22</span>
+								<span class="tile__name">Extended chords</span>
+								<span class="tile__blurb">Keep stacking thirds: ninths, elevenths, thirteenths.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+					</ol>
+				</section>
+
+				<section class="chapter" aria-labelledby="ch-harmony">
+					<header class="chapter__head">
+						<span class="chapter__num" aria-hidden="true">VI</span>
+						<h2 class="chapter__name" id="ch-harmony">Harmony</h2>
+						<p class="chapter__blurb">How chords move: tension, release, and changing key.</p>
+					</header>
+					<ol class="tiles">
+						<li class="tile" data-lesson="function">
+							<button class="tile__play" type="button">
+								<span class="tile__num">23</span>
+								<span class="tile__name">Function &amp; cadences</span>
+								<span class="tile__blurb">Home, away, tension — and the way back.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="voice-leading">
+							<button class="tile__play" type="button">
+								<span class="tile__num">24</span>
+								<span class="tile__name">Voice leading</span>
+								<span class="tile__blurb">Move every voice as little as you can.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="circle-progression">
+							<button class="tile__play" type="button">
+								<span class="tile__num">25</span>
+								<span class="tile__name">The circle progression</span>
+								<span class="tile__blurb">Roots falling by fifths: iii, vi, ii, V, I.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="secondary-dominants">
+							<button class="tile__play" type="button">
+								<span class="tile__num">26</span>
+								<span class="tile__name">Secondary dominants</span>
+								<span class="tile__blurb">Give any chord a V7 of its own.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="modulation">
+							<button class="tile__play" type="button">
+								<span class="tile__num">27</span>
+								<span class="tile__name">Modulation</span>
+								<span class="tile__blurb">Changing key: the seven-note slice slides along.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="borrowed">
+							<button class="tile__play" type="button">
+								<span class="tile__num">28</span>
+								<span class="tile__name">Borrowed chords</span>
+								<span class="tile__blurb">Darken a major key with chords from its parallel minor.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+						<li class="tile" data-lesson="tritone-sub">
+							<button class="tile__play" type="button">
+								<span class="tile__num">29</span>
+								<span class="tile__name">Tritone substitution</span>
+								<span class="tile__blurb">Swap V7 for the chord straight across the circle.</span>
+							</button>
+							<span class="tile__glyph" aria-hidden="true"></span>
+						</li>
+					</ol>
+				</section>
+
+				<section class="beyond" aria-labelledby="beyond-title">
+					<h2 class="beyond__title" id="beyond-title">Beyond the circle</h2>
+					<p class="beyond__blurb">The rest of a complete course — the parts of music that aren't about which notes.</p>
+					<ul class="beyond__list">
+						<li><span>Melody</span> contour, motifs, and the notes that pass between chords</li>
+						<li><span>Phrases &amp; form</span> cadences as punctuation; verse and chorus, sonata</li>
+						<li><span>Counterpoint</span> two or more independent lines at once</li>
+						<li><span>Ear training</span> hearing all of it without a picture</li>
+					</ul>
+				</section>
+
+				<footer class="colophon">Set in Computer Modern. Every sound is synthesised in your browser — nothing to download.</footer>
+			</main>
+
+			<aside class="stage" id="stage" aria-label="The circle of fifths and a keyboard">
+				<div class="stage__wheel">
+					<svg id="wheel" class="wheel" viewBox="-262 -262 524 524" role="group" aria-label="Circle of fifths — choose a key"></svg>
+				</div>
+
+				<div class="now">
+					<div class="now__top">
+						<p class="now__eyebrow" id="now-eyebrow">Press any lesson</p>
+						<div class="now__tools">
+							<button class="now__key" id="now-key" type="button" title="Back to each lesson's own key" hidden>
+								<span class="now__key-label">Key</span> <span class="now__key-name"></span> <span aria-hidden="true">×</span>
+							</button>
+							<button class="now__again" id="now-again" type="button" hidden>
+								<span class="now__again-icon" aria-hidden="true"></span><span class="now__again-text">Play again</span>
+							</button>
+						</div>
+					</div>
+					<p class="now__row" id="now-row"><span class="now__title" id="now-title"></span> <span class="now__sub" id="now-sub"></span></p>
+					<p class="now__say" id="now-say" aria-live="polite"></p>
+				</div>
+
+				<div class="stage__keys">
+					<svg id="keys" class="keys" aria-label="Keyboard" role="group"></svg>
+				</div>
+
+				<p class="stage__hint">
+					<span>Click a key on the circle to hear the lesson there</span>
+					<span><kbd>A</kbd>–<kbd>K</kbd> play · <kbd>Z</kbd><kbd>X</kbd> octave · <kbd>←</kbd><kbd>→</kbd> key · <kbd>Esc</kbd> stop</span>
+				</p>
+
+				<noscript><p class="stage__noscript">The circle and the keyboard need JavaScript to play.</p></noscript>
+			</aside>
+		</div>
+	</body>
+</html>

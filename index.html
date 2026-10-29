@@ -236,6 +236,21 @@
 						     Everything here is an empty shell: js/modules/jar.js fills
 						     the slips and every piece of text from js/data/qa.js. -->
             <div class="qa__stage" data-qa-stage>
+              <!-- The room itself: a window onto the garden, the table the
+							     jar and the plant stand on, and the café's boards under it.
+							     Behind everything else on the stage, and only a picture —
+							     `alt=""` for the same reason as the plant, and nothing in
+							     it is a target. -->
+              <img
+                class="qa__room"
+                src="static/PixelArt/qa-room.png"
+                alt=""
+                role="presentation"
+                width="172"
+                height="124"
+                loading="lazy"
+              />
+
               <!-- Furniture. It stands behind the jar and is partly seen
 							     *through* it, which is the cheapest proof the glass is
 							     glass — a highlight only suggests transparency, something
@@ -451,7 +466,7 @@
       <!-- ==============================================================
 			     Project board
 
-			     These eight cards are static HTML on purpose. If the board were
+			     These nine cards are static HTML on purpose. If the board were
 			     rendered from js/projects.data.js, crawlers and no-JS visitors
 			     would find no links at all on the site's most important page.
 			     The cost is that title / tags / blurb are duplicated between
@@ -636,6 +651,37 @@
                 management into the physical world through tangible interaction.
               </p>
               <span class="card__more">read the case study →</span>
+            </a>
+
+            <!-- The badge is the game's logo, stuck where the award seal sits
+                 on the first card. -->
+            <a
+              class="card card--badge paper stitch t-serval"
+              href="project-operation-serval.html"
+              draggable="false"
+              style="--i: 8; --z: 9; --rest-x: -0.75rem; --rest-rot: -2deg"
+            >
+              <img
+                class="card__badge"
+                src="static/projects/serval-logo.webp"
+                width="512"
+                height="512"
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <h3 class="card__title">Operation Serval, UI for an Indie Tank Game</h3>
+              <ul class="chips">
+                <li class="chip">Game UI</li>
+                <li class="chip">Design System</li>
+                <li class="chip">UI Design</li>
+              </ul>
+              <p class="card__desc">
+                The garage, research tree and HUD of a friend's indie tank
+                game, all built from one component library and coloured from
+                its logo.
+              </p>
+              <span class="card__more">see the screens →</span>
             </a>
           </div>
 

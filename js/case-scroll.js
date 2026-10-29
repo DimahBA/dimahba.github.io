@@ -8,15 +8,21 @@
      · `--progress`, a number between 0 and 1, on the document element;
      · `aria-current` on the rail link for the screen you are standing in;
      · `aria-current` on the participant dot for the card the cohort strip is
-       showing, and `disabled` on its chevrons at the two ends.
+       showing, and `disabled` on its chevrons at the two ends;
+     · on a screen reel, `aria-current` on the pip for the screen in view,
+       and `data-autoplay` / `data-playing` on the reel itself.
 
    Same division of labour as the rest of the site: CSS owns every pose, and
    the script owns only which state the page is in. The disclosure on the
    French verbatims is a <details>, so it is not here at all — and neither is
-   the cohort strip's scrolling, which is a native overflow with scroll-snap
-   and works with this file absent. */
+   any strip's scrolling, which is a native overflow with scroll-snap and
+   works with this file absent.
+
+   The file serves every page in this shape, so each part below looks for its
+   own markup and does nothing when the page has none. */
 
 import { $, $$ } from "./lib/dom.js";
+import { prefersReducedMotion } from "./lib/motion.js";
 import { revealOnce } from "./modules/reveal.js";
 import { mountLightbox, makeZoomable } from "./modules/lightbox.js";
 
@@ -161,11 +167,112 @@ if (cohort) {
 	show(0);
 }
 
+/* ------------------------------------------------------- the screen reel */
+
+/* Full-width screenshots on a scroll-snap track, like the cohort strip, plus
+   the one thing it does not do: it plays.
+
+   How long a screen stays up is not written here. It is the length of the
+   pip's fill animation in the stylesheet, and the reel moves on when that
+   animation ends. So every reason to stop — the pause button, the reel being
+   scrolled out of the window, a reader who asked for less motion — is just
+   the animation not running, and there is no timer to keep in step with it
+   or to forget to clear.
+
+   Two attributes, because they are two different facts: `data-autoplay` is
+   what the reader chose, and `data-playing` is whether it is running right
+   now. The button's label follows the first; the pip follows the second. */
+const DWELL = "reel-dwell";
+
+for (const reel of $$("[data-reel]")) {
+	const track = $("[data-reel-track]", reel);
+	const slides = $$("[data-reel-slide]", track);
+	const pips = $$("[data-reel-go]", reel);
+	const arrows = $$("[data-reel-step]", reel);
+	const play = $("[data-reel-play]", reel);
+
+	if (!track || !slides.length) continue;
+
+	let current = 0;
+	let wanted = !prefersReducedMotion();
+	let inView = false;
+
+	function show(index) {
+		current = index;
+		pips.forEach((pip, i) => {
+			if (i === index) pip.setAttribute("aria-current", "true");
+			else pip.removeAttribute("aria-current");
+		});
+	}
+
+	function sync() {
+		reel.toggleAttribute("data-autoplay", wanted);
+		reel.toggleAttribute("data-playing", wanted && inView);
+	}
+
+	/* Wraps both ways: past the last screen is the first one again. A
+	   scrollTo on the track rather than scrollIntoView on the slide, because
+	   scrollIntoView also scrolls the page to bring the slide fully into view,
+	   and the reel moving on by itself must never move the page under the
+	   reader. */
+	function go(index) {
+		const n = slides.length;
+		track.scrollTo({ left: slides[((index % n) + n) % n].offsetLeft });
+	}
+
+	/* Which screen is current is read off the scroll position, never stored
+	   by the buttons — the same rule as the cohort strip, for the same
+	   reason: a swipe has to land in the same state a click would. */
+	const seen = new IntersectionObserver(
+		(entries) => {
+			for (const entry of entries) {
+				if (entry.isIntersecting) show(slides.indexOf(entry.target));
+			}
+		},
+		{ root: track, threshold: 0.5 },
+	);
+
+	for (const slide of slides) seen.observe(slide);
+
+	/* Only plays while most of it is on screen. A reel changing pictures
+	   below the fold is motion in the corner of the reader's eye with nobody
+	   watching it. */
+	new IntersectionObserver(
+		([entry]) => {
+			inView = entry.isIntersecting;
+			sync();
+		},
+		{ threshold: 0.5 },
+	).observe(reel);
+
+	reel.addEventListener("animationend", (event) => {
+		if (event.animationName === DWELL) go(current + 1);
+	});
+
+	for (const arrow of arrows) {
+		arrow.addEventListener("click", () => go(current + Number(arrow.dataset.reelStep)));
+	}
+
+	for (const pip of pips) {
+		pip.addEventListener("click", () => go(Number(pip.dataset.reelGo)));
+	}
+
+	play?.addEventListener("click", () => {
+		wanted = !wanted;
+		sync();
+	});
+
+	show(0);
+	sync();
+}
+
 /* ---------------------------------------------------------- photographs */
 
+/* The lightbox's eyebrow is the piece's own title, read off the page so each
+   case study names itself. */
 if (scroller) {
 	makeZoomable(scroller);
 	mountLightbox(scroller, {
-		eyebrow: "Adaptive AR pathfinding for Parkinson's disease",
+		eyebrow: $("h1")?.textContent.replace(/\s+/g, " ").trim() ?? "",
 	});
 }

@@ -1,0 +1,526 @@
+<!doctype html>
+<html lang="en" data-case="serval">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Operation Serval — Game UI — Dimah</title>
+    <meta
+      name="description"
+      content="The interfaces I designed for Operation Serval, a friend's indie tank game: the garage, the research tree and the in-game HUD."
+    />
+    <meta name="theme-color" content="#14110c" />
+    <link
+      rel="canonical"
+      href="https://dimahba.github.io/project-operation-serval.html"
+    />
+
+    <meta property="og:type" content="article" />
+    <meta property="og:site_name" content="Buttercup Café" />
+    <meta property="og:title" content="Operation Serval — Game UI" />
+    <meta
+      property="og:description"
+      content="The garage, the research tree and the battle HUD I designed for a friend's indie tank game."
+    />
+    <meta
+      property="og:url"
+      content="https://dimahba.github.io/project-operation-serval.html"
+    />
+    <meta
+      property="og:image"
+      content="https://dimahba.github.io/static/projects/serval-garage-modes.webp"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link
+      rel="icon"
+      href="static/PixelArt/myChibi-cropped.png"
+      type="image/png"
+    />
+    <link rel="apple-touch-icon" href="static/PixelArt/myChibi-cropped.png" />
+
+    <!-- Two pairs of faces. The game's own, Oswald for titles and Chakra
+         Petch for reading, set everything about the game. The café's, Space
+         Grotesk and Baloo 2, set what is still the café's on this page: the
+         way back, and Dimah telling you how it started. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400..800&amp;family=Chakra+Petch:wght@400;500;600&amp;family=Oswald:wght@400..700&amp;family=Space+Grotesk:wght@400..700&amp;display=swap"
+    />
+
+    <!-- Stamped before first paint, as on every page: the entrances only
+         apply when there is something around to trigger them. -->
+    <script>
+      document.documentElement.classList.add("js");
+    </script>
+
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/components.css" />
+    <link rel="stylesheet" href="css/lightbox.css" />
+    <link rel="stylesheet" href="css/case-scroll.css" />
+
+    <script type="module" src="js/case-scroll.js"></script>
+  </head>
+
+  <body>
+    <a class="skip-link" href="#context">Skip to content</a>
+
+    <div class="progress" data-progress aria-hidden="true"></div>
+
+    <main data-scroller>
+      <!-- ==========================================================
+           Hero — the name, and the front line at dusk
+           ========================================================== -->
+      <section class="screen screen--hero sv-hero" id="top" data-screen>
+        <!-- Scenery, not content: the title says everything there is to
+             say on this screen, so the drawing is left out of the
+             accessibility tree. -->
+        <img
+          class="sv-hero__land"
+          src="static/projects/serval-hero.svg"
+          width="1600"
+          height="900"
+          alt=""
+          decoding="async"
+          fetchpriority="high"
+        />
+
+        <div class="back-row">
+          <a class="back" href="index.html#work" data-reveal>
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M15 19l-7-7 7-7"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+            Back to projects
+          </a>
+        </div>
+
+        <div class="screen__inner sv-hero__inner">
+          <h1 class="sv-hero__title" data-reveal style="--in-delay: 60ms">
+            <span class="sv-hero__op">Operation</span>
+            <span class="sv-hero__name">Serval</span>
+          </h1>
+        </div>
+
+        <a class="readon" href="#context">
+          <span>Read on</span>
+          <svg
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M12 5v14M6 13l6 6 6-6"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </a>
+      </section>
+
+      <!-- ==========================================================
+           How it started — a page out of the café's scrapbook
+
+           The one screen on this page that is the café's rather than the
+           game's: the chibi and the say panel from the home page, telling
+           how the project came about, with the tank it was all for taped
+           down beside them. Laid out as a collage, so the source order is
+           the phone's reading order: the photograph, the note, then the
+           chibi and the panel.
+           ========================================================== -->
+      <section class="screen sv-screen--sand sv-intro" id="context" data-screen>
+        <div class="screen__inner sv-intro__inner">
+          <h2 class="visually-hidden">How it started</h2>
+
+          <figure
+            class="snap paper stitch sv-intro__photo"
+            data-reveal
+            style="--in-delay: 60ms"
+          >
+            <span class="tape tape--tl" role="presentation"></span>
+            <img
+              src="static/projects/serval-panzer.jpg"
+              width="960"
+              height="720"
+              alt="A camouflaged Panzer IV in the game, parked on the concrete in front of a hangar, its long gun pointing to the left."
+              loading="lazy"
+              decoding="async"
+            />
+            <figcaption>The Panzer IV, waiting in the garage.</figcaption>
+          </figure>
+
+          <aside
+            class="sv-note paper stitch"
+            data-reveal
+            style="--in-delay: 160ms"
+          >
+            <span class="tape tape--tr" role="presentation"></span>
+            <dl>
+              <div>
+                <dt>Role</dt>
+                <dd>UI design, component library</dd>
+              </div>
+              <div>
+                <dt>For</dt>
+                <dd>Goldelio's indie tank game, in development</dd>
+              </div>
+            </dl>
+          </aside>
+
+          <div class="sv-intro__say">
+            <div class="chibi sv-intro__chibi" style="--in-delay: 260ms">
+              <img
+                src="static/PixelArt/myChibi-cropped.png"
+                alt="Pixel-art portrait of Dimah"
+                width="323"
+                height="326"
+              />
+            </div>
+
+            <div class="saypanel sv-intro__panel" style="--in-delay: 380ms">
+              <img
+                class="sv-intro__tank"
+                src="static/PixelArt/tank.png"
+                alt=""
+                width="180"
+                height="126"
+              />
+              <p class="saypanel__line">
+                I've always loved war games. I used to play some occasionally
+                on the Wii (yes, FPS games on the Wii, I know it's silly), and
+                others like Call of Duty and Half-Life 2.
+              </p>
+              <p class="saypanel__line">
+                So when my friend Goldelio, who is developing his own indie
+                game, asked me to design its interfaces, I didn't have to think
+                twice !
+              </p>
+              <a
+                class="btn btn--go"
+                href="https://operation-serval.com/"
+                target="_blank"
+                rel="noopener"
+              >
+                Check out the game
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path
+                    d="M6 6l6 6-6 6M13 6l6 6-6 6"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="square"
+                  />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================================
+           The screens — a reel that plays itself
+
+           The track is a native scroll-snap strip, so with scripting off
+           it is still four screenshots you can scroll through. The
+           controls only exist once the script is there to drive them.
+           ========================================================== -->
+      <section
+        class="screen sv-reel"
+        id="screens"
+        data-screen
+        data-reel
+        aria-roledescription="carousel"
+        aria-labelledby="screens-title"
+      >
+        <!-- The controls sit beside the title rather than in a row of their
+             own, so the screenshot gets that row's height. They come before
+             the slides, with pause first: the reader can stop the reel
+             before tabbing into it. -->
+        <div class="sv-reel__head">
+          <h2 class="sv-reel__title" id="screens-title" data-reveal>
+            Garage, research and battle
+          </h2>
+
+          <div class="sv-reel__bar">
+            <!-- Both labels are in the markup and the stylesheet shows one,
+                 the same way the translations on the Parkinson's page work:
+                 the script only says whether the reel is playing. -->
+            <button class="sv-btn sv-reel__play" type="button" data-reel-play>
+              <span class="sv-reel__when-on">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M7 5h3v14H7zM14 5h3v14h-3z" fill="currentColor" />
+                </svg>
+                <span class="sv-reel__label">Pause</span>
+              </span>
+              <span class="sv-reel__when-off">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path d="M8 5l11 7-11 7z" fill="currentColor" />
+                </svg>
+                <span class="sv-reel__label">Play</span>
+              </span>
+            </button>
+
+            <button
+              class="sv-btn"
+              type="button"
+              data-reel-step="-1"
+              aria-label="Previous screen"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M15 19l-7-7 7-7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="square"
+                />
+              </svg>
+            </button>
+
+            <ol class="sv-reel__pips">
+              <li>
+                <button class="sv-pip" type="button" data-reel-go="0" aria-label="Garage, select mode">
+                  <span class="sv-pip__fill"></span>
+                </button>
+              </li>
+              <li>
+                <button class="sv-pip" type="button" data-reel-go="1" aria-label="Research, tech tree">
+                  <span class="sv-pip__fill"></span>
+                </button>
+              </li>
+              <li>
+                <button class="sv-pip" type="button" data-reel-go="2" aria-label="Research, upgrades">
+                  <span class="sv-pip__fill"></span>
+                </button>
+              </li>
+              <li>
+                <button class="sv-pip" type="button" data-reel-go="3" aria-label="Battle, HUD">
+                  <span class="sv-pip__fill"></span>
+                </button>
+              </li>
+            </ol>
+
+            <button
+              class="sv-btn"
+              type="button"
+              data-reel-step="1"
+              aria-label="Next screen"
+            >
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M9 5l7 7-7 7"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="square"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <ul class="sv-reel__track" data-reel-track tabindex="0">
+          <li
+            class="sv-reel__slide"
+            data-reel-slide
+            role="group"
+            aria-roledescription="slide"
+            aria-label="1 of 4"
+          >
+            <figure class="sv-shot">
+              <img
+                src="static/projects/serval-garage-modes.webp"
+                width="1920"
+                height="1080"
+                alt="The garage: a camouflaged Panzer IV in front of a hangar, with the lineup of tanks along the bottom and a Select Mode flyout open on the right, showing each mode as a card with a picture of its map, above a compact mode picker and the BATTLE button."
+                decoding="async"
+              />
+              <figcaption>
+                <b>Garage · Select mode</b> — the full list of modes only opens
+                when you want to change it.
+              </figcaption>
+            </figure>
+          </li>
+          <li
+            class="sv-reel__slide"
+            data-reel-slide
+            role="group"
+            aria-roledescription="slide"
+            aria-label="2 of 4"
+          >
+            <figure class="sv-shot">
+              <img
+                src="static/projects/serval-research-tree.webp"
+                width="1920"
+                height="1080"
+                alt="The research tree on a dark brown grid: four ranks of German tanks in three columns. Owned tanks show their upgrade progress, the tank being researched is framed with orange corner brackets, and the locked ranks are greyed out behind padlocks."
+                decoding="async"
+                fetchpriority="low"
+              />
+              <figcaption>
+                <b>Research · Tech tree</b> — four ranks, three lines of tanks,
+                and the one you're researching framed in orange.
+              </figcaption>
+            </figure>
+          </li>
+          <li
+            class="sv-reel__slide"
+            data-reel-slide
+            role="group"
+            aria-roledescription="slide"
+            aria-label="3 of 4"
+          >
+            <figure class="sv-shot">
+              <img
+                src="static/projects/serval-research-upgrades.webp"
+                width="1920"
+                height="1080"
+                alt="The upgrade window for the Panzer IV: a progress bar split into four tiers, and a grid of mobility, protection and firepower upgrades. Researched ones are green, the one being researched is orange, and the later tiers are locked."
+                decoding="async"
+                fetchpriority="low"
+              />
+              <figcaption>
+                <b>Research · Upgrades</b> — every tank's upgrades in four tiers,
+                and a bar that shows when the next one opens.
+              </figcaption>
+            </figure>
+          </li>
+          <li
+            class="sv-reel__slide"
+            data-reel-slide
+            role="group"
+            aria-roledescription="slide"
+            aria-label="4 of 4"
+          >
+            <figure class="sv-shot">
+              <img
+                src="static/projects/serval-battle-hud.jpg"
+                width="1554"
+                height="814"
+                alt="The HUD in battle, over a desert sky and a hill with a palm tree on it: two score bars either side of a 24:12 timer and a compass tape along the top, a round crosshair in the middle, the speed and RPM gauge bottom left, two ammo slots at the bottom with APHE selected in orange, and a sector map with capture points A, B and C bottom right."
+                decoding="async"
+                fetchpriority="low"
+              />
+              <figcaption>
+                <b>Battle · HUD</b> — score and clock along the top, speed, ammo
+                and the map along the bottom, and the middle left clear for
+                aiming.
+              </figcaption>
+            </figure>
+          </li>
+        </ul>
+      </section>
+
+      <!-- ==========================================================
+           Colours — taken from the logo
+           ========================================================== -->
+      <section class="screen sv-screen--sand" id="colours" data-screen>
+        <div class="screen__inner">
+          <div class="split">
+            <div class="split__text">
+              <h2 class="screen__title--lg" data-reveal>Taken from the logo</h2>
+              <p class="screen__body" data-reveal style="--in-delay: 80ms">
+                The game's logo is a serval, half orange and half navy. The
+                orange became the accent. It's the only loud colour in the
+                game, so it's kept for the things you act on: BATTLE, DEPLOY,
+                and the tank you're researching.
+              </p>
+              <p class="screen__body" data-reveal style="--in-delay: 120ms">
+                Everything else is brown, because it's a war game. The panels
+                are mud, khaki and canvas, colours that sit on a battlefield
+                instead of fighting with it. The navy stays in the logo badge.
+              </p>
+            </div>
+
+            <figure
+              class="sv-logo paper stitch"
+              data-no-zoom
+              data-reveal
+              style="--in-delay: 140ms"
+            >
+              <img
+                src="static/projects/serval-logo.webp"
+                width="512"
+                height="512"
+                alt="The game's logo: a white serval roaring, on a ground split diagonally between orange and dark navy."
+                loading="lazy"
+                decoding="async"
+              />
+            </figure>
+          </div>
+
+          <!-- Five of the kit's tokens, values copied from its tokens.css.
+               The fill is set per swatch because it is the content. -->
+          <ul class="sv-swatches" data-reveal style="--in-delay: 180ms">
+            <li class="sv-swatch" style="--fill: var(--serval-orange)">
+              <b>Orange</b><code>#D9622B</code><span>Accent, from the logo</span>
+            </li>
+            <li class="sv-swatch" style="--fill: var(--serval-navy)">
+              <b>Navy</b><code>#16212D</code><span>Logo ground, from the logo</span>
+            </li>
+            <li class="sv-swatch" style="--fill: var(--serval-field)">
+              <b>Field</b><code>#14110C</code><span>Screen ground</span>
+            </li>
+            <li class="sv-swatch" style="--fill: var(--serval-glass)">
+              <b>Panel glass</b><code>#342D22</code><span>Panels, at 75%</span>
+            </li>
+            <li class="sv-swatch" style="--fill: var(--serval-sand)">
+              <b>Sand</b><code>#CDB98E</code><span>Lines and second buttons</span>
+            </li>
+          </ul>
+
+          <p class="screen__note" data-reveal style="--in-delay: 220ms">
+            Titles are set in Oswald and everything you read in Chakra Petch,
+            the same two fonts as this page.
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <footer class="outro">
+      <div class="screen__inner">
+        <img
+          class="sv-outro__badge"
+          src="static/projects/serval-logo.webp"
+          width="512"
+          height="512"
+          alt=""
+          loading="lazy"
+          decoding="async"
+        />
+        <p>
+          Designed for Goldelio's indie tank game, which is still in
+          development.
+        </p>
+        <div class="outro__links">
+          <a
+            class="btn btn--go"
+            href="https://operation-serval.com/"
+            target="_blank"
+            rel="noopener"
+          >
+            Check out the game
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path
+                d="M6 6l6 6-6 6M13 6l6 6-6 6"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="square"
+              />
+            </svg>
+          </a>
+          <a class="btn" href="index.html#work">Back to the table</a>
+          <a class="btn" href="index.html#hello">Say hi ☕</a>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -27,6 +27,13 @@
 	--moss-deep: #adba84;
 	--slate: #4f5a5d; /* blackboard */
 
+	/* Operation Serval's kit, the three colours its card on the home table
+	   wears. The rest of the game's palette lives with its case study, in
+	   case-scroll.css. Values from the game's own tokens.css. */
+	--serval-orange: #d9622b;
+	--serval-sand: #cdb98e;
+	--serval-paper: #e4d9c1;
+
 	/* Warm inks. The old site used Tailwind's blue-grey greys, which read
 	   cold and slightly dirty against cream. */
 	--ink: #33393b;
@@ -42,9 +49,16 @@
 	/* -- type -------------------------------------------------------------- */
 	/* One face for every piece of running text, headings excepted. Rounded and
 	   wide-apertured, which is what the typed-out speech panels want — text
-	   arriving a character at a time has to stay easy at a glance. */
-	--ff-body: "Baloo 2", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
-	--ff-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	   arriving a character at a time has to stay easy at a glance.
+
+	   The faces are named twice, the same two tiers as the palette. A case
+	   study re-inked for something else (Operation Serval) swaps the semantic
+	   pair and keeps the raw one, for whatever on its page is still the
+	   café's: the way back, and Dimah's own voice. */
+	--face-body: "Baloo 2", ui-rounded, "Trebuchet MS", system-ui, sans-serif;
+	--face-display: "Space Grotesk", ui-sans-serif, system-ui, -apple-system, sans-serif;
+	--ff-body: var(--face-body);
+	--ff-display: var(--face-display);
 	/* Baloo 2 sits light at 400; 600 is the weight the copy is set in. */
 	--fw-body: 600;
 
@@ -126,6 +140,13 @@
 	--card-bg: var(--butter);
 	--chip-bg: var(--butter-deep);
 	--accent: var(--butter-deep);
+}
+/* The game's sand paper with its sand line for chips. The orange is the
+   accent only: as a chip under ink it would be about 3:1. */
+.t-serval {
+	--card-bg: var(--serval-paper);
+	--chip-bg: var(--serval-sand);
+	--accent: var(--serval-orange);
 }
 
 /* --------------------------------------------------------------------------

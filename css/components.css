@@ -47,6 +47,54 @@
 }
 
 /* --------------------------------------------------------------------------
+   2b. Washi tape
+   One strip, torn at both ends, holding a corner of a sheet down. The
+   diagonal hatching is the tape's own weave — without it a flat rectangle
+   reads as a sticker. Here rather than with the shelf on the home page
+   because Operation Serval's scrapbook screen tapes its photograph down too.
+   -------------------------------------------------------------------------- */
+
+.tape {
+	position: absolute;
+	z-index: 2;
+	width: 5.25rem;
+	height: 1.4rem;
+	/* Colour and weave kept on their own properties. A colour is only legal in
+	   the *last* layer of the `background` shorthand, and putting it first
+	   throws the whole declaration away — which is a strip of tape you cannot
+	   see rather than an error anybody reports. Butter unless a page re-inks
+	   it through --tape. */
+	background-color: var(--tape, var(--butter));
+	background-image: repeating-linear-gradient(
+		118deg,
+		rgb(255 255 255 / 0.6) 0 5px,
+		rgb(255 255 255 / 0) 5px 11px
+	);
+	box-shadow: 0 1px 3px rgb(88 70 52 / 0.22);
+	opacity: 0.92;
+	clip-path: polygon(
+		0 6%,
+		7% 0,
+		96% 5%,
+		100% 46%,
+		95% 100%,
+		5% 96%,
+		1% 52%
+	);
+	pointer-events: none;
+}
+
+.tape--tl {
+	inset: -0.7rem auto auto -1.15rem;
+	rotate: -19deg;
+}
+
+.tape--tr {
+	inset: -0.75rem -1.2rem auto auto;
+	rotate: 15deg;
+}
+
+/* --------------------------------------------------------------------------
    3. Project card
    Physical paper on a desk. The transform is split across three independent
    CSS properties so that the things that want to move a card can never
@@ -513,6 +561,32 @@ html.is-dragging * {
 .card--foil .card__desc,
 .card--foil .card__more {
 	padding-inline-end: 5.75em;
+}
+
+/* A project's own emblem, stuck in the same corner on the same terms as the
+   seal: absolutely placed, sized in em so it shrinks with the sheet, and
+   given a gutter so no copy runs under it. Cut on three corners because the
+   Serval badge is cut that way in its own game. */
+.card__badge {
+	position: absolute;
+	right: 1.15em;
+	bottom: 1.15em;
+	width: 3.25em;
+	height: 3.25em;
+	clip-path: polygon(
+		0 0,
+		calc(100% - 0.45em) 0,
+		100% 0.45em,
+		100% calc(100% - 0.45em),
+		calc(100% - 0.45em) 100%,
+		0.45em 100%,
+		0 calc(100% - 0.45em)
+	);
+}
+
+.card--badge .card__desc,
+.card--badge .card__more {
+	padding-inline-end: 4em;
 }
 
 /* --------------------------------------------------------------------------

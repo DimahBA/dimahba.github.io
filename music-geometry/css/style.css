@@ -1,0 +1,463 @@
+/* ==========================================================================
+   Music Geometry — the page
+   The stage fills the screen; under it, the narration band and the controls.
+   Everything on the stage itself is drawn by the SVG components from the
+   parameter store, so this file only styles type on the stage, and the HTML
+   chrome around it. Colours arrive as custom properties from js/palette.js.
+   ========================================================================== */
+
+/* Computer Modern, as in 3Blue1Brown's videos. */
+@font-face {
+	font-family: "CMU Serif";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-roman.woff2") format("woff2");
+}
+@font-face {
+	font-family: "CMU Serif";
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-italic.woff2") format("woff2");
+}
+@font-face {
+	font-family: "CMU Serif";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-700-roman.woff2") format("woff2");
+}
+
+:root {
+	--serif: "CMU Serif", "Latin Modern Roman", "Cambria Math", Georgia, serif;
+	--music: "Noto Music", "Segoe UI Symbol", "Apple Symbols", serif;
+	--ease: cubic-bezier(0.45, 0, 0.2, 1);
+	--gutter: clamp(1rem, 3vw, 2.5rem);
+	color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html,
+body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	background: var(--bg, #000);
+	color: var(--white, #fff);
+	font-family: var(--serif);
+	-webkit-font-smoothing: antialiased;
+	overflow: hidden;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+button:disabled {
+	cursor: default;
+	opacity: 0.3;
+}
+
+:focus-visible {
+	outline: 2px solid var(--whole);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+/* --------------------------------------------------------------------------
+   Layout: one screen, three rows. The stage takes what the words and the
+   controls leave. */
+
+.app {
+	height: 100dvh;
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto auto;
+}
+
+.stage {
+	display: block;
+	width: 100%;
+	height: 100%;
+	min-height: 0;
+	user-select: none;
+	touch-action: none;
+}
+
+/* In the last beat the keys and the staff's notes are playable. */
+.stage.is-interactive .key,
+.stage.is-interactive .note-hit {
+	cursor: pointer;
+}
+
+/* --------------------------------------------------------------------------
+   Type on the stage */
+
+.stage text {
+	font-family: var(--serif);
+}
+
+.stage-title {
+	fill: var(--white);
+	stroke-width: 1.4px;
+}
+
+.stage-sub {
+	font-size: 34px;
+	font-style: italic;
+	fill: var(--grayB);
+}
+
+.clef {
+	font-family: var(--music) !important;
+	font-size: 112px;
+}
+
+.accidental {
+	font-family: var(--music) !important;
+	font-size: 46px;
+}
+
+.note-name {
+	font-size: 30px;
+}
+
+.step-label {
+	font-size: 30px;
+	font-style: italic;
+}
+
+.formula {
+	font-size: 54px;
+	font-style: italic;
+}
+
+.bead-num {
+	font-size: 19px;
+	font-weight: 700;
+	pointer-events: none;
+}
+
+.key-name {
+	font-size: 22px;
+	pointer-events: none;
+}
+
+.key-name--black {
+	font-size: 17px;
+}
+
+.anno {
+	font-size: 28px;
+	font-style: italic;
+}
+
+/* The score (every lesson after the major scale) sets its music glyphs at
+   80px: Noto Music's em is one staff height, four spaces of 20. Time
+   signatures are set in the bold Computer Modern, two spaces per number. */
+.clef--score {
+	font-size: 80px;
+}
+
+.accidental--score {
+	font-size: 72px;
+}
+
+.rest {
+	font-family: var(--music) !important;
+	font-size: 80px;
+}
+
+.ts {
+	font-size: 58px;
+	font-weight: 700;
+}
+
+.item-label {
+	font-size: 24px;
+	font-style: italic;
+}
+
+.count {
+	font-weight: 700;
+}
+
+.grp-label {
+	font-size: 24px;
+	font-style: italic;
+}
+
+.cd-dir {
+	font-size: 24px;
+	font-style: italic;
+}
+
+.cd-cap {
+	font-size: 34px;
+	font-style: italic;
+}
+
+/* In a beat that lets the reader play, rows of music can be clicked too. */
+.stage.is-interactive .row-hit {
+	cursor: pointer;
+}
+
+.anno--small {
+	font-size: 24px;
+}
+
+/* --------------------------------------------------------------------------
+   Narration: set like a caption, and written in word by word — Manim's
+   lagged fade-in, a small rise and a fade, one word after another. */
+
+.say-band {
+	display: grid;
+	justify-items: center;
+	align-content: start;
+	gap: 0.75rem;
+	min-height: 9.5rem;
+	padding: 0.5rem var(--gutter) 0.75rem;
+}
+
+.say {
+	max-width: 58rem;
+	margin: 0;
+	font-size: clamp(1.15rem, 0.9rem + 0.75vw, 1.6rem);
+	line-height: 1.45;
+	text-align: center;
+	text-wrap: balance;
+}
+
+.unbroken {
+	white-space: nowrap;
+}
+
+.word {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(0.35em);
+	animation: word-in 0.6s var(--ease) forwards;
+	animation-delay: calc(var(--i) * 24ms + 60ms);
+}
+
+.say.is-still .word {
+	animation: none;
+	opacity: 1;
+	transform: none;
+}
+
+@keyframes word-in {
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+.k-whole {
+	color: var(--whole);
+}
+.k-half {
+	color: var(--half);
+}
+.k-tonic {
+	color: var(--tonic);
+}
+.k-fits {
+	color: var(--fits);
+}
+.k-em {
+	font-style: italic;
+}
+
+.extras {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	gap: 0.5rem;
+	min-height: 2.25rem;
+}
+
+.extra {
+	padding: 0.3rem 1rem;
+	border: 1.5px solid var(--grayD);
+	border-radius: 999px;
+	font-style: italic;
+	font-size: 1.05rem;
+	color: var(--grayB);
+	transition:
+		border-color 160ms var(--ease),
+		color 160ms var(--ease);
+}
+
+.extra::before {
+	content: "▸ ";
+	color: var(--gray);
+}
+
+.extra:hover {
+	border-color: var(--gray);
+	color: var(--white);
+}
+
+/* A chooser among extras: the one on stage now. */
+.extra[aria-pressed="true"] {
+	border-color: var(--whole);
+	color: var(--white);
+}
+
+/* --------------------------------------------------------------------------
+   Controls: quiet, like a video player's. */
+
+.controls {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+	padding: 0.6rem var(--gutter) 0.9rem;
+	border-top: 1px solid var(--grayE);
+	font-size: 1rem;
+}
+
+.ctl {
+	min-height: 2.25rem;
+	padding: 0.2rem 0.9rem;
+	border-radius: 999px;
+	border: 1.5px solid var(--grayD);
+	color: var(--grayB);
+	transition:
+		border-color 160ms var(--ease),
+		color 160ms var(--ease),
+		background-color 160ms var(--ease);
+}
+
+.ctl:hover:not(:disabled) {
+	border-color: var(--gray);
+	color: var(--white);
+}
+
+.ctl--quiet {
+	border-color: transparent;
+}
+
+/* Back to the home page's list of lessons. */
+.ctl--home {
+	display: inline-flex;
+	align-items: center;
+	font-style: italic;
+	text-decoration: none;
+}
+
+.ctl--primary {
+	min-width: 6.5rem;
+	border-color: var(--whole);
+	color: var(--white);
+}
+
+.ctl--primary:hover:not(:disabled) {
+	background: color-mix(in srgb, var(--whole) 18%, transparent);
+	border-color: var(--whole);
+}
+
+.controls__end {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.progress {
+	flex: 1;
+	display: flex;
+	justify-content: center;
+	gap: 1.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.chapter {
+	display: grid;
+	justify-items: center;
+	gap: 0.3rem;
+}
+
+.chapter__name {
+	font-size: 0.8rem;
+	font-style: italic;
+	color: var(--gray);
+}
+
+.chapter__ticks {
+	display: flex;
+	gap: 0.3rem;
+}
+
+.tick {
+	width: 1.6rem;
+	height: 0.3rem;
+	border-radius: 999px;
+	background: var(--grayD);
+	transition: background-color 200ms var(--ease);
+}
+
+.tick.is-done {
+	background: var(--gray);
+}
+
+.tick[aria-current] {
+	background: var(--whole);
+}
+
+/* A bigger target than the bar it draws. */
+.tick {
+	position: relative;
+}
+.tick::after {
+	content: "";
+	position: absolute;
+	inset: -0.6rem -0.1rem;
+}
+
+.naming {
+	display: inline-flex;
+	padding: 2px;
+	border: 1.5px solid var(--grayE);
+	border-radius: 999px;
+}
+
+.naming button {
+	padding: 0.15rem 0.7rem;
+	border-radius: 999px;
+	font-size: 0.9rem;
+	color: var(--gray);
+}
+
+.naming button[aria-pressed="true"] {
+	background: var(--grayE);
+	color: var(--white);
+}
+
+.noscript {
+	max-width: 40ch;
+	margin: 4rem auto;
+	color: var(--grayB);
+	text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.word {
+		animation: none;
+		opacity: 1;
+		transform: none;
+	}
+}

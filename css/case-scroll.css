@@ -297,6 +297,14 @@ body {
 	translate: none;
 }
 
+/* The chibi and the say panel bring their own entrance from components.css,
+   which waits for `is-in` on the element itself. Here it is the screen that
+   gets it, so they are let in by the screen like everything else on it. */
+.js .screen.is-in :is(.chibi, .saypanel) {
+	opacity: 1;
+	scale: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
 	/* Matches the specificity of the rule above, so nothing is left invisible
 	   waiting for a transition that will never run. */
@@ -2244,5 +2252,758 @@ body {
 	.snap {
 		rotate: none;
 		box-shadow: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   22. Operation Serval
+   The same shape re-inked for a game: the screens, the reveal, the credits
+   row and the outro are all the ones above, but in the game's own kit — its
+   brown-and-orange palette, Oswald for titles and Chakra Petch for reading.
+
+   Everything is scoped to <html data-case="serval">. The token overrides sit
+   on :root rather than on <main> because the lightbox is mounted on <body>,
+   outside the page's content, and has to be the same colour as the page it
+   opened from.
+   -------------------------------------------------------------------------- */
+
+:root[data-case="serval"] {
+	/* The rest of the kit's palette. Orange, sand and the sand paper are in
+	   base.css, because the home card wears them too. */
+	--serval-orange-text: color-mix(in srgb, var(--serval-orange), #fff 25%);
+	--serval-glass: #342d22;
+	--serval-head: #1d1913;
+	--serval-field: #14110c;
+	--serval-navy: #16212d;
+	--serval-text: #ede6d6;
+	--serval-body: #ddd4c0;
+	--serval-muted: #afa285;
+
+	--bg-page: var(--serval-field);
+	--paper: var(--serval-glass);
+	--paper-warm: color-mix(in srgb, var(--serval-glass), var(--serval-sand) 14%);
+	--ink: var(--serval-text);
+	--ink-soft: var(--serval-body);
+	--ink-faint: var(--serval-muted);
+	--accent: var(--serval-orange);
+	--accent-ink: var(--serval-orange-text);
+	--stitch-color: color-mix(in srgb, var(--serval-sand) 40%, transparent);
+	/* base.css draws the focus ring in slate, which disappears on brown. */
+	--slate: var(--serval-sand);
+
+	--ff-display: "Oswald", "Arial Narrow", sans-serif;
+	--ff-body: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+	/* Chakra Petch is already a firm face at 400. Baloo's 600 here would
+	   set every paragraph semi-bold. */
+	--fw-body: 400;
+
+	/* The site's shadows are a warm brown chosen to read on cream. On a brown
+	   page they have to be darker than the ground to read at all. */
+	--sh-contact: 0 1px 2px rgb(0 0 0 / 0.45);
+	--sh-ambient: 0 10px 24px -10px rgb(0 0 0 / 0.6);
+	--shadow-lift: 0 4px 8px -2px rgb(0 0 0 / 0.5),
+		0 22px 44px -14px rgb(0 0 0 / 0.7);
+}
+
+/* Oswald is a condensed face that wants caps and a little air, the opposite
+   of the tightened tracking base.css gives Space Grotesk. */
+[data-case="serval"] :is(h1, h2, h3, h4) {
+	font-weight: 600;
+	line-height: 1.02;
+	letter-spacing: 0.01em;
+	text-transform: uppercase;
+}
+
+[data-case="serval"] strong,
+[data-case="serval"] b {
+	font-weight: 600;
+}
+
+/* The kit's section label: tracked caps in the reading face, behind a small
+   orange square. */
+[data-case="serval"] .eyebrow {
+	display: flex;
+	align-items: center;
+	gap: 0.7em;
+	font-family: var(--ff-body);
+	font-size: var(--fs-100);
+	letter-spacing: 0.22em;
+}
+
+[data-case="serval"] .eyebrow::before {
+	content: "";
+	flex: none;
+	width: 0.6em;
+	height: 0.6em;
+	background: var(--accent);
+}
+
+[data-case="serval"] :is(.screen__pull, .screen__note) {
+	letter-spacing: 0.01em;
+}
+
+/* The way back to the café is the café's furniture, so it keeps the face it
+   is set in on every other case study instead of taking the game's. */
+[data-case="serval"] :is(.back, .readon, .outro .btn) {
+	font-family: var(--face-display);
+}
+
+.sv-screen--head {
+	background: var(--serval-head);
+}
+
+/* The light screens: the scrapbook intro and the colours. The game's sand
+   paper, with the inks swapped for the field brown, so the swatches on it
+   are seen against something that is not one of them. */
+.sv-screen--sand {
+	--ink: var(--serval-field);
+	--ink-soft: color-mix(in srgb, var(--serval-field) 80%, var(--serval-paper));
+	--ink-faint: color-mix(in srgb, var(--serval-field) 62%, var(--serval-paper));
+	background: var(--serval-paper);
+	color: var(--ink);
+}
+
+/* The kit's buttons: square, a hairline of sand, orange only on the way in.
+   One class for every control on the page, because they are one control in
+   the game. */
+.sv-btn,
+[data-case="serval"] .btn {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	gap: var(--sp-2);
+	min-width: 2.75rem;
+	min-height: 2.75rem;
+	padding: 0 var(--sp-3);
+	border: 1px solid color-mix(in srgb, var(--serval-sand) 50%, transparent);
+	border-radius: 0;
+	background: none;
+	box-shadow: none;
+	font-family: var(--ff-display);
+	font-size: var(--fs-300);
+	font-weight: 600;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+	color: var(--serval-sand);
+	transition: background var(--dur) var(--ease-out),
+		border-color var(--dur) var(--ease-out), color var(--dur) var(--ease-out);
+}
+
+[data-case="serval"] .btn {
+	padding-inline: var(--sp-5);
+}
+
+.sv-btn:hover:not(:disabled),
+[data-case="serval"] .btn:hover {
+	border-color: var(--accent);
+	background: var(--accent);
+	color: var(--serval-text);
+	translate: none;
+	box-shadow: none;
+}
+
+.sv-btn:disabled {
+	opacity: 0.35;
+	cursor: default;
+}
+
+.sv-btn svg,
+[data-case="serval"] .btn svg {
+	width: 1.125rem;
+	height: 1.125rem;
+	flex: none;
+}
+
+/* The one loud button, the way BATTLE is the one loud button in the
+   garage: orange at rest, for the link that leaves for the game itself. The
+   words are in the field brown rather than the game's white, which on this
+   orange is under 3:1. On the way in it turns dark, inside the same orange
+   line. */
+[data-case="serval"] .btn--go {
+	border-color: var(--accent);
+	background: var(--accent);
+	color: var(--serval-field);
+}
+
+[data-case="serval"] .btn--go:hover {
+	background: var(--serval-field);
+	color: var(--serval-text);
+}
+
+/* --- hero ----------------------------------------------------------------- */
+
+/* The title sits in the sky, above the sun, rather than in the middle of the
+   screen where the tanks are. */
+.sv-hero {
+	isolation: isolate;
+	align-content: start;
+	padding-block-start: clamp(6rem, 20svh, 13rem);
+	background: var(--serval-field);
+}
+
+/* Cropped, never letterboxed. Off-centre towards the sun, so that on a phone
+   the narrow slice that is left is the sun and the tank under it. */
+.sv-hero__land {
+	position: absolute;
+	inset: 0;
+	z-index: -1;
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+	object-position: 62% 100%;
+}
+
+.sv-hero__inner {
+	justify-items: center;
+	text-align: center;
+}
+
+.sv-hero__title {
+	display: grid;
+	justify-items: center;
+	gap: 0.15em;
+	color: var(--serval-text);
+}
+
+/* "Operation" as the kit's micro label. Tracking adds space after the last
+   letter as well as between them, so the end margin takes it back and the
+   word sits on the same centre line as the name under it. */
+.sv-hero__op {
+	margin-inline-end: -0.5em;
+	font-family: var(--ff-body);
+	font-size: clamp(0.85rem, 0.6rem + 0.9vw, 1.35rem);
+	letter-spacing: 0.5em;
+	color: var(--serval-sand);
+}
+
+/* Capped against the height too: a laptop is a wide, short window, and the
+   name must not grow down into the sun. */
+.sv-hero__name {
+	font-size: min(clamp(4.5rem, 1.5rem + 11vw, 11rem), 26svh);
+	font-weight: 700;
+	line-height: 0.9;
+	letter-spacing: 0.04em;
+}
+
+/* The kit's anchor: the short orange rule every panel carries in its square
+   corner. */
+.sv-hero__title::after {
+	content: "";
+	width: 3rem;
+	height: 3px;
+	margin-block-start: 0.6rem;
+	background: var(--accent);
+}
+
+/* --- how it started ------------------------------------------------------- */
+
+/* A page out of the café's scrapbook, laid on the same sand paper as the
+   colours screen (.sv-screen--sand, which also brings the dark inks). It is
+   the one screen here in the café's own materials — cream sheets, a dashed
+   thread, washi tape — and in the café's own faces, because it is the chibi
+   talking, in the say panel from the home page. Everything after it is the
+   game. */
+.sv-intro {
+	--ff-display: var(--face-display);
+	--ff-body: var(--face-body);
+	--fw-body: 600;
+	/* The serval :root makes paper the panel glass, which is right for the
+	   game's screens and wrong for a scrapbook. */
+	--card-bg: var(--cream);
+	/* The portrait's size and how far it is pulled down over its panel — the
+	   same pair the home hero uses on a phone, for the same move. */
+	--chibi-size: clamp(6.5rem, 20vw, 8.75rem);
+	--chibi-dip: calc(var(--chibi-size) * 0.42);
+	/* The café's things, in the game's colours: the tape is the orange. */
+	--tape: var(--serval-orange);
+	font-family: var(--ff-body);
+	font-weight: var(--fw-body);
+}
+
+/* The portrait sits on the top edge of its own panel. In flow, with the
+   panel pulled up under it, so nothing above has to know the two overlap. */
+.sv-intro__say {
+	display: grid;
+	justify-items: start;
+}
+
+.sv-intro__chibi {
+	--chibi-bg: var(--peach-deep);
+	z-index: 1;
+	width: var(--chibi-size);
+	padding: var(--sp-4);
+	margin-inline-start: var(--sp-6);
+	margin-block-end: calc(var(--chibi-dip) * -1);
+}
+
+/* The awning down the panel's edge is striped in the game's orange and sand
+   instead of the café's butter. */
+.sv-intro__panel {
+	--awning-a: var(--serval-orange);
+	--awning-b: var(--serval-sand);
+	padding-block-start: calc(var(--chibi-dip) + var(--sp-3));
+}
+
+.sv-intro__panel .saypanel__line + .saypanel__line {
+	margin-block-start: var(--sp-3);
+}
+
+.sv-intro__panel .btn {
+	margin-block-start: var(--sp-5);
+}
+
+/* Parked on the panel's top edge. Sized off the portrait so the two share
+   one pixel grid: the chibi is 54 of its pixels across inside its padding,
+   the tank is 30. */
+.sv-intro__tank {
+	position: absolute;
+	inset-block-end: 100%;
+	inset-inline-end: clamp(var(--sp-6), 10%, var(--sp-12));
+	width: calc((var(--chibi-size) - var(--sp-4) * 2) * 30 / 54);
+	image-rendering: pixelated;
+}
+
+/* Mounted the way the logo is on the colours screen: the game's panel glass
+   with a sand thread, rather than the café's cream. The caption is on that
+   glass, so it takes the page's light ink back from the sand screen. */
+.sv-intro__photo {
+	--rot: -1.5deg;
+	--card-bg: var(--paper);
+	--stitch-color: color-mix(in srgb, var(--serval-sand) 40%, transparent);
+	--ink-soft: var(--serval-body);
+	justify-self: center;
+	width: min(100%, 26rem);
+}
+
+.sv-intro__photo img {
+	aspect-ratio: 4 / 3;
+}
+
+.sv-intro__photo figcaption {
+	text-align: center;
+}
+
+/* Cut from the game's sand, the khaki its second buttons and lines are
+   drawn in: one step darker than the sand paper it is pinned to, so it reads
+   as a separate sheet, and the cream thread the café's cards wear still
+   shows on it.
+
+   Stacked, the note is pulled up over the photograph's bottom margin, the
+   way a scrapbook gets layered — by less than that margin, so it never
+   sits on the caption. */
+.sv-note {
+	--card-bg: var(--serval-sand);
+	--stitch-color: var(--cream);
+	position: relative;
+	z-index: 1;
+	justify-self: end;
+	width: min(100%, 16rem);
+	margin-block-start: calc(var(--sp-3) * -1);
+	rotate: 3deg;
+}
+
+.sv-note dl {
+	display: grid;
+	gap: var(--sp-3);
+}
+
+/* The label the home page's shelf cards wear, mixed towards the note — less
+   far than the shelf mixes it, because sand is darker than any of the café's
+   cards and 62% left this size of type at about 4:1. */
+.sv-note dt {
+	font-family: var(--ff-display);
+	font-size: var(--fs-100);
+	font-weight: 700;
+	letter-spacing: 0.14em;
+	text-transform: uppercase;
+	color: color-mix(in srgb, var(--ink) 72%, var(--card-bg));
+}
+
+.sv-note dd {
+	font-size: var(--fs-300);
+	line-height: var(--lh-snug);
+}
+
+/* The collage. The photograph is the centrepiece across seven columns, the
+   note is pinned beside its top corner, and the panel is laid over its
+   right edge — one column of overlap, painted on top — with the portrait
+   sitting on the panel. */
+@media (min-width: 62rem) {
+	.sv-intro__inner {
+		grid-template-columns: repeat(12, minmax(0, 1fr));
+		grid-template-rows: auto 1fr;
+		gap: var(--sp-6) var(--sp-5);
+		align-items: start;
+	}
+
+	.sv-intro__photo {
+		grid-column: 1 / 8;
+		grid-row: 1 / 3;
+		width: 100%;
+	}
+
+	.sv-note {
+		grid-column: 9 / 12;
+		grid-row: 1;
+		justify-self: start;
+		align-self: end;
+		margin: 0;
+	}
+
+	.sv-intro__say {
+		grid-column: 7 / 13;
+		grid-row: 2;
+		z-index: 2;
+	}
+}
+
+/* --- the screen reel ------------------------------------------------------ */
+
+/* As wide as the window and, wherever the window is shaped like a screen, as
+   tall as it too: the reel is the one screen on the page that is a picture,
+   so the chrome around it is cut to one line above — the title with the
+   controls beside it — and the caption below. Under that size the
+   screenshots simply take their own height. */
+.sv-reel {
+	/* How long a screenshot stays up. The script has no number of its own:
+	   it moves on when the pip's fill animation ends. */
+	--dwell: 6s;
+	grid-template-rows: auto auto;
+	align-content: start;
+	gap: clamp(var(--sp-3), 2vh, var(--sp-5));
+	min-height: 0;
+	padding: clamp(1.75rem, 4.5vh, 3rem) 0 clamp(1.25rem, 3vh, 2.25rem);
+	background: var(--serval-field);
+}
+
+.sv-reel__head {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: flex-end;
+	justify-content: space-between;
+	gap: var(--sp-3) var(--sp-6);
+	width: 100%;
+	max-width: calc(var(--wrap) + var(--gutter) * 2);
+	margin-inline: auto;
+	padding-inline: var(--gutter);
+}
+
+.sv-reel__title {
+	font-size: var(--fs-700);
+}
+
+/* The cohort strip's mechanism: a native scroller that snaps a whole screen
+   at a time and works with no script at all. */
+.sv-reel__track {
+	position: relative;
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: 100%;
+	min-height: 0;
+	overflow-x: auto;
+	overscroll-behavior-inline: contain;
+	scroll-snap-type: x mandatory;
+	scroll-behavior: smooth;
+	scrollbar-width: none;
+}
+
+.sv-reel__track::-webkit-scrollbar {
+	display: none;
+}
+
+.sv-reel__track:focus-visible {
+	outline-offset: -3px;
+}
+
+.sv-reel__slide {
+	display: grid;
+	min-height: 0;
+	padding-inline: var(--gutter);
+	scroll-snap-align: center;
+	scroll-snap-stop: always;
+}
+
+.sv-shot {
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto;
+	gap: var(--sp-3);
+	min-height: 0;
+}
+
+.sv-shot img {
+	width: 100%;
+}
+
+.sv-shot figcaption {
+	justify-self: center;
+	max-width: 90ch;
+	font-size: var(--fs-300);
+	line-height: 1.5;
+	text-align: center;
+	color: var(--ink-soft);
+}
+
+.sv-shot figcaption b {
+	font-family: var(--ff-display);
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--ink);
+}
+
+/* Screen-shaped windows: the reel fills the height and the screenshot is
+   fitted inside what is left, never cropped — a menu with its edge cut off
+   is a different menu. */
+@media (min-width: 48rem) and (min-height: 34rem) {
+	.sv-reel {
+		grid-template-rows: auto minmax(0, 1fr);
+		height: 100svh;
+	}
+
+	.sv-shot .zoom,
+	.sv-shot img {
+		height: 100%;
+		min-height: 0;
+	}
+
+	.sv-shot img {
+		object-fit: contain;
+	}
+}
+
+/* The controls only do anything with the script running, so without it
+   there are none — the track still scrolls. */
+.sv-reel__bar {
+	display: none;
+}
+
+.js .sv-reel__bar {
+	display: flex;
+	align-items: center;
+	gap: var(--sp-2);
+}
+
+.sv-reel__pips {
+	display: flex;
+	gap: var(--sp-1);
+}
+
+/* A pip is a hairline, as in the game's own progress bars. The button around
+   it is a full touch target; the line is only what it looks like. */
+/* Narrow enough that the whole bar fits beside the title on a laptop. */
+.sv-pip {
+	position: relative;
+	display: block;
+	width: clamp(1.75rem, 2.5vw, 2.25rem);
+	height: 2.75rem;
+}
+
+.sv-pip::before,
+.sv-pip__fill {
+	content: "";
+	position: absolute;
+	inset: calc(50% - 1.5px) 0 auto;
+	height: 3px;
+}
+
+.sv-pip::before {
+	background: color-mix(in srgb, var(--serval-sand) 28%, transparent);
+	transition: background var(--dur) var(--ease-out);
+}
+
+.sv-pip:hover::before {
+	background: color-mix(in srgb, var(--serval-sand) 60%, transparent);
+}
+
+.sv-pip__fill {
+	background: var(--accent);
+	scale: 0 1;
+	transform-origin: left;
+}
+
+/* Paused, the current pip is simply lit. Playing, it fills over the dwell,
+   and the end of that fill is what moves the reel on. */
+.sv-pip[aria-current="true"] .sv-pip__fill {
+	scale: 1 1;
+}
+
+.sv-reel[data-playing] .sv-pip[aria-current="true"] .sv-pip__fill {
+	animation: reel-dwell var(--dwell) linear both;
+}
+
+@keyframes reel-dwell {
+	from {
+		scale: 0 1;
+	}
+	to {
+		scale: 1 1;
+	}
+}
+
+.sv-reel__play {
+	margin-inline-end: var(--sp-3);
+}
+
+.sv-reel__play > span {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-2);
+}
+
+.sv-reel:not([data-autoplay]) .sv-reel__when-on,
+.sv-reel[data-autoplay] .sv-reel__when-off {
+	display: none;
+}
+
+/* A small phone has room for the five pips and the chevrons or for the word
+   "Pause", not both. The word stays the button's name; only the eye loses
+   it, and the icon beside it already says the same thing. */
+@media (max-width: 30rem) {
+	.sv-pip {
+		width: 1.5rem;
+	}
+
+	.sv-reel__label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.sv-reel__track {
+		scroll-behavior: auto;
+	}
+
+	/* No autoplay at all, rather than one that flicks through the screens:
+	   base.css cuts every animation to a hundredth of a millisecond, which
+	   would end the dwell the moment it began. Same selector as the rule
+	   that starts it, so this one wins on order. */
+	.sv-reel[data-playing] .sv-pip[aria-current="true"] .sv-pip__fill {
+		animation: none;
+	}
+
+	.js .sv-reel__play {
+		display: none;
+	}
+}
+
+/* --- colours -------------------------------------------------------------- */
+
+/* The logo on a sheet of the café's paper, stitched and pinned at an angle
+   the way the photographs on the Parkinson's page are: the one place the two
+   halves of this page's look meet on one object. */
+.sv-logo {
+	justify-self: center;
+	width: min(100%, 18rem);
+	border-radius: var(--r-card);
+	rotate: -2deg;
+}
+
+.sv-logo img {
+	width: 100%;
+	border-radius: var(--r-sm);
+}
+
+.sv-swatches {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+	gap: var(--sp-6) var(--sp-4);
+}
+
+.sv-swatch {
+	display: grid;
+	gap: 0.1rem;
+	align-content: start;
+	font-size: var(--fs-200);
+	line-height: 1.4;
+	color: var(--ink-soft);
+}
+
+/* Cut like the kit's own swatches: three corners off, top-left square. */
+.sv-swatch::before {
+	content: "";
+	height: clamp(3.5rem, 9vh, 5rem);
+	margin-block-end: var(--sp-3);
+	background: var(--fill);
+	clip-path: polygon(
+		0 0,
+		calc(100% - 12px) 0,
+		100% 12px,
+		100% calc(100% - 12px),
+		calc(100% - 12px) 100%,
+		12px 100%,
+		0 calc(100% - 12px)
+	);
+}
+
+.sv-swatch b {
+	font-family: var(--ff-display);
+	font-size: var(--fs-500);
+	letter-spacing: 0.04em;
+	text-transform: uppercase;
+	color: var(--ink);
+}
+
+.sv-swatch code {
+	font-family: var(--ff-body);
+	letter-spacing: 0.06em;
+}
+
+/* --- close ---------------------------------------------------------------- */
+
+[data-case="serval"] .outro {
+	background: var(--serval-field);
+	border-block-start-color: color-mix(in srgb, var(--serval-sand) 30%, transparent);
+}
+
+/* The logo as the kit's badge: three corners cut, top-left square. */
+.sv-outro__badge {
+	width: 4.5rem;
+	height: 4.5rem;
+	clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% calc(100% - 10px), calc(100% - 10px) 100%, 10px 100%, 0 calc(100% - 10px));
+}
+
+/* --- the lightbox --------------------------------------------------------- */
+
+/* The screenshots are 1920 across and full of small type, so on a window
+   wide enough to spare it the lightbox gives them more of the screen than it
+   gives a photograph. The phone sizes in lightbox.css are left alone. */
+@media (min-width: 60.0625rem) {
+	[data-case="serval"] .lightbox {
+		--img-max-w: min(76rem, calc(100vw - 35rem));
+		--img-max-h: min(48rem, calc(100svh - 11rem));
+	}
+}
+
+[data-case="serval"] .lightbox__sheet {
+	--card-bg: var(--serval-head);
+}
+
+/* A <dialog> takes the browser's own text colour, which is black — unseen
+   on the café's cream, unreadable on this brown. And its caption is an h2
+   only for the outline: it reads as a sentence, so it is set as one rather
+   than in the page's capitals. */
+[data-case="serval"] .lightbox {
+	color: var(--ink);
+}
+
+[data-case="serval"] .lightbox__title {
+	font-family: var(--ff-body);
+	font-weight: 500;
+	line-height: 1.45;
+	letter-spacing: 0;
+	text-transform: none;
+}
+
+@media print {
+	.sv-reel__bar {
+		display: none;
+	}
+
+	.sv-reel {
+		height: auto;
 	}
 }

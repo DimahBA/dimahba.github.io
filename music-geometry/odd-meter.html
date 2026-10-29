@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-story="odd-meter">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+		<title>Odd Meter — Music Geometry</title>
+		<meta
+			name="description"
+			content="An animated lesson on odd meters — 5/8, 7/8, 8/8, 10/8, 11/8 and 5/4 — beats of two and three mixed, each played with a click and conducted by a moving hand."
+		/>
+		<!-- A prototype, not yet part of the site: kept out of search until it is. -->
+		<meta name="robots" content="noindex" />
+		<meta name="theme-color" content="#000000" />
+		<meta name="color-scheme" content="dark" />
+
+		<link
+			rel="icon"
+			href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23000'/%3E%3Cpolygon points='16,5 25.5,10.5 25.5,21.5 21.5,25.5 10.5,25.5 5,16 10.5,6.5' fill='none' stroke='%2358C4DD' stroke-width='2' stroke-linejoin='round'/%3E%3Ccircle cx='16' cy='5' r='2.6' fill='%23F0AC5F'/%3E%3C/svg%3E"
+		/>
+
+		<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="preload"
+			as="font"
+			type="font/woff2"
+			crossorigin
+			href="https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-roman.woff2"
+		/>
+		<!-- Only the glyphs the staff needs: both clefs, the accidentals, and the
+		     quarter, eighth and sixteenth rests. -->
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Noto+Music&amp;display=block&amp;text=%F0%9D%84%9E%F0%9D%84%A2%E2%99%AF%E2%99%AD%E2%99%AE%F0%9D%84%AA%F0%9D%84%AB%F0%9D%84%BD%F0%9D%84%BE%F0%9D%84%BF"
+		/>
+		<link rel="stylesheet" href="css/style.css" />
+
+		<script type="module" src="js/lesson.js"></script>
+	</head>
+
+	<body>
+		<div class="app">
+			<svg id="stage" class="stage" viewBox="0 0 1600 900" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Animated diagram of odd meters and a conductor's beat pattern"></svg>
+
+			<section class="say-band">
+				<p id="say" class="say" aria-live="polite"></p>
+				<div id="extras" class="extras"></div>
+			</section>
+
+			<nav class="controls" aria-label="Story">
+				<a class="ctl ctl--quiet ctl--home" href="./#odd-meter" title="All lessons">Lessons</a>
+				<button id="back" class="ctl" type="button" aria-label="Back" title="Back (←)">←</button>
+				<ol id="progress" class="progress"></ol>
+				<div class="controls__end">
+					<button id="replay" class="ctl ctl--quiet" type="button" title="Replay this beat (R)">↻ Replay</button>
+					<span class="naming" role="group" aria-label="Note names">
+						<button type="button" data-naming="solfege" aria-pressed="true">Do Ré Mi</button>
+						<button type="button" data-naming="letters" aria-pressed="false">C D E</button>
+					</span>
+					<button id="next" class="ctl ctl--primary" type="button" title="Next (→ or space)">Next</button>
+				</div>
+			</nav>
+		</div>
+
+		<noscript>
+			<p class="noscript">This is an animated, interactive story — it needs JavaScript.</p>
+		</noscript>
+	</body>
+</html>

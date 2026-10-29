@@ -1,0 +1,1323 @@
+/* ==========================================================================
+   Music Geometry — the home page
+
+   Two columns. The course scrolls on the left: a title, then four chapters
+   of lesson tiles. The stage stays put on the right: the circle of fifths,
+   a readout of what is playing, and the keyboard.
+
+   The lesson's look carries over: black ground, Manim's colours with one
+   meaning each, Computer Modern, crisp strokes and flat fills — no glow,
+   no gradient, no shadow. Colours arrive as custom properties from
+   js/palette.js; the same values are written here too, so the page is
+   right before the script runs.
+
+   Scripts only toggle classes and data attributes (is-on, is-current,
+   data-tone) and set --dur; everything those look like is decided here.
+   ========================================================================== */
+
+@font-face {
+	font-family: "CMU Serif";
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-roman.woff2") format("woff2");
+}
+@font-face {
+	font-family: "CMU Serif";
+	font-style: italic;
+	font-weight: 400;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-500-italic.woff2") format("woff2");
+}
+@font-face {
+	font-family: "CMU Serif";
+	font-style: normal;
+	font-weight: 700;
+	font-display: swap;
+	src: url("https://cdn.jsdelivr.net/npm/computer-modern@0.1.2/fonts/cmu-serif-700-roman.woff2") format("woff2");
+}
+
+:root {
+	--bg: #000000;
+	--white: #ffffff;
+	--grayA: #dddddd;
+	--grayB: #bbbbbb;
+	--gray: #888888;
+	--grayD: #444444;
+	--grayE: #222222;
+	--whole: #58c4dd;
+	--half: #f7d96f;
+	--tonic: #f0ac5f;
+	--tonicInk: #c78d46;
+	--fits: #83c167;
+	--breaks: #fc6255;
+	--blueB: #9cdceb;
+	--away: #b189c6;
+	--ivory: #eceae4;
+
+	/* Surfaces: steps of near-black, for hairlines and tiles. */
+	--hair: #1d1d1d;
+	--hair-strong: #333333;
+	--surface: #070707;
+	--surface-up: #0d0d0d;
+
+	--serif: "CMU Serif", "Noto Music", "Latin Modern Roman", "Cambria", Georgia, serif;
+	--ease: cubic-bezier(0.45, 0, 0.2, 1);
+	--ease-out: cubic-bezier(0.2, 0.7, 0.2, 1);
+
+	--sp-1: 4px;
+	--sp-2: 8px;
+	--sp-3: 12px;
+	--sp-4: 16px;
+	--sp-5: 24px;
+	--sp-6: 32px;
+	--sp-7: 48px;
+	--sp-8: 64px;
+	--sp-9: 96px;
+
+	--fs-xs: 0.75rem;
+	--fs-s: 0.875rem;
+	--fs-m: 1rem;
+	--fs-l: 1.125rem;
+	--fs-xl: 1.375rem;
+	--fs-2xl: 1.875rem;
+	--fs-hero: clamp(3rem, 1.6rem + 3.6vw, 5.5rem);
+
+	--radius: 16px;
+	--gutter: clamp(24px, 4.2vw, 80px);
+	color-scheme: dark;
+}
+
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
+body {
+	margin: 0;
+	background: var(--bg);
+	color: var(--white);
+	font-family: var(--serif);
+	font-size: var(--fs-m);
+	line-height: 1.5;
+	-webkit-font-smoothing: antialiased;
+	text-rendering: optimizeLegibility;
+}
+
+button {
+	font: inherit;
+	color: inherit;
+	background: none;
+	border: 0;
+	padding: 0;
+	cursor: pointer;
+}
+
+a {
+	color: inherit;
+}
+
+:focus-visible {
+	outline: 2px solid var(--whole);
+	outline-offset: 3px;
+	border-radius: 4px;
+}
+
+::selection {
+	background: color-mix(in srgb, var(--whole) 35%, transparent);
+}
+
+/* --------------------------------------------------------------------------
+   Layout: the course scrolls, the stage stays. */
+
+.home {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) minmax(420px, 45vw);
+	min-height: 100dvh;
+}
+
+.course {
+	min-width: 0;
+	padding: var(--sp-6) var(--gutter) var(--sp-8);
+	border-right: 1px solid var(--hair);
+}
+
+.stage {
+	position: sticky;
+	top: 0;
+	height: 100dvh;
+	display: grid;
+	grid-template-rows: minmax(0, 1fr) auto auto auto;
+	gap: var(--sp-3);
+	padding: var(--sp-4) clamp(20px, 2.6vw, 44px) var(--sp-3);
+}
+
+/* --------------------------------------------------------------------------
+   Masthead */
+
+.masthead {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-4);
+}
+
+.brand {
+	display: inline-flex;
+	align-items: center;
+	gap: var(--sp-3);
+	font-size: var(--fs-l);
+	letter-spacing: 0.01em;
+	text-decoration: none;
+}
+
+.brand__mark {
+	width: 26px;
+	height: 26px;
+}
+
+.brand__mark polygon {
+	fill: none;
+	stroke: var(--whole);
+	stroke-width: 2;
+	stroke-linejoin: round;
+}
+
+.brand__mark circle {
+	fill: var(--tonic);
+}
+
+.naming {
+	display: inline-flex;
+	padding: 2px;
+	border: 1px solid var(--hair-strong);
+	border-radius: 999px;
+}
+
+.naming button {
+	padding: 0.2rem 0.8rem;
+	border-radius: 999px;
+	font-size: var(--fs-s);
+	color: var(--gray);
+	transition:
+		color 160ms var(--ease),
+		background-color 160ms var(--ease);
+}
+
+.naming button:hover {
+	color: var(--grayA);
+}
+
+.naming button[aria-pressed="true"] {
+	background: var(--grayE);
+	color: var(--white);
+}
+
+/* --------------------------------------------------------------------------
+   Hero */
+
+.hero {
+	padding: clamp(56px, 11vh, 128px) 0 var(--sp-8);
+	max-width: 46rem;
+}
+
+.kicker {
+	margin: 0 0 var(--sp-5);
+	font-size: var(--fs-xs);
+	letter-spacing: 0.2em;
+	text-transform: uppercase;
+	color: var(--gray);
+}
+
+.hero__title {
+	margin: 0;
+	font-size: var(--fs-hero);
+	font-weight: 400;
+	line-height: 1.02;
+	letter-spacing: -0.015em;
+}
+
+.hero__title em {
+	display: block;
+	color: var(--grayB);
+}
+
+.hero__lede {
+	max-width: 34rem;
+	margin: var(--sp-6) 0 0;
+	font-size: var(--fs-l);
+	line-height: 1.6;
+	color: var(--grayB);
+	text-wrap: pretty;
+}
+
+.hero__actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: var(--sp-4) var(--sp-5);
+	margin-top: var(--sp-6);
+}
+
+.cta {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5em;
+	min-height: 2.75rem;
+	padding: 0.35rem 1.35rem;
+	border: 1px solid var(--tonic);
+	border-radius: 999px;
+	text-decoration: none;
+	color: var(--white);
+	transition:
+		background-color 200ms var(--ease),
+		color 200ms var(--ease);
+}
+
+.cta span {
+	transition: transform 240ms var(--ease);
+}
+
+.cta:hover {
+	background: var(--tonic);
+	color: var(--bg);
+}
+
+.cta:hover span {
+	transform: translateX(3px);
+}
+
+.hero__note {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.6em;
+	margin: 0;
+	font-size: var(--fs-s);
+	font-style: italic;
+	color: var(--gray);
+}
+
+.pip {
+	width: 7px;
+	height: 7px;
+	border-radius: 50%;
+	background: var(--tonic);
+}
+
+/* --------------------------------------------------------------------------
+   Chapters */
+
+.chapter + .chapter {
+	margin-top: var(--sp-8);
+}
+
+.chapter__head {
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: baseline;
+	column-gap: var(--sp-4);
+	margin-bottom: var(--sp-5);
+	padding-bottom: var(--sp-4);
+	border-bottom: 1px solid var(--hair);
+}
+
+.chapter__num {
+	min-width: 2.2rem;
+	font-size: var(--fs-l);
+	font-style: italic;
+	color: var(--gray);
+}
+
+.chapter__name {
+	margin: 0;
+	font-size: var(--fs-2xl);
+	font-weight: 400;
+	line-height: 1.2;
+}
+
+.chapter__blurb {
+	grid-column: 2;
+	margin: var(--sp-1) 0 0;
+	font-style: italic;
+	color: var(--gray);
+}
+
+/* --------------------------------------------------------------------------
+   Tiles. Each is a button (play its idea) with its miniature circle beside
+   the text; the one ready lesson also carries a link into it. While a tile
+   plays, a hairline along its foot fills over exactly as long as it lasts. */
+
+.tiles {
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(min(100%, 268px), 1fr));
+	gap: var(--sp-3);
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.tile {
+	position: relative;
+	display: flex;
+	border: 1px solid var(--hair);
+	border-radius: var(--radius);
+	background: var(--surface);
+	overflow: hidden;
+	transition:
+		border-color 220ms var(--ease),
+		background-color 220ms var(--ease);
+}
+
+.tile:hover,
+.tile:focus-within {
+	border-color: var(--hair-strong);
+	background: var(--surface-up);
+}
+
+.tile.is-current {
+	border-color: var(--grayD);
+}
+
+.tile__play {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: var(--sp-2);
+	width: 100%;
+	min-height: 156px;
+	padding: var(--sp-5) 92px var(--sp-5) var(--sp-5);
+	text-align: left;
+	border-radius: inherit;
+}
+
+.tile__play:focus-visible {
+	outline-offset: -2px;
+	border-radius: var(--radius);
+}
+
+.tile__num {
+	font-size: var(--fs-xs);
+	letter-spacing: 0.16em;
+	color: var(--gray);
+	font-variant-numeric: tabular-nums;
+}
+
+.tile__name {
+	margin-top: var(--sp-1);
+	font-size: var(--fs-xl);
+	line-height: 1.15;
+	color: var(--white);
+}
+
+.tile__blurb {
+	font-size: 0.95rem;
+	line-height: 1.5;
+	color: var(--grayB);
+	text-wrap: pretty;
+}
+
+/* A small "play" mark that appears on hover, and becomes "stop" while
+   the tile plays. Drawn with borders: a triangle, then a square. */
+.tile__play::after {
+	content: "";
+	position: absolute;
+	right: 30px;
+	bottom: 24px;
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 5.5px 0 5.5px 9px;
+	border-color: transparent transparent transparent var(--grayB);
+	opacity: 0;
+	transform: translateX(-4px);
+	transition:
+		opacity 200ms var(--ease),
+		transform 240ms var(--ease);
+}
+
+.tile:hover .tile__play::after,
+.tile__play:focus-visible::after {
+	opacity: 1;
+	transform: none;
+}
+
+.tile.is-playing .tile__play::after {
+	width: 10px;
+	height: 10px;
+	border: 0;
+	border-radius: 2px;
+	background: var(--white);
+	opacity: 1;
+	transform: none;
+}
+
+.tile__glyph {
+	position: absolute;
+	top: 18px;
+	right: 18px;
+	width: 62px;
+	height: 62px;
+	pointer-events: none;
+}
+
+.tile::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	height: 2px;
+	background: var(--grayA);
+	transform: scaleX(0);
+	transform-origin: left;
+	opacity: 0;
+}
+
+.tile.is-playing::after {
+	opacity: 1;
+	animation: fill-bar var(--dur, 6s) linear forwards;
+}
+
+@keyframes fill-bar {
+	to {
+		transform: scaleX(1);
+	}
+}
+
+/* The ready lesson: a gold link, and the tile's hairline warms. */
+.tile--ready {
+	border-color: color-mix(in srgb, var(--tonic) 34%, var(--hair));
+}
+
+.tile--ready:hover,
+.tile--ready:focus-within {
+	border-color: color-mix(in srgb, var(--tonic) 60%, var(--hair));
+}
+
+.tile--ready .tile__play {
+	padding-bottom: 64px;
+}
+
+.tile__lesson {
+	position: absolute;
+	left: var(--sp-5);
+	bottom: 20px;
+	display: inline-flex;
+	align-items: center;
+	gap: 0.4em;
+	padding: 0.2rem 0.85rem;
+	border: 1px solid var(--tonic);
+	border-radius: 999px;
+	font-size: var(--fs-s);
+	text-decoration: none;
+	color: var(--tonic);
+	transition:
+		background-color 200ms var(--ease),
+		color 200ms var(--ease);
+}
+
+.tile__lesson:hover {
+	background: var(--tonic);
+	color: var(--bg);
+}
+
+/* --------------------------------------------------------------------------
+   Miniature circles on the tiles — the picture each lesson ends on, still.
+   Strokes keep their width whatever the size. Hovering turns it one place
+   round: the same idea, a fifth higher. */
+
+.mini {
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	opacity: 0.85;
+	transition:
+		opacity 300ms var(--ease),
+		transform 700ms var(--ease);
+}
+
+.tile:hover .mini,
+.tile.is-current .mini {
+	opacity: 1;
+}
+
+.tile:hover .mini {
+	transform: rotate(30deg);
+}
+
+.mini__ring {
+	fill: none;
+	stroke: var(--grayD);
+	stroke-width: 1;
+	vector-effect: non-scaling-stroke;
+}
+
+.mini__band {
+	fill: var(--white);
+	fill-opacity: 0.17;
+}
+
+.mini__ghost {
+	fill: none;
+	stroke: var(--grayB);
+	stroke-width: 1;
+	stroke-dasharray: 2 3;
+	vector-effect: non-scaling-stroke;
+}
+
+.mini__shape {
+	fill: var(--tone);
+	fill-opacity: 0.16;
+	stroke: var(--tone);
+	stroke-width: 1.25;
+	stroke-linejoin: round;
+	vector-effect: non-scaling-stroke;
+}
+
+.mini__seg {
+	stroke: var(--tone);
+	stroke-width: 1.15;
+	stroke-linecap: round;
+	vector-effect: non-scaling-stroke;
+}
+
+.mini__seg.is-dim {
+	opacity: 0.35;
+}
+
+.mini__dot {
+	fill: var(--grayD);
+}
+.mini__dot.is-set {
+	fill: var(--grayA);
+}
+.mini__dot.is-tonic {
+	fill: var(--tonic);
+}
+.mini__dot.is-alt {
+	fill: var(--fits);
+}
+.mini__dot.is-hot {
+	fill: var(--breaks);
+}
+
+/* --------------------------------------------------------------------------
+   Tones: one meaning each, shared by the circle and the miniatures. */
+
+[data-tone="ink"] {
+	--tone: var(--white);
+}
+[data-tone="tonic"] {
+	--tone: var(--tonic);
+}
+[data-tone="away"] {
+	--tone: var(--away);
+}
+[data-tone="hot"] {
+	--tone: var(--breaks);
+}
+[data-tone="whole"] {
+	--tone: var(--whole);
+}
+[data-tone="half"] {
+	--tone: var(--half);
+}
+
+/* --------------------------------------------------------------------------
+   The circle of fifths */
+
+/* The circle takes whatever height the readout and keyboard leave, and
+   fits itself inside it (the viewBox "meets" its box). */
+.stage__wheel {
+	position: relative;
+	min-height: 0;
+}
+
+.wheel {
+	position: absolute;
+	inset: 0;
+	display: block;
+	width: 100%;
+	height: 100%;
+	overflow: visible;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.wheel__ring {
+	fill: none;
+	stroke: var(--hair-strong);
+	stroke-width: 1.5;
+	stroke-dasharray: 1 1;
+	stroke-dashoffset: 0;
+}
+
+.js .wheel__ring {
+	stroke-dashoffset: 1;
+	transition: stroke-dashoffset 1.6s var(--ease);
+}
+
+.js .wheel.is-in .wheel__ring {
+	stroke-dashoffset: 0;
+}
+
+/* A key: the slice of seven neighbours, as a soft rounded band. */
+.band {
+	fill: var(--white);
+	fill-opacity: 0.075;
+	stroke: var(--white);
+	stroke-opacity: 0.16;
+	stroke-width: 1;
+	opacity: 0;
+	transition: opacity 450ms var(--ease);
+}
+
+.band.is-shown {
+	opacity: 1;
+}
+
+.ghost {
+	fill: none;
+	stroke: var(--grayB);
+	stroke-width: 1.4;
+	stroke-dasharray: 3 7;
+	stroke-linecap: round;
+	opacity: 0;
+	transition: opacity 450ms var(--ease);
+}
+
+.ghost.is-shown {
+	opacity: 0.8;
+}
+
+/* A chord: the polygon through its notes. */
+.shape {
+	fill: var(--tone);
+	fill-opacity: 0.1;
+	stroke: var(--tone);
+	stroke-width: 2.5;
+	stroke-linejoin: round;
+	opacity: 0;
+	transition:
+		opacity 350ms var(--ease),
+		fill 450ms var(--ease),
+		stroke 450ms var(--ease);
+}
+
+.shape.is-shown {
+	opacity: 1;
+}
+
+/* A path from note to note, drawn in as it is played. */
+.seg {
+	stroke: var(--tone);
+	stroke-width: 2.4;
+	stroke-linecap: round;
+	stroke-dasharray: 1 1;
+	stroke-dashoffset: 1;
+	opacity: 0;
+	transition:
+		stroke-dashoffset 380ms var(--ease-out),
+		opacity 350ms var(--ease),
+		stroke 350ms var(--ease);
+}
+
+/* Hidden until drawn: an unused line has no length, and its round caps
+   would otherwise leave a dot. */
+.seg.is-on {
+	stroke-dashoffset: 0;
+	opacity: 1;
+}
+
+.seg.is-on.is-dim {
+	opacity: 0.32;
+}
+
+/* A root moving: an arc just inside the ring, then its head. */
+.arrow,
+.arrow-head {
+	fill: none;
+	stroke: var(--grayA);
+	stroke-width: 2;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+}
+
+.arrow {
+	stroke-dasharray: 1 1;
+	stroke-dashoffset: 1;
+	transition: stroke-dashoffset 480ms var(--ease-out);
+}
+
+.arrow.is-on {
+	stroke-dashoffset: 0;
+}
+
+.arrow-head {
+	opacity: 0;
+	transition: opacity 160ms var(--ease) 0s;
+}
+
+.arrow-head.is-on {
+	opacity: 1;
+	transition-delay: 360ms;
+}
+
+/* The twelve places. A dot grows and colours with its role; while its
+   note sounds it turns the lesson's "being played" blue and sends out a
+   ring — 3Blue1Brown's flash. */
+.node {
+	cursor: pointer;
+}
+
+.node__hit {
+	fill: transparent;
+}
+
+.node__dot,
+.node__flash,
+.node__bass {
+	transform-box: fill-box;
+	transform-origin: center;
+}
+
+.node__dot {
+	fill: var(--grayD);
+	transform: scale(0.5);
+	transition:
+		transform 380ms var(--ease),
+		fill 380ms var(--ease);
+}
+
+.node.is-key .node__dot {
+	fill: var(--gray);
+	transform: scale(0.58);
+}
+.node.is-set .node__dot {
+	fill: var(--white);
+	transform: scale(0.8);
+}
+.node.is-alt .node__dot {
+	fill: var(--fits);
+	transform: scale(0.88);
+}
+.node.is-hot .node__dot {
+	fill: var(--breaks);
+	transform: scale(0.88);
+}
+.node.is-tonic .node__dot {
+	fill: var(--tonic);
+	transform: scale(1);
+}
+.node.is-on .node__dot {
+	fill: var(--blueB);
+	transform: scale(1.12);
+	transition-duration: 50ms;
+}
+
+.node:hover .node__dot {
+	transform: scale(1.05);
+}
+
+.node__flash {
+	fill: none;
+	stroke: var(--blueB);
+	stroke-width: 2;
+	opacity: 0;
+}
+
+.node.is-flash .node__flash {
+	animation: flash 760ms var(--ease-out);
+}
+
+@keyframes flash {
+	from {
+		opacity: 0.9;
+		transform: scale(1);
+	}
+	to {
+		opacity: 0;
+		transform: scale(3.1);
+	}
+}
+
+.node__bass {
+	fill: none;
+	stroke: var(--grayA);
+	stroke-width: 1.5;
+	opacity: 0;
+	transform: scale(0.7);
+	transition:
+		opacity 300ms var(--ease),
+		transform 380ms var(--ease);
+}
+
+.node.is-bass .node__bass {
+	opacity: 1;
+	transform: none;
+}
+
+/* Labels: the major key outside each place, its relative minor beyond. */
+.lab {
+	font-size: 25px;
+	fill: var(--grayB);
+	text-anchor: middle;
+	dominant-baseline: central;
+	cursor: pointer;
+	transition: fill 300ms var(--ease);
+}
+
+/* SVG text can't carry a tidy outline ring, so focus is shown the way a
+   label is emphasised: brighter, and underlined from the keyboard. */
+.lab:focus {
+	outline: none;
+}
+
+.lab:hover,
+.lab:focus-visible {
+	fill: var(--white);
+}
+
+.lab:focus-visible {
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 5px;
+}
+
+.lab.is-in {
+	fill: var(--white);
+}
+
+.lab.is-em {
+	fill: var(--white);
+	text-decoration: underline;
+	text-decoration-thickness: 1px;
+	text-underline-offset: 5px;
+}
+
+.lab.is-tonic {
+	fill: var(--tonic);
+}
+
+.lab--minor {
+	font-size: 15px;
+	font-style: italic;
+	fill: var(--gray);
+}
+
+.lab--minor.is-em {
+	fill: var(--grayA);
+	text-decoration: none;
+}
+
+.lab__alt {
+	font-size: 0.66em;
+	fill: var(--gray);
+}
+
+.js .wheel .node,
+.js .wheel .lab {
+	opacity: 0;
+	transition:
+		opacity 700ms var(--ease) calc(var(--i) * 45ms + 300ms),
+		fill 300ms var(--ease);
+}
+
+.js .wheel.is-in .node,
+.js .wheel.is-in .lab {
+	opacity: 1;
+}
+
+.wheel__center {
+	font-size: 46px;
+	fill: var(--white);
+	text-anchor: middle;
+	dominant-baseline: central;
+	opacity: 0;
+	transition: opacity 300ms var(--ease);
+	pointer-events: none;
+}
+
+.wheel__center.is-shown {
+	opacity: 1;
+}
+
+/* --------------------------------------------------------------------------
+   The readout: what is playing, in words. */
+
+.now {
+	display: grid;
+	gap: var(--sp-2);
+	min-height: 7.6rem;
+	align-content: start;
+	padding-top: var(--sp-3);
+	border-top: 1px solid var(--hair);
+}
+
+.now__top {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: var(--sp-3);
+	min-height: 1.9rem;
+}
+
+.now__eyebrow {
+	margin: 0;
+	font-size: var(--fs-xs);
+	letter-spacing: 0.18em;
+	text-transform: uppercase;
+	color: var(--gray);
+}
+
+.now__tools {
+	display: flex;
+	gap: var(--sp-2);
+}
+
+.now__key,
+.now__again {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.45em;
+	min-height: 1.9rem;
+	padding: 0.1rem 0.8rem;
+	border: 1px solid var(--hair-strong);
+	border-radius: 999px;
+	font-size: var(--fs-s);
+	color: var(--grayB);
+	transition:
+		border-color 160ms var(--ease),
+		color 160ms var(--ease);
+}
+
+.now__key[hidden],
+.now__again[hidden] {
+	display: none;
+}
+
+.now__key:hover,
+.now__again:hover {
+	border-color: var(--gray);
+	color: var(--white);
+}
+
+.now__key-label {
+	font-style: italic;
+	color: var(--gray);
+}
+
+.now__key-name {
+	color: var(--white);
+}
+
+.now__again-icon {
+	width: 0;
+	height: 0;
+	border-style: solid;
+	border-width: 4.5px 0 4.5px 7.5px;
+	border-color: transparent transparent transparent currentColor;
+}
+
+.now__again[data-state="stop"] .now__again-icon {
+	width: 8px;
+	height: 8px;
+	border: 0;
+	border-radius: 1.5px;
+	background: currentColor;
+}
+
+.now__row {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0 var(--sp-3);
+	margin: 0;
+}
+
+.now__row.is-new {
+	animation: rise 420ms var(--ease-out);
+}
+
+@keyframes rise {
+	from {
+		opacity: 0;
+		transform: translateY(6px);
+	}
+}
+
+.now__title {
+	font-size: var(--fs-2xl);
+	line-height: 1.2;
+}
+
+.now__sub {
+	font-size: var(--fs-m);
+	font-style: italic;
+	color: var(--grayB);
+}
+
+.now__say {
+	max-width: 54ch;
+	margin: 0;
+	font-size: 1.04rem;
+	line-height: 1.55;
+	color: var(--grayA);
+	text-wrap: pretty;
+}
+
+.word {
+	display: inline-block;
+	opacity: 0;
+	transform: translateY(0.3em);
+	animation: word-in 0.55s var(--ease) forwards;
+	animation-delay: calc(var(--i) * 22ms + 40ms);
+}
+
+.now__say.is-still .word {
+	animation: none;
+	opacity: 1;
+	transform: none;
+}
+
+@keyframes word-in {
+	to {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+/* --------------------------------------------------------------------------
+   The keyboard */
+
+.stage__keys {
+	min-width: 0;
+}
+
+.keys {
+	display: block;
+	width: 100%;
+	height: auto;
+	touch-action: none;
+	user-select: none;
+	-webkit-user-select: none;
+}
+
+.pk {
+	fill: var(--ivory);
+	cursor: pointer;
+	transition: fill 520ms var(--ease-out);
+}
+
+.pk:hover {
+	fill: var(--white);
+}
+
+.pk--black {
+	fill: #151515;
+	stroke: #2e2e2e;
+	stroke-width: 1;
+}
+
+.pk--black:hover {
+	fill: #242424;
+}
+
+.pk.is-on {
+	fill: var(--blueB);
+	transition-duration: 40ms;
+}
+
+.pk--black.is-on {
+	fill: var(--whole);
+}
+
+.pk-dot {
+	fill: var(--grayD);
+	opacity: 0;
+	pointer-events: none;
+	transition:
+		opacity 300ms var(--ease),
+		fill 300ms var(--ease);
+}
+
+.pk-dot--black {
+	fill: var(--grayB);
+}
+
+.pk-dot.is-set {
+	opacity: 1;
+}
+.pk-dot.is-tonic {
+	fill: var(--tonicInk);
+}
+.pk-dot--black.is-tonic {
+	fill: var(--tonic);
+}
+.pk-dot.is-alt {
+	fill: var(--fits);
+}
+.pk-dot.is-hot {
+	fill: var(--breaks);
+}
+
+.pk-label {
+	font-size: 10px;
+	fill: var(--gray);
+	text-anchor: middle;
+	pointer-events: none;
+}
+
+/* --------------------------------------------------------------------------
+   Hints */
+
+.stage__hint {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	gap: var(--sp-1) var(--sp-4);
+	margin: 0;
+	font-size: var(--fs-xs);
+	font-style: italic;
+	color: var(--gray);
+}
+
+kbd {
+	display: inline-block;
+	min-width: 1.5em;
+	margin: 0 1px;
+	padding: 0 0.3em;
+	border: 1px solid var(--hair-strong);
+	border-radius: 4px;
+	font-family: inherit;
+	font-size: 0.95em;
+	font-style: normal;
+	line-height: 1.45;
+	text-align: center;
+	color: var(--grayB);
+}
+
+.stage__noscript {
+	color: var(--grayB);
+	font-style: italic;
+}
+
+/* --------------------------------------------------------------------------
+   Beyond, and the colophon */
+
+.beyond {
+	margin-top: var(--sp-9);
+	padding-top: var(--sp-6);
+	border-top: 1px solid var(--hair);
+}
+
+.beyond__title {
+	margin: 0;
+	font-size: var(--fs-2xl);
+	font-weight: 400;
+}
+
+.beyond__blurb {
+	margin: var(--sp-2) 0 var(--sp-5);
+	font-style: italic;
+	color: var(--gray);
+}
+
+.beyond__list {
+	display: grid;
+	gap: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.beyond__list li {
+	display: grid;
+	grid-template-columns: minmax(9rem, 13rem) 1fr;
+	gap: var(--sp-4);
+	padding: var(--sp-3) 0;
+	border-bottom: 1px solid var(--hair);
+	color: var(--grayB);
+}
+
+.beyond__list span {
+	color: var(--white);
+}
+
+.colophon {
+	margin-top: var(--sp-7);
+	font-size: var(--fs-s);
+	font-style: italic;
+	color: var(--gray);
+}
+
+/* --------------------------------------------------------------------------
+   The entrance: the title and lede rise once, as the circle draws itself. */
+
+.js .hero > * {
+	animation: rise 900ms var(--ease-out) both;
+}
+.js .hero > :nth-child(2) {
+	animation-delay: 80ms;
+}
+.js .hero > :nth-child(3) {
+	animation-delay: 160ms;
+}
+.js .hero > :nth-child(4) {
+	animation-delay: 240ms;
+}
+
+/* --------------------------------------------------------------------------
+   Narrow windows: the stage goes first, and nothing is pinned. */
+
+@media (max-width: 960px) {
+	.home {
+		grid-template-columns: 1fr;
+	}
+
+	.stage {
+		position: relative;
+		order: -1;
+		height: auto;
+		grid-template-rows: auto;
+		border-bottom: 1px solid var(--hair);
+	}
+
+	.stage__wheel {
+		height: min(78vw, 64vh);
+	}
+
+	.course {
+		border-right: 0;
+	}
+
+	.hero {
+		padding-top: var(--sp-7);
+	}
+}
+
+@media (prefers-reduced-motion: reduce) {
+	*,
+	*::before,
+	*::after {
+		animation-duration: 1ms !important;
+		animation-delay: 0ms !important;
+		transition-duration: 1ms !important;
+		transition-delay: 0ms !important;
+	}
+
+	.tile.is-playing::after {
+		animation: none !important;
+		transform: scaleX(1);
+		opacity: 0.4;
+	}
+
+	.tile:hover .mini {
+		transform: none;
+	}
+}
