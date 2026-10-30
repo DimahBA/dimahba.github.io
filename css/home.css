@@ -493,55 +493,11 @@
 		filter var(--dur-fly) var(--ease-out);
 }
 
-/* The room the jar stands in: a window onto the garden, the table, and the
-   café's boards under it, as one drawing.
-
-   Every length here is counted in the jar's own pixels. `--pixel` is one of
-   them, 1/54 of `--jar-w`, so the room is 172 of them across and its corner
-   lies 59 left of the stage's centre and 52 above it — the file's corner at
-   jar coordinates (−32, −12), less the jar's half-size (27, 40), because the
-   centre of the stage is the centre of the jar. Placed in pixels rather than
-   as fractions of the jar so a redrawn room is moved by reading two numbers
-   off the drawing, and so its pixels and the jar's are the same size by
-   construction: a table drawn at a different pixel size from the jar on it
-   is two hands on one page.
-
-   The table is where it is because the jar and the plant are. Its top runs
-   from just behind the pot's foot to just in front of the jar's, so both of
-   them stand on the wood and both shadows fall on it.
-
-   It hangs past the bottom of the stage — the legs and the floor stand in
-   the section's own padding — for the same reason the plant grows past the
-   top. Same `z-index` as the plant and earlier in the source, so it is
-   painted first: the pot stands *on* this table, not in front of a picture
-   of one. */
-.qa__stage .qa__room {
-	--pixel: calc(var(--jar-w) / 54);
-
-	position: absolute;
-	inset-block-start: 50%;
-	inset-inline-start: 50%;
-	z-index: -1;
-	/* `max-width: none` for the same reason as the plant: this box is wider
-	   than the stage on a phone, on purpose. */
-	width: calc(var(--pixel) * 172);
-	max-width: none;
-	height: auto;
-	translate: calc(var(--pixel) * -59) calc(var(--pixel) * -52);
-	image-rendering: pixelated;
-	pointer-events: none;
-	transition: opacity var(--dur-fly) var(--ease-out),
-		filter var(--dur-fly) var(--ease-out);
-}
-
 /* It recedes with the jar, and further. Depth of field falls off with
    distance, so the thing standing behind the out-of-focus object cannot be
    the sharp one — a crisp plant behind a blurred jar reads as a sticker on
-   the page rather than as something in the room. The room goes back with
-   the plant: the window is behind it, and the table is only ever seen round
-   the letter's edges. */
-.qa__stage.has-note .qa__plant,
-.qa__stage.has-note .qa__room {
+   the page rather than as something in the room. */
+.qa__stage.has-note .qa__plant {
 	opacity: 0.4;
 	filter: blur(3px);
 }
